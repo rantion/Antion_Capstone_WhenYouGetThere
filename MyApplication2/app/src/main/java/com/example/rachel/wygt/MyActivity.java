@@ -25,6 +25,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,12 +36,20 @@ import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 
 public class MyActivity extends FragmentActivity implements GooglePlayServicesClient.ConnectionCallbacks,
@@ -70,11 +80,13 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
     private Location mLocation;
     private NetworkProviderStatusReciever _statusReciever;
     private MyLocationListener _networkListener;
+    private GoogleMap googleMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
+        initilizeMap();
         servicesConnected();
         mPrefs = getSharedPreferences("SharedPreferences",
                 Context.MODE_PRIVATE);
@@ -116,6 +128,21 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
             (new GetAddressesFromName()).execute(locationName);
         }
     }
+
+    private void initilizeMap() {
+        if (googleMap == null) {
+            googleMap = ((MapFragment) getFragmentManager().findFragmentById(
+                    R.id.map)).getMap();
+
+            // check if map is created successfully or not
+            if (googleMap == null) {
+                Toast.makeText(getApplicationContext(),
+                        "Sorry! unable to create maps", Toast.LENGTH_SHORT)
+                        .show();
+            }
+        }
+    }
+
 //
 //    @Override
 //    protected void onStart() {
@@ -196,20 +223,14 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
             Log.d(_logTag,"no Last Location Available");
             return;
         }
-        (new GetAddressesFromLocation()).execute(mLocation);
+        LatLng currentPos = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
+        MarkerOptions marker = new MarkerOptions().position(currentPos).title("Current Location");
+        googleMap.addMarker(marker);
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(
+              currentPos).zoom(12).build();
 
-//        Geocoder geocoder = new Geocoder(this);
-//        try {
-//            List<Address> addressList = geocoder.getFromLocation(mLocation.getLatitude(), mLocation.getLongitude(), 5);
-//            int addressesReturned = addressList.size();
-//            Log.d(_logTag,"number of addresses returned: "+ addressesReturned);
-//
-//            for(Address address: addressList){
-//                displayAddressLines(address);
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                (new GetAddressesFromLocation()).execute(mLocation);
 
     }
 //    boolean confirmNetworkProviderAvailable (LocationManager lm) {
@@ -322,6 +343,11 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
     @Override
     public void onLocationChanged(Location location) {
         // Report to the UI that the location was updated
+
+        int latitude = (int) (mLocation.getLatitude() * 1e6);
+        int longitude = (int) (mLocation.getLongitude() * 1e6);
+
+
         String msg = "Updated Location: " +
                 Double.toString(location.getLatitude()) + "," +
                 Double.toString(location.getLongitude());
@@ -543,7 +569,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
 
             Geocoder geocoder = new Geocoder(MyActivity.this); //context of class wrapped in
             try {
-                addressList = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(),5);
+                addressList = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(),2);
 
             } catch (IOException e) {
                 e.printStackTrace();

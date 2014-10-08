@@ -1,1 +1,1 @@
-include ':app'
+include ':app', ':android-google-usb-api13'
