@@ -2,8 +2,10 @@ package com.example.rachel.wygt;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
@@ -21,15 +23,16 @@ import android.provider.Settings;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.View.OnKeyListener;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -39,21 +42,16 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.w3c.dom.Text;
-
 import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 
 public class MyActivity extends FragmentActivity implements GooglePlayServicesClient.ConnectionCallbacks,
-        GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
+        GooglePlayServicesClient.OnConnectionFailedListener, LocationListener,OnKeyListener {
     private final static int
             CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     String _logTag = "*** WYGT MainActivity ***";
@@ -86,8 +84,13 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
-        initilizeMap();
+        initializeMap();
+        LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+        confirmNetworkProviderAvailable(lm);
         servicesConnected();
+        EditText addressBox = (EditText)findViewById(R.id.enter_location_field);
+        addressBox.setOnKeyListener(this);
+
         mPrefs = getSharedPreferences("SharedPreferences",
                 Context.MODE_PRIVATE);
         // Get a SharedPreferences editor
@@ -104,36 +107,31 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
     }
 
     public void getAddress(View v) {
-        // Ensure that a Geocoder services is available
         Log.d(_logTag, "getAddress clicked");
         if (Build.VERSION.SDK_INT >=
                 Build.VERSION_CODES.JELLY_BEAN
                 &&
                 Geocoder.isPresent()) {
-            // Show the activity indicator
-//            mActivityIndicator.setVisibility(View.VISIBLE);
-            /*
-             * Reverse geocoding is long-running and synchronous.
-             * Run it on a background thread.
-             * Pass the current location to the background task.
-             * When the task finishes,
-             * onPostExecute() displays the address.
-             */
-            if(mLocation == null){
-                LocationManager lm = (LocationManager)getSystemService(LOCATION_SERVICE);
-                mLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            }
+             mActivityIndicator.setVisibility(View.VISIBLE);
             EditText _location = (EditText)findViewById(R.id.enter_location_field);
             String locationName = _location.getText().toString();
             (new GetAddressesFromName()).execute(locationName);
         }
     }
 
-    private void initilizeMap() {
+    private void initializeMap() {
         if (googleMap == null) {
             googleMap = ((MapFragment) getFragmentManager().findFragmentById(
                     R.id.map)).getMap();
             googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+            googleMap.setMyLocationEnabled(true);
+            googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+            LocationManager lm = (LocationManager)getSystemService(LOCATION_SERVICE);
+            Location current = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            if(current!= null) {
+                LatLng currentPos = new LatLng(current.getLatitude(), current.getLongitude());
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPos,12.0f));
+            }
 
             // check if map is created successfully or not
             if (googleMap == null) {
@@ -225,7 +223,8 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
             return;
         }
         LatLng currentPos = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
-        MarkerOptions marker = new MarkerOptions().position(currentPos).title("Current Location");
+        MarkerOptions marker = new MarkerOptions();
+        marker.position(currentPos).title("Current Location");
         googleMap.addMarker(marker);
         CameraPosition cameraPosition = new CameraPosition.Builder().target(
               currentPos).zoom(12).build();
@@ -234,48 +233,48 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                 (new GetAddressesFromLocation()).execute(mLocation);
 
     }
-//    boolean confirmNetworkProviderAvailable (LocationManager lm) {
-//
-//        boolean networkAvailable =  confirmAirplaneModeIsOff()&&
-//                confirmNetworkProviderEnabled(lm)&&
-//                confirmWifiAvailable()
-//                ;
-//        return networkAvailable;
-//    }
-//
-//    public boolean confirmNetworkProviderEnabled (LocationManager lm){
-//        boolean isAvailable = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-//
-//        if(!isAvailable){
-//            AlertUserDialog dialog = new AlertUserDialog("Please Enable Location Services" , Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//            dialog.show(getFragmentManager(),null);
-//        }
-//        return isAvailable;
-//    }
-//
-//    public boolean confirmAirplaneModeIsOff (){
-//
-//        Log.d(_logTag, "inside AirPlaneMode");
-//        boolean isOff =
-//                Settings.System.getInt(getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0) == 0;
-//        Log.d(_logTag, "AirPlane Mode Is : "+isOff);
-//        if(!isOff){
-//            AlertUserDialog dialog = new AlertUserDialog("Please disable Airplane mode", Settings.ACTION_AIRPLANE_MODE_SETTINGS);
-//            dialog.show(getFragmentManager(),null);
-//        }
-//        return isOff;
-//    }
-//
-//    public boolean confirmWifiAvailable(){
-//        ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-//        NetworkInfo wifiInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-//        boolean isAvailable = wifiInfo.isAvailable();
-//        if(!isAvailable){
-//            AlertUserDialog dialog = new AlertUserDialog("Please Enable Your WiFi", Settings.ACTION_WIFI_SETTINGS);
-//            dialog.show(getFragmentManager(),null);
-//        }
-//        return isAvailable;
-//    }
+    boolean confirmNetworkProviderAvailable (LocationManager lm) {
+
+        boolean networkAvailable =  confirmAirplaneModeIsOff()&&
+                confirmNetworkProviderEnabled(lm)&&
+                confirmWifiAvailable()
+                ;
+        return networkAvailable;
+    }
+
+    public boolean confirmNetworkProviderEnabled (LocationManager lm){
+        boolean isAvailable = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        if(!isAvailable){
+            AlertUserDialog dialog = new AlertUserDialog("Please Enable Location Services" , Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            dialog.show(getFragmentManager(),null);
+        }
+        return isAvailable;
+    }
+
+    public boolean confirmAirplaneModeIsOff (){
+
+        Log.d(_logTag, "inside AirPlaneMode");
+        boolean isOff =
+                Settings.System.getInt(getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0) == 0;
+        Log.d(_logTag, "AirPlane Mode Is : "+isOff);
+        if(!isOff){
+            AlertUserDialog dialog = new AlertUserDialog("Please disable Airplane mode", Settings.ACTION_AIRPLANE_MODE_SETTINGS);
+            dialog.show(getFragmentManager(),null);
+        }
+        return isOff;
+    }
+
+    public boolean confirmWifiAvailable(){
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo wifiInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        boolean isAvailable = wifiInfo.isAvailable();
+        if(!isAvailable){
+            AlertUserDialog dialog = new AlertUserDialog("Please Enable Your WiFi", Settings.ACTION_WIFI_SETTINGS);
+            dialog.show(getFragmentManager(),null);
+        }
+        return isAvailable;
+    }
 
     private void clearDisplay(){
         TextView textView = (TextView)findViewById(R.id.textView);
@@ -370,6 +369,30 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
 
     }
 
+    @Override
+    public boolean onKey(View view, int keyCode, KeyEvent event) {
+//
+
+        if (keyCode == EditorInfo.IME_ACTION_SEARCH ||
+                keyCode == EditorInfo.IME_ACTION_DONE ||
+                event.getAction() == KeyEvent.ACTION_DOWN &&
+                        event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+
+            if (!event.isShiftPressed()) {
+                Log.v("AndroidEnterKeyActivity","Enter Key Pressed!");
+                switch (view.getId()) {
+                    case R.id.enter_location_field:
+                        getAddress(view);
+                        break;
+                }
+                return true;
+            }
+
+        }
+        return false; // pass on to other listeners.
+
+    }
+
 
     // Define a DialogFragment that displays the error dialog
     public static class ErrorDialogFragment extends DialogFragment {
@@ -453,77 +476,6 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         return false;
     }
 
-//    private class GetAddressTask extends
-//            AsyncTask<Location, Void, String> {
-//        Context mContext;
-//
-//        public GetAddressTask(Context context) {
-//            super();
-//            mContext = context;
-//        }
-//
-//        @Override
-//        protected String doInBackground(Location... params) {
-//            Geocoder geocoder =
-//                    new Geocoder(mContext, Locale.getDefault());
-//            // Get the current location from the input parameter list
-//            Location loc = params[0];
-//            // Create a list to contain the result address
-//            List<Address> addresses = null;
-//            try {
-//                /*
-//                 * Return 1 address.
-//                 */
-//                addresses = geocoder.getFromLocation(loc.getLatitude(),
-//                        loc.getLongitude(), 1);
-//            } catch (IOException e1) {
-//                Log.e("LocationSampleActivity",
-//                        "IO Exception in getFromLocation()");
-//                e1.printStackTrace();
-//                return ("IO Exception trying to get address");
-//            } catch (IllegalArgumentException e2) {
-//                // Error message to post in the log
-//                String errorString = "Illegal arguments " +
-//                        Double.toString(loc.getLatitude()) +
-//                        " , " +
-//                        Double.toString(loc.getLongitude()) +
-//                        " passed to address service";
-//                Log.e("LocationSampleActivity", errorString);
-//                e2.printStackTrace();
-//                return errorString;
-//            }
-//            // If the reverse geocode returned an address
-//            if (addresses != null && addresses.size() > 0) {
-//                // Get the first address
-//                Address address = addresses.get(0);
-//                /*
-//                 * Format the first line of address (if available),
-//                 * city, and country name.
-//                 */
-//                String addressText = String.format(
-//                        "%s, %s, %s",
-//                        // If there's a street address, add it
-//                        address.getMaxAddressLineIndex() > 0 ?
-//                                address.getAddressLine(0) : "",
-//                        // Locality is usually a city
-//                        address.getLocality(),
-//                        // The country of the address
-//                        address.getCountryName());
-//                // Return the text
-//                return addressText;
-//            } else {
-//                return "No address found";
-//            }
-//        }
-//
-//        @Override
-//        protected void onPostExecute(String address) {
-//            // Set activity indicator visibility to "gone"
-//          //  mActivityIndicator.setVisibility(View.GONE);
-//            // Display the results of the lookup.
-//            mAddress.setText(address);
-//        }
-//    }
 
     class GetAddressesFromName extends AsyncTask<String, Void, List<Address>>{
 
@@ -536,7 +488,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
 
             Geocoder geocoder = new Geocoder(MyActivity.this); //context of class wrapped in
             try {
-                addressList = geocoder.getFromLocationName(placeName,1);
+                addressList = geocoder.getFromLocationName(placeName,10);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -545,16 +497,48 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         }
 
         @Override
-        protected void onPostExecute(List<Address> addresses) {
+        protected void onPostExecute(final List<Address> addresses) {
             long threadId = Thread.currentThread().getId();
             Log.d(_logTag,"onPostExecute threadID: "+threadId);
             MyActivity.this.clearDisplay();
+            final CharSequence[] _addresses = new CharSequence[addresses.size()];
+            int j = 0;
+            final Address[] addressArray = new Address[addresses.size()];
             for(Address address: addresses){
-                MyActivity.this.displayAddressLines(address);
+           //     MyActivity.this.displayAddressLines(address);
+                int lastIndex = address.getMaxAddressLineIndex();
+                String addressLine = "";
+                for(int i = 0; i<=lastIndex; i++){
+                    addressLine = addressLine + address.getAddressLine(i) + "\n";
+                }
+                addressArray[j]=address;
+                _addresses[j]= addressLine;
+                j++;
             }
             if(addresses.size()==0){
                 MyActivity.this.clearDisplay();
                 MyActivity.this.addLineToDisplay("I'm sorry, we cannot find your location");
+            }
+            else{
+                AlertDialog.Builder builder = new AlertDialog.Builder(MyActivity.this);
+                builder.setTitle("Select your address: ");
+
+                builder.setItems(_addresses, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Address selectedAddress = addressArray[which];
+                        LatLng currentPos = new LatLng(selectedAddress.getLatitude(), selectedAddress.getLongitude());
+                        MarkerOptions marker = new MarkerOptions();
+                        marker.position(currentPos).title(selectedAddress.getAddressLine(0));
+                        googleMap.addMarker(marker);
+                        CameraPosition cameraPosition = new CameraPosition.Builder().target(
+                                 currentPos).zoom(14).build();
+                        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                        mActivityIndicator.setVisibility(View.GONE);
+
+                    }
+                });
+                builder.show();
             }
         }
     }
@@ -580,6 +564,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
 
         @Override
         protected void onPostExecute(List<Address> addresses) {
+            mActivityIndicator.setVisibility(View.GONE);
             long threadId = Thread.currentThread().getId();
             Log.d(_logTag,"onPostExecute threadID: "+threadId);
             MyActivity.this.clearDisplay();
