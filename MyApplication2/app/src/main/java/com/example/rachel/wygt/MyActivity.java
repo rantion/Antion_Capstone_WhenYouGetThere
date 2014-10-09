@@ -133,6 +133,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         if (googleMap == null) {
             googleMap = ((MapFragment) getFragmentManager().findFragmentById(
                     R.id.map)).getMap();
+            googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
             // check if map is created successfully or not
             if (googleMap == null) {
