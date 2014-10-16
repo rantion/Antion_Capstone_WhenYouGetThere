@@ -1,12 +1,41 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".MyActivity">
+
+    <LinearLayout
+        android:id="@+id/EnterLocationLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal"
+        >
+
+        <EditText
+            android:id="@+id/enter_location_field"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/abc_action_bar_default_height"
+            android:layout_weight="1.03"
+            android:clickable="true"
+            android:hint="enter location" />
+
+        <Button
+            android:id="@+id/enter_location"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/abc_action_bar_default_height"
+            android:layout_alignParentLeft="true"
+            android:layout_toRightOf="@+id/enter_location_field"
+            android:onClick="getAddress"
+            android:text="G0!" />
+    </LinearLayout>
+
+
 
     <ProgressBar
         android:id="@+id/address_progress"
@@ -16,43 +45,96 @@
         android:indeterminate="true"
         android:visibility="gone" />
 
-    <EditText
-        android:id="@+id/enter_location_field"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/abc_action_bar_default_height"
-        android:clickable="true"
-        android:hint="enter location"
-        />
-
-    <Button
-        android:id="@+id/enter_location"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/abc_action_bar_default_height"
-        android:layout_below="@id/enter_location_field"
-        android:onClick="getAddress"
-        android:text="G0!"
-        />
-
-    <TextView
-        android:id="@+id/textView"
-        android:text="@string/hello_world"
+    <LinearLayout
+        android:id="@+id/map_layout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/enter_location"
-        android:layout_marginBottom="@dimen/abc_action_bar_subtitle_bottom_margin"
-        android:layout_gravity="top" />
+        android:layout_below="@id/EnterLocationLayout"
+        android:visibility="visible"
+        android:orientation="vertical"
+
+        >
+
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/map"
+            class="com.google.android.gms.maps.MapFragment"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="25"
+            tools:context=".MyActivity" />
+
+        <LinearLayout
+            android:id="@+id/destination_bar"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/map_layout"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:showDividers="middle"
+            android:divider="@drawable/divider"
+            android:weightSum="1">
+
+            <TextView
+                android:id="@+id/activity_my_destination"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_marginRight="@dimen/abc_action_bar_icon_vertical_padding"
+                android:text="Destination" />
 
 
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        tools:context=".MyActivity"
-        android:id="@+id/map"
-        class="com.google.android.gms.maps.MapFragment"
-        android:layout_width="match_parent"
-        android:layout_below="@id/textView"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_gravity="bottom" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="fill_parent"
+                android:gravity="center_horizontal"
+                android:layout_gravity="bottom"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="When I get there I need to..." />
+
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    >
+
+                    <Button
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/button"
+                        android:layout_margin="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:text="Remember\nSomething"
+                        android:textSize="7pt"/>
+
+                    <Button
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/button"
+                        android:layout_margin="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:textSize="7pt"
+                        android:text="Do\nSomething" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
 
 </RelativeLayout>
