@@ -117,7 +117,23 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
             mActivityIndicator.setVisibility(View.VISIBLE);
             EditText _location = (EditText) findViewById(R.id.enter_location_field);
             String locationName = _location.getText().toString();
-            (new GetAddressesFromName()).execute(locationName);
+            if(locationName.length()>0) {
+                (new GetAddressesFromName()).execute(locationName);
+            }
+            else{
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("Please Enter A Destination")
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+                mActivityIndicator.setVisibility(View.GONE);
+                return;
+            }
         }
     }
 
@@ -474,7 +490,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                             CameraPosition cameraPosition = new CameraPosition.Builder().target(
                                     destinationLocation).zoom(14).build();
                             _marker.setSnippet((String) _addresses[which]);
-                            googleMap.setOnMarkerClickListener(MarkerListener);
+//                            googleMap.setOnMarkerClickListener(MarkerListener);
                             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                             mActivityIndicator.setVisibility(View.GONE);
                             LinearLayout navBar = (LinearLayout) findViewById(R.id.destination_bar);
@@ -522,17 +538,17 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
             }
         }
 
-        GoogleMap.OnMarkerClickListener MarkerListener = new GoogleMap.OnMarkerClickListener() {
-
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                Intent intent = new Intent(MyActivity.this, CreateTaskActivity.class);
-                intent.putExtra("Destination", marker.getSnippet());
-                intent.putExtra("Destination_location", marker.getPosition());
-                startActivity(intent);
-                return false;
-            }
-        };
+//        GoogleMap.OnMarkerClickListener MarkerListener = new GoogleMap.OnMarkerClickListener() {
+//
+//            @Override
+//            public boolean onMarkerClick(Marker marker) {
+//                Intent intent = new Intent(MyActivity.this, CreateTaskActivity.class);
+//                intent.putExtra("Destination", marker.getSnippet());
+//                intent.putExtra("Destination_location", marker.getPosition());
+//                startActivity(intent);
+//                return false;
+//            }
+//        };
     }
 
 
