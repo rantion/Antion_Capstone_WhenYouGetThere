@@ -27,8 +27,12 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,6 +52,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -57,8 +62,6 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
     String _logTag = "*** WYGT MainActivity ***";
     private final static int
             CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-
-
     private LocationClient locationClient;
     private static final int MILLISECONDS_PER_SECOND = 1000;
     // Update frequency in seconds
@@ -75,12 +78,10 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
     boolean mUpdatesRequested;
     SharedPreferences mPrefs;
     SharedPreferences.Editor mEditor;
-    private TextView mAddress;
     private ProgressBar mActivityIndicator;
     private Location mLocation;
     private GoogleMap googleMap;
     private Marker _marker;
-    private MapFragment mf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +93,6 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         servicesConnected();
         EditText addressBox = (EditText) findViewById(R.id.enter_location_field);
         addressBox.setOnKeyListener(this);
-
         mPrefs = getSharedPreferences("SharedPreferences",
                 Context.MODE_PRIVATE);
         mEditor = mPrefs.edit();
@@ -107,6 +107,8 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
     }
 
     public void getAddress(View v) {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
         Log.d(_logTag, "getAddress clicked");
         if (Build.VERSION.SDK_INT >=
                 Build.VERSION_CODES.JELLY_BEAN
@@ -119,6 +121,11 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         }
     }
 
+    private void getCurrentLocation(){
+        LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+        mLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+    }
+
     private void initializeMap() {
         if (googleMap == null) {
             googleMap = ((MapFragment) getFragmentManager().findFragmentById(
@@ -127,9 +134,6 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
             googleMap.setMyLocationEnabled(true);
             googleMap.getUiSettings().setMyLocationButtonEnabled(true);
             googleMap.getUiSettings().setCompassEnabled(true);
-            mf =((MapFragment) getFragmentManager().findFragmentById(
-                    R.id.map));
-
 
             LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
             Location current = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
@@ -146,70 +150,14 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         }
     }
 
-//
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        locationClient.connect();
-//    }
-//
-//    @Override
-//    protected void onStop() {
-//        // If the client is connected
-//        if (locationClient.isConnected()) {
-//            locationClient.removeLocationUpdates((com.google.android.gms.location.LocationListener) this);
-//            /*
-//             * Remove location updates for a listener.
-//             * The current Activity is the listener, so
-//             * the argument is "this".
-//             */
-//        }
-//        /*
-//         * After disconnect() is called, the client is
-//         * considered "dead".
-//         */
-//        locationClient.disconnect();
-//        super.onStop();
-//    }
-//
-//    @Override
-//    protected void onPause() {
-//        // Save the current setting for updates
-//        mEditor.putBoolean("KEY_UPDATES_ON", mUpdatesRequested);
-//        mEditor.commit();
-//        super.onPause();
-//    }
-//
-//    @Override
-//    protected void onResume() {
-//        /*
-//         * Get any previous setting for location updates
-//         * Gets "false" if an error occurs
-//         */
-//        if (mPrefs.contains("KEY_UPDATES_ON")) {
-//            mUpdatesRequested =
-//                    mPrefs.getBoolean("KEY_UPDATES_ON", false);
-//
-//            // Otherwise, turn off location updates
-//        } else {
-//            mEditor.putBoolean("KEY_UPDATES_ON", false);
-//            mEditor.commit();
-//        }
-//    }
-//
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.my, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_getCurrentLocation) {
             onMenuFromLocation(item);
@@ -218,23 +166,23 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
     }
 
     public void onMenuFromLocation(MenuItem item) {
-        Log.d(_logTag, "from Location Menu selected");
-        clearDisplay();
-        LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
-        mLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        if (mLocation == null) {
-            Log.d(_logTag, "no Last Location Available");
-            return;
-        }
-        LatLng currentPos = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
-        MarkerOptions marker = new MarkerOptions();
-        marker.position(currentPos).title("Current Location");
-        googleMap.addMarker(marker);
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(
-                currentPos).zoom(12).build();
-
-        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-        (new GetAddressesFromLocation()).execute(mLocation);
+//        Log.d(_logTag, "from Location Menu selected");
+//        clearDisplay();
+//        LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+//        mLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//        if (mLocation == null) {
+//            Log.d(_logTag, "no Last Location Available");
+//            return;
+//        }
+//        LatLng currentPos = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
+//        MarkerOptions marker = new MarkerOptions();
+//        marker.position(currentPos).title("Current Location");
+//        googleMap.addMarker(marker);
+//        CameraPosition cameraPosition = new CameraPosition.Builder().target(
+//                currentPos).zoom(12).build();
+//
+//        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+//        (new GetAddressesFromLocation()).execute(mLocation);
 
     }
 
@@ -346,8 +294,6 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
 
     @Override
     public void onLocationChanged(Location location) {
-        // Report to the UI that the location was updated
-
         int latitude = (int) (mLocation.getLatitude() * 1e6);
         int longitude = (int) (mLocation.getLongitude() * 1e6);
 
@@ -376,8 +322,6 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
 
     @Override
     public boolean onKey(View view, int keyCode, KeyEvent event) {
-//
-
         if (keyCode == EditorInfo.IME_ACTION_SEARCH ||
                 keyCode == EditorInfo.IME_ACTION_DONE ||
                 event.getAction() == KeyEvent.ACTION_DOWN &&
@@ -394,49 +338,32 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
             }
 
         }
-        return false; // pass on to other listeners.
-
+        return false;
     }
 
 
-    // Define a DialogFragment that displays the error dialog
     public static class ErrorDialogFragment extends DialogFragment {
-        // Global field to contain the error dialog
         private Dialog mDialog;
-
-        // Default constructor. Sets the dialog field to null
         public ErrorDialogFragment() {
             super();
             mDialog = null;
         }
-
-        // Set the dialog to display
         public void setDialog(Dialog dialog) {
             mDialog = dialog;
         }
-
-        // Return a Dialog to the DialogFragment.
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             return mDialog;
         }
     }
 
-    /*
-     * Handle results returned to the FragmentActivity
-     * by Google Play services
-     */
     @Override
     protected void onActivityResult(
             int requestCode, int resultCode, Intent data) {
-        // Decide what to do based on the original request code
         switch (requestCode) {
 
             case CONNECTION_FAILURE_RESOLUTION_REQUEST:
-            /*
-             * If the result code is Activity.RESULT_OK, try
-             * to connect again
-             */
+
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                     /*
@@ -486,7 +413,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
     }
 
 
-    class GetAddressesFromName extends AsyncTask<String, Void, List<Address>> {
+    private class GetAddressesFromName extends AsyncTask<String, Void, List<Address>> {
 
         @Override
         protected List<Address> doInBackground(String... params) {
@@ -501,58 +428,97 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
 
             } catch (IOException e) {
                 e.printStackTrace();
+                addressList= new ArrayList<Address>();
             }
             return addressList;
         }
 
         @Override
         protected void onPostExecute(final List<Address> addresses) {
-            long threadId = Thread.currentThread().getId();
-            Log.d(_logTag, "onPostExecute threadID: " + threadId);
-            MyActivity.this.clearDisplay();
-            final CharSequence[] _addresses = new CharSequence[addresses.size()];
-            int j = 0;
-            final Address[] addressArray = new Address[addresses.size()];
-            for (Address address : addresses) {
-                    MyActivity.this.displayAddressLines(address);
-                int lastIndex = address.getMaxAddressLineIndex();
-                String addressLine = "";
-                for (int i = 0; i <= lastIndex; i++) {
-                    addressLine = addressLine + address.getAddressLine(i) + "\n";
-                }
-                addressArray[j] = address;
-                _addresses[j] = addressLine;
-                j++;
-            }
-            if (addresses.size() == 0) {
+            if(addresses!=null) {
+                long threadId = Thread.currentThread().getId();
+                Log.d(_logTag, "onPostExecute threadID: " + threadId);
                 MyActivity.this.clearDisplay();
-                MyActivity.this.addLineToDisplay("I'm sorry, we cannot find your location");
-            } else {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MyActivity.this);
-                builder.setTitle("Select your address: ");
-
-                builder.setItems(_addresses, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Address selectedAddress = addressArray[which];
-                        LatLng currentPos = new LatLng(selectedAddress.getLatitude(), selectedAddress.getLongitude());
-                        if (_marker != null) {
-                            _marker.remove();
-                        }
-                        MarkerOptions marker = new MarkerOptions();
-                        marker.position(currentPos).title(selectedAddress.getAddressLine(0));
-                        _marker = googleMap.addMarker(marker);
-                        CameraPosition cameraPosition = new CameraPosition.Builder().target(
-                                currentPos).zoom(14).build();
-                        _marker.setSnippet((String) _addresses[which]);
-                        googleMap.setOnMarkerClickListener(MarkerListener);
-                        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                        mActivityIndicator.setVisibility(View.GONE);
-
-
+                final CharSequence[] _addresses = new CharSequence[addresses.size()];
+                int j = 0;
+                final Address[] addressArray = new Address[addresses.size()];
+                for (Address address : addresses) {
+                    MyActivity.this.displayAddressLines(address);
+                    int lastIndex = address.getMaxAddressLineIndex();
+                    String addressLine = "";
+                    for (int i = 0; i <= lastIndex; i++) {
+                        addressLine = addressLine + address.getAddressLine(i) + "\n";
                     }
-                });
-                builder.show();
+                    addressArray[j] = address;
+                    _addresses[j] = addressLine;
+                    j++;
+                }
+                if (addresses.size() == 0) {
+                    MyActivity.this.clearDisplay();
+                    MyActivity.this.addLineToDisplay("I'm sorry, we cannot find your location");
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MyActivity.this);
+                    builder.setTitle("Select your address: ");
+
+                    builder.setItems(_addresses, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, final int which) {
+                            Address selectedAddress = addressArray[which];
+                            final LatLng destinationLocation = new LatLng(selectedAddress.getLatitude(), selectedAddress.getLongitude());
+                            if (_marker != null) {
+                                _marker.remove();
+                            }
+                            MarkerOptions marker = new MarkerOptions();
+                            marker.position(destinationLocation).title(selectedAddress.getAddressLine(0));
+                            _marker = googleMap.addMarker(marker);
+                            CameraPosition cameraPosition = new CameraPosition.Builder().target(
+                                    destinationLocation).zoom(14).build();
+                            _marker.setSnippet((String) _addresses[which]);
+                            googleMap.setOnMarkerClickListener(MarkerListener);
+                            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                            mActivityIndicator.setVisibility(View.GONE);
+                            LinearLayout navBar = (LinearLayout) findViewById(R.id.destination_bar);
+                            if (navBar != null) {
+                                navBar.setVisibility(View.VISIBLE);
+                                TextView destAddress = (TextView) findViewById(R.id.activity_my_destination);
+                                if (destAddress != null) {
+                                    destAddress.setText(_addresses[which]);
+                                }
+                            }
+                            Button rememberButton = (Button) findViewById(R.id.remember_button);
+                            Button doSomethingButton = (Button) findViewById(R.id.do_something_button);
+                            getCurrentLocation();
+                            final LatLng currentLocation = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
+
+                            rememberButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(MyActivity.this, CreateTaskActivity.class);
+                                    intent.putExtra("Destination", _addresses[which]);
+                                    intent.putExtra("Destination_location", destinationLocation);
+                                    intent.putExtra("Current_Location",currentLocation);
+                                    intent.putExtra("Button", "Remember");
+                                    startActivity(intent);
+                                }
+                            });
+
+                            doSomethingButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(MyActivity.this, CreateTaskActivity.class);
+                                    intent.putExtra("Destination",_addresses[which]);
+                                    intent.putExtra("Destination_location",destinationLocation);
+                                    intent.putExtra("Current_Location", currentLocation);
+                                    intent.putExtra("Button", "Do Something");
+                                    startActivity(intent);
+                                }
+                            });
+
+
+                        }
+                    });
+                    builder.show();
+                }
             }
         }
 

@@ -14,8 +14,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal">
 
         <EditText
             android:id="@+id/enter_location_field"
@@ -36,7 +35,6 @@
     </LinearLayout>
 
 
-
     <ProgressBar
         android:id="@+id/address_progress"
         android:layout_width="wrap_content"
@@ -50,10 +48,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/EnterLocationLayout"
-        android:visibility="visible"
         android:orientation="vertical"
-
-        >
+        android:visibility="visible">
 
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
@@ -65,20 +61,22 @@
             tools:context=".MyActivity" />
 
         <LinearLayout
+            android:visibility="gone"
             android:id="@+id/destination_bar"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/map_layout"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:layout_weight="1"
+            android:divider="@drawable/divider"
             android:orientation="horizontal"
             android:showDividers="middle"
-            android:divider="@drawable/divider"
-            android:weightSum="1">
+            android:weightSum="9">
 
             <TextView
                 android:id="@+id/activity_my_destination"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="3"
                 android:layout_height="fill_parent"
                 android:layout_marginRight="@dimen/abc_action_bar_icon_vertical_padding"
                 android:text="Destination" />
@@ -86,16 +84,17 @@
 
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="fill_parent"
-                android:gravity="center_horizontal"
                 android:layout_gravity="bottom"
+                android:layout_weight="6"
+                android:gravity="center_horizontal"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
+                    android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
                     android:text="When I get there I need to..." />
 
 
@@ -104,27 +103,34 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="left"
                     android:gravity="center_horizontal"
-                    android:orientation="horizontal"
-                    android:weightSum="2"
-                    >
+                    android:orientation="vertical"
+                    android:weightSum="2">
 
                     <Button
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
+                        android:id="@+id/remember_button"
+                        android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_marginRight="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_weight="1"
                         android:background="@drawable/button"
-                        android:layout_margin="@dimen/abc_action_bar_icon_vertical_padding"
                         android:text="Remember\nSomething"
-                        android:textSize="7pt"/>
+                        android:onClick="startRememberActivity"
+                        android:textSize="7pt" />
 
                     <Button
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
+                        android:id="@+id/do_something_button"
+                        android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_marginRight="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_weight="1"
                         android:background="@drawable/button"
-                        android:layout_margin="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:textSize="7pt"
-                        android:text="Do\nSomething" />
+                        android:text="Do\nSomething"
+                        android:onClick="startDoSomethingActivity"
+                        android:textSize="7pt" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -133,8 +139,6 @@
         </LinearLayout>
 
     </LinearLayout>
-
-
 
 
 </RelativeLayout>
