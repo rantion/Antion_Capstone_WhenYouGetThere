@@ -1,9 +1,20 @@
 package com.example.rachel.wygt;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Created by Rachel on 10/8/14.
@@ -11,6 +22,10 @@ import android.util.Log;
 public class MyLocationListener implements LocationListener {
 
     final String _logTag = "MonitorLocation";
+    private static final int NOTIFICATION_ID = 1000;
+
+    public MyLocationListener() {
+    }
 
     @Override
     public void onLocationChanged(Location location) {
@@ -20,8 +35,46 @@ public class MyLocationListener implements LocationListener {
         float accuracy = location.getAccuracy();
         long time = location.getTime();
 
-        String logMessage = LogHelper.FormatLocationInfo(provider, latitude, longitude, accuracy,time);
+        Map<LatLong, Long> locations = MyApplication.getLocations();
+        Iterator it = locations.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry entry = (Map.Entry) it.next();
+            LatLong _location = (LatLong) entry.getKey();
+            long radius = (Long) entry.getValue();
+            float[] results = new float[4];
+            Location.distanceBetween(_location.getLatitude(), _location.getLongitude(), location.getLatitude(), location.getLongitude(), results);
+            if (results[0] < (float)radius) {
+                Context context = MyApplication.getAppContext();
+                NotificationManager notificationManager =
+                        (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, null, 0);
+                Notification notification = createNotification();
+
+                notification.setLatestEventInfo(context,
+                        "YO NOTIFICATION IS NOTIFYING YOU", null, pendingIntent);
+                notificationManager.notify(NOTIFICATION_ID, notification);
+            }
+        }
+
+        String logMessage = LogHelper.FormatLocationInfo(provider, latitude, longitude, accuracy, time);
         Log.d(_logTag, "Monitor Location: " + logMessage);
+
+//         Toast.makeText(MyApplication.getAppContext(),logMessage, Toast.LENGTH_LONG).show();
+
+    }
+
+    private Notification createNotification() {
+        Notification notification = new Notification();
+        notification.icon = R.drawable.ic_launcher;
+        notification.when = System.currentTimeMillis();
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+        notification.defaults |= Notification.DEFAULT_VIBRATE;
+        notification.defaults |= Notification.DEFAULT_LIGHTS;
+        notification.ledARGB = Color.RED;
+        notification.ledOnMS = 1500;
+        notification.ledOffMS = 1500;
+        return notification;
     }
 
     @Override
@@ -31,12 +84,12 @@ public class MyLocationListener implements LocationListener {
 
     @Override
     public void onProviderEnabled(String provider) {
-        Log.d(_logTag,"Monitor Location - providerEnabled" +provider);
+        Log.d(_logTag, "Monitor Location - providerEnabled" + provider);
     }
 
     @Override
     public void onProviderDisabled(String provider) {
-        Log.d(_logTag,"Monitor Location - providerDisabled" +provider);
+        Log.d(_logTag, "Monitor Location - providerDisabled" + provider);
     }
 }
 

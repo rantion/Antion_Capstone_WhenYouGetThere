@@ -36,16 +36,17 @@ import javax.xml.parsers.ParserConfigurationException;
 public class DistanceMatrixHelper {
     private LatLng origin, destination;
     public List<String> distances;
-
+    private String distanceMiles;
+    public JSONObject jsonObject;
 
     public DistanceMatrixHelper(LatLng origin, LatLng destination) {
+        (new GetDrivingDistance()).execute(origin, destination);
         this.origin = origin;
         this.destination = destination;
     }
 
-    public void getDistanceInMiles(){
-        (new GetDrivingDistance()).execute(origin, destination);
-
+    public String getDistanceInMiles(){
+      return distanceMiles;
     }
 
     public String getTimeEstimate(){
@@ -56,10 +57,12 @@ public class DistanceMatrixHelper {
 
         @Override
         protected JSONObject doInBackground(LatLng... params) {
-            LatLng origin = params[0];
-            LatLng destination = params[1];
+            LatLng _origin = params[0];
+            LatLng _destination = params[1];
+            String origin = _origin.latitude+","+_origin.longitude;
+            String destination = _destination.latitude+","+_destination.longitude;
             String url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" +
-                    origin.toString() + "&destinations=" + destination.toString() +
+                    origin + "&destinations=" + destination +
                     "&mode=driving&sensor=false&language=en-EN&units=imperial";
             Double finalDistance = 0.0;
 
@@ -82,6 +85,7 @@ public class DistanceMatrixHelper {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            jsonObject=_jsonObject;
             return _jsonObject;
         }
 
@@ -98,10 +102,11 @@ public class DistanceMatrixHelper {
                         for (int j = 0; i < elements.length(); i++) {
                             JSONObject element = elements.getJSONObject(0);
                             JSONObject distance = element.getJSONObject("distance");
-                            distances.add(distance.getString("value"));
+                            distances.add(distance.getString("text"));
                         }
 
                     }
+                    distanceMiles= distances.get(0);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

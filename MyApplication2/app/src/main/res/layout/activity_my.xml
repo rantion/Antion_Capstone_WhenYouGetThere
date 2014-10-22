@@ -36,6 +36,7 @@
                 android:layout_height="@dimen/abc_action_bar_default_height"
                 android:layout_weight="1.03"
                 android:clickable="true"
+                android:onClick="clearField"
                 android:hint="Enter destination"
                 android:textColor="@android:color/white" />
 

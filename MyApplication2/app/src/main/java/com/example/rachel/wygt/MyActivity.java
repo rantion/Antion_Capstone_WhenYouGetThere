@@ -7,6 +7,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.location.Address;
@@ -51,6 +52,17 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,13 +94,14 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
     private Location mLocation;
     private GoogleMap googleMap;
     private Marker _marker;
+    private GPSTracker gpsTracker = MyApplication.getGpsTracker();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
         initializeMap();
-        LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+        LocationManager lm = gpsTracker.getLocationManager();
         confirmNetworkProviderAvailable(lm);
         servicesConnected();
         EditText addressBox = (EditText) findViewById(R.id.enter_location_field);
@@ -96,14 +109,29 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         mPrefs = getSharedPreferences("SharedPreferences",
                 Context.MODE_PRIVATE);
         mEditor = mPrefs.edit();
-        locationClient = new LocationClient(this, this, this);
-        mLocationRequest = LocationRequest.create();
-        mLocationRequest.setPriority(
-                LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setInterval(UPDATE_INTERVAL);
-        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+
+
+
+        lm.requestLocationUpdates(
+                LocationManager.NETWORK_PROVIDER,
+                0,
+                0,
+        new MyLocationListener());
+
+
+//        locationClient = new LocationClient(this, this, this);
+//        mLocationRequest = LocationRequest.create();
+//        mLocationRequest.setPriority(
+//                LocationRequest.PRIORITY_HIGH_ACCURACY);
+//        mLocationRequest.setInterval(UPDATE_INTERVAL);
+//        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
         mActivityIndicator =
                 (ProgressBar) findViewById(R.id.address_progress);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 
     public void getAddress(View v) {
@@ -137,11 +165,6 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         }
     }
 
-    private void getCurrentLocation(){
-        LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
-        mLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-    }
-
     private void initializeMap() {
         if (googleMap == null) {
             googleMap = ((MapFragment) getFragmentManager().findFragmentById(
@@ -150,9 +173,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
             googleMap.setMyLocationEnabled(true);
             googleMap.getUiSettings().setMyLocationButtonEnabled(true);
             googleMap.getUiSettings().setCompassEnabled(true);
-
-            LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
-            Location current = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            Location current = gpsTracker.getLocation();
             if (current != null) {
                 LatLng currentPos = new LatLng(current.getLatitude(), current.getLongitude());
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPos, 12.0f));
@@ -200,6 +221,14 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
 //        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 //        (new GetAddressesFromLocation()).execute(mLocation);
 
+    }
+
+    public void clearField(View v){
+        EditText enterLocation = (EditText)findViewById(R.id.enter_location_field);
+        if(enterLocation!=null) {
+            enterLocation.setText("");
+            mActivityIndicator.setVisibility(View.GONE);
+        }
     }
 
     boolean confirmNetworkProviderAvailable(LocationManager lm) {
@@ -348,6 +377,23 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                 switch (view.getId()) {
                     case R.id.enter_location_field:
                         getAddress(view);
+                        break;
+                }
+                return true;
+            }
+
+        }
+
+        if (keyCode == EditorInfo.IME_ACTION_SEARCH ||
+                keyCode == EditorInfo.IME_ACTION_DONE ||
+                event.getAction() == KeyEvent.ACTION_DOWN &&
+                        event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+
+            if (!event.isShiftPressed()) {
+                Log.v("AndroidEnterKeyActivity", "Enter Key Pressed!");
+                switch (view.getId()) {
+                    case R.id.enter_location_field:
+                        mActivityIndicator.setVisibility(View.GONE);
                         break;
                 }
                 return true;
@@ -503,9 +549,8 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                             }
                             Button rememberButton = (Button) findViewById(R.id.remember_button);
                             Button doSomethingButton = (Button) findViewById(R.id.do_something_button);
-                            getCurrentLocation();
+                            mLocation = gpsTracker.getLocation();
                             final LatLng currentLocation = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
-
                             rememberButton.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -582,6 +627,5 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
             }
         }
     }
-
 
 }
