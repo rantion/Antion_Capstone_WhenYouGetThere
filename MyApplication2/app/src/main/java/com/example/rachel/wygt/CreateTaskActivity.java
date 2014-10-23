@@ -12,6 +12,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -51,9 +52,8 @@ public class CreateTaskActivity extends Activity {
 
     private LatLng destinationLocation, currentLocation;
     private String distance, duration, destination;
-    private GPSTracker gpsTracker;
+    private TaskDataSource dataSource = MyApplication.getDataSource();
     private static final String PROX_ALERT_INTENT = "Proximity_Alert_Intent";
-    private ProximityIntentReceiver proximityReciever;
 
 
     @Override
@@ -61,7 +61,6 @@ public class CreateTaskActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_task);
         Bundle extras = getIntent().getExtras();
-        gpsTracker = new GPSTracker();
         if (extras != null) {
             destinationLocation = (LatLng) extras.get("Destination_location");
             currentLocation = (LatLng) extras.get("Current_Location");
@@ -126,7 +125,8 @@ public class CreateTaskActivity extends Activity {
 //        prox.setText(string);
 
         Map<LatLong, Long> locations =  MyApplication.getLocations();
-        locations.put(new LatLong(destinationLocation),convertToMeters(milesAway));
+      //  locations.put(new LatLong(destinationLocation),convertToMeters(milesAway));
+        dataSource.createTask(destinationLocation,"This is my reminder "+ SystemClock.currentThreadTimeMillis(),convertToMeters(milesAway));
         Log.d("CreateTaskActivity", "Saved Destination");
 
     }

@@ -9,22 +9,11 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name">
 
-        <receiver android:name=".ProximityService$ProximityAlertIntentReceiver" >
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="Proximity_Alert_Intent" />
-            </intent-filter>
-        </receiver>
-
-
-        <service android:name=".GPSTracker">
-
-        </service>
-        <service android:name=".ProximityService"
-            android:enabled="true"
+        <service android:name=".GPSTracker"
             android:process=":remote">
 
         </service>
+
         <activity
             android:name=".MyActivity"
             android:label="@string/app_name" >
@@ -58,7 +47,6 @@
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-library android:name="com.google.android.maps" />
 </manifest>

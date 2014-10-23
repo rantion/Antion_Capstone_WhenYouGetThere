@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,6 +24,7 @@ public class MyLocationListener implements LocationListener {
 
     final String _logTag = "MonitorLocation";
     private static final int NOTIFICATION_ID = 1000;
+    private TaskDataSource dataSource = MyApplication.getDataSource();
 
     public MyLocationListener() {
     }
@@ -35,14 +37,11 @@ public class MyLocationListener implements LocationListener {
         float accuracy = location.getAccuracy();
         long time = location.getTime();
 
-        Map<LatLong, Long> locations = MyApplication.getLocations();
-        Iterator it = locations.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry entry = (Map.Entry) it.next();
-            LatLong _location = (LatLong) entry.getKey();
-            long radius = (Long) entry.getValue();
+        List<Task> values  = dataSource.getAllTasks();
+        for(Task task : values){
             float[] results = new float[4];
-            Location.distanceBetween(_location.getLatitude(), _location.getLongitude(), location.getLatitude(), location.getLongitude(), results);
+            long radius = task.getRadius();
+            Location.distanceBetween(task.getLatitude(), task.getLongitude(), location.getLatitude(), location.getLongitude(), results);
             if (results[0] < (float)radius) {
                 Context context = MyApplication.getAppContext();
                 NotificationManager notificationManager =
@@ -51,10 +50,35 @@ public class MyLocationListener implements LocationListener {
                 Notification notification = createNotification();
 
                 notification.setLatestEventInfo(context,
-                        "YO NOTIFICATION IS NOTIFYING YOU", null, pendingIntent);
+                        "BD NOTIFICATION IS NOTIFYING YOU", null, pendingIntent);
                 notificationManager.notify(NOTIFICATION_ID, notification);
+                dataSource.deleteTask(task);
+
             }
         }
+
+
+//        Map<LatLong, Long> locations = MyApplication.getLocations();
+//        Iterator it = locations.entrySet().iterator();
+//        while (it.hasNext()) {
+//            Map.Entry entry = (Map.Entry) it.next();
+//            LatLong _location = (LatLong) entry.getKey();
+//            long radius = (Long) entry.getValue();
+//            float[] results = new float[4];
+//            Location.distanceBetween(_location.getLatitude(), _location.getLongitude(), location.getLatitude(), location.getLongitude(), results);
+//            if (results[0] < (float)radius) {
+//                Context context = MyApplication.getAppContext();
+//                NotificationManager notificationManager =
+//                        (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+//                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, null, 0);
+//                Notification notification = createNotification();
+//
+//                notification.setLatestEventInfo(context,
+//                        "YO NOTIFICATION IS NOTIFYING YOU", null, pendingIntent);
+////                notificationManager.notify(NOTIFICATION_ID, notification);
+////                locations.remove(_location);
+//            }
+//        }
 
         String logMessage = LogHelper.FormatLocationInfo(provider, latitude, longitude, accuracy, time);
         Log.d(_logTag, "Monitor Location: " + logMessage);
@@ -71,6 +95,7 @@ public class MyLocationListener implements LocationListener {
         notification.flags |= Notification.FLAG_SHOW_LIGHTS;
         notification.defaults |= Notification.DEFAULT_VIBRATE;
         notification.defaults |= Notification.DEFAULT_LIGHTS;
+        notification.defaults |= Notification.DEFAULT_SOUND;
         notification.ledARGB = Color.RED;
         notification.ledOnMS = 1500;
         notification.ledOffMS = 1500;
