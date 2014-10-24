@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Parcel;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -37,27 +38,10 @@ public class MyApplication extends Application {
 
     public void onCreate() {
         MyApplication.context = getApplicationContext();
-        ClassLoader classLoader = getClass().getClassLoader();
         gpsTracker = new GPSTracker();
         try {
             dataSource = new TaskDataSource(context);
             dataSource.open();
-//            File file = new File(context.getFilesDir(), "locations_file");
-//            fileLocation = file.getName();
-//
-//            FileInputStream fileInputStream  = openFileInput(fileLocation);
-//            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-//
-//            locations = (HashMap) objectInputStream.readObject();
-//            objectInputStream.close();
-//            Iterator it = locations.entrySet().iterator();
-//            while(it.hasNext()){
-//                Map.Entry entry = (Map.Entry)it.next();
-//                LatLong _location = (LatLong)entry.getKey();
-//                Log.d("MyApplication",_location.toString());
-//
-//
-//            }
         }
         catch(Exception e){
             e.printStackTrace();
@@ -90,6 +74,7 @@ public class MyApplication extends Application {
 
     @Override
     public void onTerminate() {
+        Log.d("MyApplication","My Application Destroyed");
         FileOutputStream fileOutputStream = null;
         try {
             fileOutputStream = openFileOutput(fileLocation, Context.MODE_PRIVATE);

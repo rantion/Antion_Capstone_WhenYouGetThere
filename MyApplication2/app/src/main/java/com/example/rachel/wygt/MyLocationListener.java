@@ -1,14 +1,19 @@
 package com.example.rachel.wygt;
 
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +29,7 @@ public class MyLocationListener implements LocationListener {
 
     final String _logTag = "MonitorLocation";
     private static final int NOTIFICATION_ID = 1000;
+    private String REMINDER_INTENT = "Reiminder_Intent";
     private TaskDataSource dataSource = MyApplication.getDataSource();
 
     public MyLocationListener() {
@@ -43,16 +49,21 @@ public class MyLocationListener implements LocationListener {
             long radius = task.getRadius();
             Location.distanceBetween(task.getLatitude(), task.getLongitude(), location.getLatitude(), location.getLongitude(), results);
             if (results[0] < (float)radius) {
+
+                Intent intent = new Intent(MyApplication.getAppContext(),ReminderActivity.class);
+                intent.putExtra("Reminder", task.getReminder());
+                intent.putExtra("id", task.getId());
+
                 Context context = MyApplication.getAppContext();
                 NotificationManager notificationManager =
                         (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, null, 0);
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 1000, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 Notification notification = createNotification();
-
                 notification.setLatestEventInfo(context,
                         "BD NOTIFICATION IS NOTIFYING YOU", null, pendingIntent);
                 notificationManager.notify(NOTIFICATION_ID, notification);
                 dataSource.deleteTask(task);
+                Log.d("reminder", "you should see that shit");
 
             }
         }
@@ -116,5 +127,7 @@ public class MyLocationListener implements LocationListener {
     public void onProviderDisabled(String provider) {
         Log.d(_logTag, "Monitor Location - providerDisabled" + provider);
     }
+
+
 }
 

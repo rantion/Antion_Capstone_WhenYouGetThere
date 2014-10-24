@@ -16,7 +16,9 @@ import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -48,7 +50,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by Rachel on 10/15/14.
  */
-public class CreateTaskActivity extends Activity {
+public class CreateTaskActivity extends Activity implements View.OnKeyListener {
 
     private LatLng destinationLocation, currentLocation;
     private String distance, duration, destination;
@@ -99,11 +101,16 @@ public class CreateTaskActivity extends Activity {
         EditText _miles = (EditText) findViewById(R.id.miles_away);
         String miles = _miles.getText().toString();
         RadioButton button = (RadioButton) findViewById(R.id.radio_there);
+        EditText _reminder = (EditText)findViewById(R.id.enter_reminder_field);
+        String reminder = "";
         double milesAway = 0.0;
         if (!miles.equals("...")) {
             milesAway = Double.valueOf(miles);
         } else if (button.isChecked()) {
             milesAway = .1;
+        }
+        if(_reminder!=null){
+            reminder = _reminder.getText().toString();
         }
 ////        proximityReciever = new ProximityIntentReceiver();
 //          LocationManager lm = gpsTracker.getLocationManager();
@@ -116,9 +123,9 @@ public class CreateTaskActivity extends Activity {
 //        PendingIntent proximityIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 //        lm.addProximityAlert(destinationLocation.latitude, destinationLocation.longitude, convertToMeters(milesAway), -1, proximityIntent);
 //        Log.d("CreateTaskActivity", "Proximity Alert Created");
-//        Toast.makeText(getApplicationContext(),
-//                "Proximity Alert Created!!", Toast.LENGTH_SHORT)
-//                .show();
+        Toast.makeText(getApplicationContext(),
+                "Reminder Created!", Toast.LENGTH_SHORT)
+                .show();
 //
 //        String string = "Proximity alert created for " + destinationLocation.latitude + "," + destinationLocation.longitude;
 //        TextView prox = (TextView) findViewById(R.id.proximity_data);
@@ -126,7 +133,7 @@ public class CreateTaskActivity extends Activity {
 
         Map<LatLong, Long> locations =  MyApplication.getLocations();
       //  locations.put(new LatLong(destinationLocation),convertToMeters(milesAway));
-        dataSource.createTask(destinationLocation,"This is my reminder "+ SystemClock.currentThreadTimeMillis(),convertToMeters(milesAway));
+        dataSource.createTask(destinationLocation,reminder,convertToMeters(milesAway));
         Log.d("CreateTaskActivity", "Saved Destination");
 
     }
@@ -220,4 +227,29 @@ public class CreateTaskActivity extends Activity {
 
         }
     }
+
+    @Override
+    public boolean onKey(View view, int keyCode, KeyEvent event) {
+        if (keyCode == EditorInfo.IME_ACTION_SEARCH ||
+                keyCode == EditorInfo.IME_ACTION_DONE ||
+                event.getAction() == KeyEvent.ACTION_DOWN &&
+                        event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+
+            if (!event.isShiftPressed()) {
+                Log.v("AndroidEnterKeyActivity", "Enter Key Pressed!");
+                switch (view.getId()) {
+                    case R.id.enter_reminder_field:
+                        EditText enter = (EditText)findViewById(R.id.enter_reminder_field);
+                        Toast.makeText(getApplicationContext(),
+                                enter.getText().toString(), Toast.LENGTH_SHORT)
+                                .show();
+                        break;
+                }
+                return true;
+            }
+
+        }
+        return false;
+    }
+
 }

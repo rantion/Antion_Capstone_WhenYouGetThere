@@ -95,9 +95,11 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
     private GoogleMap googleMap;
     private Marker _marker;
     private GPSTracker gpsTracker = MyApplication.getGpsTracker();
+    private Helper helper = new Helper(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
         initializeMap();
@@ -628,4 +630,11 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         }
     }
 
+    public Helper getHelper() {
+        return helper;
+    }
+
+    public void setHelper(Helper helper) {
+        this.helper = helper;
+    }
 }

@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -49,6 +50,7 @@ public class TaskDataSource {
         cursor.moveToFirst();
         Task newTask = cursorToTask(cursor);
         cursor.close();
+        Log.d("TaskDataSource", "Task created with id: "+newTask.getId());
         return newTask;
     }
 
