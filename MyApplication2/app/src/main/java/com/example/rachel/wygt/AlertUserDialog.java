@@ -8,8 +8,8 @@ import android.content.Intent;
 import android.os.Bundle;
 
 /**
- * Created by Rachel on 10/8/14.
- */
+* Created by Rachel on 10/8/14.
+*/
     public class AlertUserDialog extends DialogFragment implements DialogInterface.OnClickListener {
         private String _displayMessage;
         private String _settingsActivityAction;

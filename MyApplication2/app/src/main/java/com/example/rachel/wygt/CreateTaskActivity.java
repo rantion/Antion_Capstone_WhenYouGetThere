@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.app.TaskStackBuilder;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -13,6 +14,7 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -61,6 +63,12 @@ public class CreateTaskActivity extends Activity implements View.OnKeyListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(MyApplication.getAppContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Log.d("APP IS OPEN", "appIsOpenSetTrue - CreateTaskActivity");
+        editor.putBoolean("appIsOpen", true);
+        editor.apply();
         setContentView(R.layout.create_task);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -131,7 +139,7 @@ public class CreateTaskActivity extends Activity implements View.OnKeyListener {
 //        TextView prox = (TextView) findViewById(R.id.proximity_data);
 //        prox.setText(string);
 
-        Map<LatLong, Long> locations =  MyApplication.getLocations();
+//        Map<LatLong, Long> locations =  MyApplication.getLocations();
       //  locations.put(new LatLong(destinationLocation),convertToMeters(milesAway));
         dataSource.createTask(destinationLocation,reminder,convertToMeters(milesAway));
         Log.d("CreateTaskActivity", "Saved Destination");
@@ -252,4 +260,25 @@ public class CreateTaskActivity extends Activity implements View.OnKeyListener {
         return false;
     }
 
+    @Override
+    protected void onPause() {
+        SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(MyApplication.getAppContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Log.d("APP IS OPEN", "appIsOpenSetToFalse - CREATE TASK ACTIVITY");
+        editor.putBoolean("appIsOpen", false);
+        editor.apply();
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(MyApplication.getAppContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Log.d("APP IS OPEN", "appIsOpenSetToFalse - CREATE TASK ACTIVITY");
+        editor.putBoolean("appIsOpen", false);
+        editor.apply();
+        super.onDestroy();
+    }
 }

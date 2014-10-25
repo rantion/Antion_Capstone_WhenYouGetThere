@@ -4,8 +4,10 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Parcel;
+import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -30,33 +32,25 @@ import java.util.Map;
 public class MyApplication extends Application {
 
     protected static GPSTracker gpsTracker;
-    protected static Map<LatLong, Long> locations;
-    protected String fileLocation;
     protected static TaskDataSource dataSource;
-
     private static Context context;
 
     public void onCreate() {
         MyApplication.context = getApplicationContext();
-        gpsTracker = new GPSTracker();
         try {
             dataSource = new TaskDataSource(context);
             dataSource.open();
         }
-        catch(Exception e){
+        catch(Exception e) {
             e.printStackTrace();
         }
+        gpsTracker = new GPSTracker();
+//        SharedPreferences sharedPreferences = PreferenceManager
+//                .getDefaultSharedPreferences(this);
+//        SharedPreferences.Editor editor = sharedPreferences.edit();
+//        Log.d("MyApplication", "appIsOpenSetToTrue - MyApplication");
+//        editor.putBoolean("appIsOpen", true);
         super.onCreate();
-
-
-    }
-
-    public static Map<LatLong, Long> getLocations() {
-        return locations;
-    }
-
-    public void setLocations(Map<LatLong, Long> locations) {
-        this.locations = locations;
     }
 
     public static GPSTracker getGpsTracker() {
@@ -72,21 +66,17 @@ public class MyApplication extends Application {
         return MyApplication.context;
     }
 
+
+
     @Override
     public void onTerminate() {
-        Log.d("MyApplication","My Application Destroyed");
-        FileOutputStream fileOutputStream = null;
-        try {
-            fileOutputStream = openFileOutput(fileLocation, Context.MODE_PRIVATE);
-            ObjectOutputStream objectOutputStream= new ObjectOutputStream(fileOutputStream);
-            objectOutputStream.writeObject(locations);
-            objectOutputStream.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        Log.d("MyApplication", "My Application Destroyed");
+        dataSource.close();
+        SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Log.d("MyApplication", "appIsOpenSetToFalse");
+        editor.putBoolean("appIsOpen", false);
         super.onTerminate();
     }
 }

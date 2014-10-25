@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="Settings" >
+        <EditTextPreference
+            android:title="Username"
+            android:summary="set your username"
+            android:key="prefUsername"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Location" >
+        <ListPreference
+            android:key="prefSyncFrequency"
+            android:entries="@array/updateFrequency"
+            android:summary="update location every..."
+            android:entryValues="@array/updateFrequencyValues"
+            android:title="Location Update Frequency" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

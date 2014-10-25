@@ -2,24 +2,26 @@ package com.example.rachel.wygt;
 
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -28,7 +30,6 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -52,50 +53,39 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
 
 
 public class MyActivity extends FragmentActivity implements GooglePlayServicesClient.ConnectionCallbacks,
-        GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, OnKeyListener {
+        GooglePlayServicesClient.OnConnectionFailedListener, OnKeyListener {
 
-    String _logTag = "*** WYGT MainActivity ***";
+    String LOGTAG = "*** WYGT MainActivity ***";
     private final static int
             CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private LocationClient locationClient;
-    private static final int MILLISECONDS_PER_SECOND = 1000;
-    // Update frequency in seconds
-    public static final int UPDATE_INTERVAL_IN_SECONDS = 5;
-    // Update frequency in milliseconds
-    private static final long UPDATE_INTERVAL =
-            MILLISECONDS_PER_SECOND * UPDATE_INTERVAL_IN_SECONDS;
-    // The fastest update frequency, in seconds
-    private static final int FASTEST_INTERVAL_IN_SECONDS = 1;
-    // A fast frequency ceiling in milliseconds
-    private static final long FASTEST_INTERVAL =
-            MILLISECONDS_PER_SECOND * FASTEST_INTERVAL_IN_SECONDS;
     LocationRequest mLocationRequest;
     boolean mUpdatesRequested;
-    SharedPreferences mPrefs;
-    SharedPreferences.Editor mEditor;
+    private AlarmManager alarmManager;
+    private Intent gpsTrackerIntent;
+    private PendingIntent pendingIntent;
     private ProgressBar mActivityIndicator;
     private Location mLocation;
     private GoogleMap googleMap;
     private Marker _marker;
+    double latitude; // latitude
+    double longitude; // longitude
     private GPSTracker gpsTracker = MyApplication.getGpsTracker();
-    private Helper helper = new Helper(this);
+    private int intervalInMinutes = 1;
+    private boolean currentlyTracking;
+    boolean isGPSEnabled = false;
+    boolean isNetworkEnabled = false;
+    boolean canGetLocation = false;
+    private LocationManager lm;
+    Location location; // location
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,32 +93,59 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
         initializeMap();
-        LocationManager lm = gpsTracker.getLocationManager();
-        confirmNetworkProviderAvailable(lm);
+        SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(this);
+//        currentlyTracking = sharedPreferences.getBoolean("currentlyTracking", false);
+        lm = (LocationManager) getSystemService(LOCATION_SERVICE);
         servicesConnected();
         EditText addressBox = (EditText) findViewById(R.id.enter_location_field);
         addressBox.setOnKeyListener(this);
-        mPrefs = getSharedPreferences("SharedPreferences",
-                Context.MODE_PRIVATE);
-        mEditor = mPrefs.edit();
-
-
-
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        boolean firstTimeLoadindApp = sharedPreferences.getBoolean("firstTimeLoadindApp", true);
+        if (firstTimeLoadindApp) {
+            editor.putBoolean("firstTimeLoadindApp", false);
+            editor.putBoolean("appIsOpen", true);
+            editor.putString("appID", UUID.randomUUID().toString());
+            editor.putString("prefSyncFrequency", "5");
+            editor.putString("prefUsername", "username");
+            editor.apply();
+        }
+        Log.d("APP IS OPEN","appIsOpenSetToTrue - MyActivity");
+        editor.putBoolean("appIsOpen", true);
+        editor.apply();
         lm.requestLocationUpdates(
                 LocationManager.NETWORK_PROVIDER,
-                0,
-                0,
-        new MyLocationListener());
-
-
-//        locationClient = new LocationClient(this, this, this);
-//        mLocationRequest = LocationRequest.create();
-//        mLocationRequest.setPriority(
-//                LocationRequest.PRIORITY_HIGH_ACCURACY);
-//        mLocationRequest.setInterval(UPDATE_INTERVAL);
-//        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+                1,
+                0, MyApplication.getGpsTracker());
         mActivityIndicator =
                 (ProgressBar) findViewById(R.id.address_progress);
+        startAlarmManager();
+    }
+
+    private void startAlarmManager() {
+        Log.d("GPS-MyActivity", "startAlarmManager");
+        Context context = getBaseContext();
+        alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        gpsTrackerIntent = new Intent(context, GpsTrackerAlarmReceiver.class);
+        pendingIntent = PendingIntent.getBroadcast(context, 0, gpsTrackerIntent, 0);
+        SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(this);
+        String interval = sharedPreferences.getString("prefSyncFrequency", "5");
+        intervalInMinutes = Integer.parseInt(interval);
+        Log.d("GPS-MyActivity", "Shared Preferences interval: " + intervalInMinutes);
+        alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime(),
+                intervalInMinutes * 60000, // 60000 = 1 minute
+                pendingIntent);
+    }
+
+    private void cancelAlarmManager() {
+        Log.d(LOGTAG, "cancelAlarmManager");
+        Context context = getBaseContext();
+        Intent gpsTrackerIntent = new Intent(context, GpsTrackerAlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, gpsTrackerIntent, 0);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
     }
 
     @Override
@@ -139,7 +156,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
     public void getAddress(View v) {
         InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-        Log.d(_logTag, "getAddress clicked");
+        Log.d(LOGTAG, "getAddress clicked");
         if (Build.VERSION.SDK_INT >=
                 Build.VERSION_CODES.JELLY_BEAN
                 &&
@@ -147,10 +164,9 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
             mActivityIndicator.setVisibility(View.VISIBLE);
             EditText _location = (EditText) findViewById(R.id.enter_location_field);
             String locationName = _location.getText().toString();
-            if(locationName.length()>0) {
+            if (locationName.length() > 0) {
                 (new GetAddressesFromName()).execute(locationName);
-            }
-            else{
+            } else {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage("Please Enter A Destination")
                         .setCancelable(false)
@@ -191,78 +207,81 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.my, menu);
+        getMenuInflater().inflate(R.menu.my_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_getCurrentLocation) {
-            onMenuFromLocation(item);
+        if (id == R.id.menu_settings) {
+            Intent intent = new Intent(this, UserSettingsActivity.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public void onMenuFromLocation(MenuItem item) {
-//        Log.d(_logTag, "from Location Menu selected");
-//        clearDisplay();
-//        LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
-//        mLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//        if (mLocation == null) {
-//            Log.d(_logTag, "no Last Location Available");
-//            return;
-//        }
-//        LatLng currentPos = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
-//        MarkerOptions marker = new MarkerOptions();
-//        marker.position(currentPos).title("Current Location");
-//        googleMap.addMarker(marker);
-//        CameraPosition cameraPosition = new CameraPosition.Builder().target(
-//                currentPos).zoom(12).build();
-//
-//        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-//        (new GetAddressesFromLocation()).execute(mLocation);
-
-    }
-
-    public void clearField(View v){
-        EditText enterLocation = (EditText)findViewById(R.id.enter_location_field);
-        if(enterLocation!=null) {
+    public void clearField(View v) {
+        EditText enterLocation = (EditText) findViewById(R.id.enter_location_field);
+        if (enterLocation != null) {
             enterLocation.setText("");
             mActivityIndicator.setVisibility(View.GONE);
+            LinearLayout navBar = (LinearLayout) findViewById(R.id.destination_bar);
+            navBar.setVisibility(View.GONE);
         }
     }
 
-    boolean confirmNetworkProviderAvailable(LocationManager lm) {
-
-        boolean networkAvailable = confirmAirplaneModeIsOff() &&
-                confirmNetworkProviderEnabled(lm) &&
-                confirmWifiAvailable();
-        return networkAvailable;
+    @Override
+    protected void onDestroy() {
+        SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Log.d("APP IS OPEN", "appIsOpenSetToFalse - MyActivity");
+        editor.putBoolean("appIsOpen", false);
+        editor.apply();
+        super.onDestroy();
     }
 
-    public boolean confirmNetworkProviderEnabled(LocationManager lm) {
-        boolean isAvailable = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-
-        if (!isAvailable) {
-            AlertUserDialog dialog = new AlertUserDialog("Please Enable Location Services", Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            dialog.show(getFragmentManager(), null);
-        }
-        return isAvailable;
+    @Override
+    protected void onPause() {
+        SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(MyApplication.getAppContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Log.d("APP IS OPEN", "appIsOpenSetToFalse - MyActivity");
+        editor.putBoolean("appIsOpen", false);
+        editor.apply();
+        super.onPause();
     }
 
-    public boolean confirmAirplaneModeIsOff() {
+    //    boolean confirmNetworkProviderAvailable(LocationManager lm) {
+//        boolean networkAvailable = confirmAirplaneModeIsOff() &&
+//                confirmNetworkProviderEnabled(lm) &&
+//                confirmWifiAvailable();
+//        return networkAvailable;
+//    }
 
-        Log.d(_logTag, "inside AirPlaneMode");
-        boolean isOff =
-                Settings.System.getInt(getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0) == 0;
-        Log.d(_logTag, "AirPlane Mode Is : " + isOff);
-        if (!isOff) {
-            AlertUserDialog dialog = new AlertUserDialog("Please disable Airplane mode", Settings.ACTION_AIRPLANE_MODE_SETTINGS);
-            dialog.show(getFragmentManager(), null);
-        }
-        return isOff;
-    }
+//    public boolean confirmNetworkProviderEnabled(LocationManager lm) {
+//        boolean isAvailable = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+//
+//        if (!isAvailable) {
+//            AlertUserDialog dialog = new AlertUserDialog("Please Enable Location Services", Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+//            dialog.show(getFragmentManager(), null);
+//        }
+//        return isAvailable;
+//    }
+
+//    public boolean confirmAirplaneModeIsOff() {
+//
+//        Log.d(LOGTAG, "inside AirPlaneMode");
+//        boolean isOff =
+//                Settings.System.getInt(getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0) == 0;
+//        Log.d(LOGTAG, "AirPlane Mode Is : " + isOff);
+//        if (!isOff) {
+//            AlertUserDialog dialog = new AlertUserDialog("Please disable Airplane mode", Settings.ACTION_AIRPLANE_MODE_SETTINGS);
+//            dialog.show(getFragmentManager(), null);
+//        }
+//        return isOff;
+//    }
 
     public boolean confirmWifiAvailable() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
@@ -275,29 +294,29 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         return isAvailable;
     }
 
-    private void clearDisplay() {
-//        TextView textView = (TextView)findViewById(R.id.textView);
-//        textView.setText("");
-    }
+//    private void clearDisplay() {
+////        TextView textView = (TextView)findViewById(R.id.textView);
+////        textView.setText("");
+//    }
 
-    private void displayAddressLines(Address address) {
-        int lastIndex = address.getMaxAddressLineIndex();
-        for (int i = 0; i <= lastIndex; i++) {
-            String addressLine = address.getAddressLine(i);
-            addLineToDisplay(addressLine);
-        }
-        addLineToDisplay("");
-    }
+//    private void displayAddressLines(Address address) {
+//        int lastIndex = address.getMaxAddressLineIndex();
+//        for (int i = 0; i <= lastIndex; i++) {
+//            String addressLine = address.getAddressLine(i);
+//            addLineToDisplay(addressLine);
+//        }
+//        addLineToDisplay("");
+//    }
 
-    private void addLineToDisplay(CharSequence displayLine) {
-//        TextView textView = (TextView)findViewById(R.id.textView);
+//    private void addLineToDisplay(CharSequence displayLine) {
+////        TextView textView = (TextView)findViewById(R.id.textView);
+////
+////        CharSequence existingText = textView.getText();
+////        CharSequence newText = existingText + "\n"+ displayLine;
+////
+////        textView.setText(newText);
 //
-//        CharSequence existingText = textView.getText();
-//        CharSequence newText = existingText + "\n"+ displayLine;
-//
-//        textView.setText(newText);
-
-    }
+//    }
 
     @Override
     public void onConnected(Bundle bundle) {
@@ -335,36 +354,8 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
              * If no resolution is available, display a dialog to the
              * user with the error.
              */
-            Log.d(_logTag, String.valueOf(connectionResult.getErrorCode()));
+            Log.d(LOGTAG, String.valueOf(connectionResult.getErrorCode()));
         }
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        int latitude = (int) (mLocation.getLatitude() * 1e6);
-        int longitude = (int) (mLocation.getLongitude() * 1e6);
-
-
-        String msg = "Updated Location: " +
-                Double.toString(location.getLatitude()) + "," +
-                Double.toString(location.getLongitude());
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    //
-    @Override
-    public void onProviderDisabled(String provider) {
-
     }
 
     @Override
@@ -396,6 +387,8 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                 switch (view.getId()) {
                     case R.id.enter_location_field:
                         mActivityIndicator.setVisibility(View.GONE);
+                        LinearLayout navBar = (LinearLayout) findViewById(R.id.destination_bar);
+                        navBar.setVisibility(View.GONE);
                         break;
                 }
                 return true;
@@ -408,13 +401,16 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
 
     public static class ErrorDialogFragment extends DialogFragment {
         private Dialog mDialog;
+
         public ErrorDialogFragment() {
             super();
             mDialog = null;
         }
+
         public void setDialog(Dialog dialog) {
             mDialog = dialog;
         }
+
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             return mDialog;
@@ -482,32 +478,30 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         @Override
         protected List<Address> doInBackground(String... params) {
             long threadId = Thread.currentThread().getId();
-            Log.d(_logTag, "doInBackground Thread ID: " + threadId);
+            Log.d(LOGTAG, "doInBackground Thread ID: " + threadId);
             String placeName = params[0];
             List<Address> addressList = null;
 
-            Geocoder geocoder = new Geocoder(MyActivity.this); //context of class wrapped in
+            Geocoder geocoder = new Geocoder(MyActivity.this, Locale.US); //context of class wrapped in
             try {
                 addressList = geocoder.getFromLocationName(placeName, 10);
 
             } catch (IOException e) {
                 e.printStackTrace();
-                addressList= new ArrayList<Address>();
+                addressList = new ArrayList<Address>();
             }
             return addressList;
         }
 
         @Override
         protected void onPostExecute(final List<Address> addresses) {
-            if(addresses!=null) {
+            if (addresses != null) {
                 long threadId = Thread.currentThread().getId();
-                Log.d(_logTag, "onPostExecute threadID: " + threadId);
-                MyActivity.this.clearDisplay();
+                Log.d(LOGTAG, "onPostExecute threadID: " + threadId);
                 final CharSequence[] _addresses = new CharSequence[addresses.size()];
                 int j = 0;
                 final Address[] addressArray = new Address[addresses.size()];
                 for (Address address : addresses) {
-                    MyActivity.this.displayAddressLines(address);
                     int lastIndex = address.getMaxAddressLineIndex();
                     String addressLine = "";
                     for (int i = 0; i <= lastIndex; i++) {
@@ -518,8 +512,6 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                     j++;
                 }
                 if (addresses.size() == 0) {
-                    MyActivity.this.clearDisplay();
-                    MyActivity.this.addLineToDisplay("I'm sorry, we cannot find your location");
                 } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MyActivity.this);
                     builder.setTitle("Select your address: ");
@@ -538,7 +530,6 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                             CameraPosition cameraPosition = new CameraPosition.Builder().target(
                                     destinationLocation).zoom(14).build();
                             _marker.setSnippet((String) _addresses[which]);
-//                            googleMap.setOnMarkerClickListener(MarkerListener);
                             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                             mActivityIndicator.setVisibility(View.GONE);
                             LinearLayout navBar = (LinearLayout) findViewById(R.id.destination_bar);
@@ -559,7 +550,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                                     Intent intent = new Intent(MyActivity.this, CreateTaskActivity.class);
                                     intent.putExtra("Destination", _addresses[which]);
                                     intent.putExtra("Destination_location", destinationLocation);
-                                    intent.putExtra("Current_Location",currentLocation);
+                                    intent.putExtra("Current_Location", currentLocation);
                                     intent.putExtra("Button", "Remember");
                                     startActivity(intent);
                                 }
@@ -569,8 +560,8 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                                 @Override
                                 public void onClick(View v) {
                                     Intent intent = new Intent(MyActivity.this, CreateTaskActivity.class);
-                                    intent.putExtra("Destination",_addresses[which]);
-                                    intent.putExtra("Destination_location",destinationLocation);
+                                    intent.putExtra("Destination", _addresses[which]);
+                                    intent.putExtra("Destination_location", destinationLocation);
                                     intent.putExtra("Current_Location", currentLocation);
                                     intent.putExtra("Button", "Do Something");
                                     startActivity(intent);
@@ -604,7 +595,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         @Override
         protected List<Address> doInBackground(Location... params) {
             long threadId = Thread.currentThread().getId();
-            Log.d(_logTag, "doInBackground Thread ID: " + threadId);
+            Log.d(LOGTAG, "doInBackground Thread ID: " + threadId);
             Location location = params[0];
             List<Address> addressList = null;
 
@@ -622,19 +613,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         protected void onPostExecute(List<Address> addresses) {
             mActivityIndicator.setVisibility(View.GONE);
             long threadId = Thread.currentThread().getId();
-            Log.d(_logTag, "onPostExecute threadID: " + threadId);
-            MyActivity.this.clearDisplay();
-            for (Address address : addresses) {
-                MyActivity.this.displayAddressLines(address);
-            }
+            Log.d(LOGTAG, "onPostExecute threadID: " + threadId);
         }
-    }
-
-    public Helper getHelper() {
-        return helper;
-    }
-
-    public void setHelper(Helper helper) {
-        this.helper = helper;
     }
 }

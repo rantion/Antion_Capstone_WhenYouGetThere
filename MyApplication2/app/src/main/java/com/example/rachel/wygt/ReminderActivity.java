@@ -11,7 +11,7 @@ public class ReminderActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setContentView(R.layout.reminder_layout);
+        setContentView(R.layout.activity_reminder);
         super.onCreate(savedInstanceState);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {

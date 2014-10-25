@@ -1,8 +1,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MyActivity" >
-    <item android:id="@+id/action_getCurrentLocation"
-        android:title="Get Current Location"
+    <item android:id="@+id/menu_settings"
+        android:title="Settings"
         android:orderInCategory="100"
         />
 
