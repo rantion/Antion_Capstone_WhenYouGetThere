@@ -89,7 +89,8 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+      //  cancelAlarmManager();
+        setTitle("WhenYouGetThere");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
         initializeMap();
@@ -109,17 +110,18 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
             editor.putString("prefSyncFrequency", "5");
             editor.putString("prefUsername", "username");
             editor.apply();
+            startAlarmManager();
         }
-        Log.d("APP IS OPEN","appIsOpenSetToTrue - MyActivity");
+        Log.d("GPS/APP IS OPEN","appIsOpenSetToTrue - MyActivity");
         editor.putBoolean("appIsOpen", true);
         editor.apply();
         lm.requestLocationUpdates(
                 LocationManager.NETWORK_PROVIDER,
-                1,
+                0,
                 0, MyApplication.getGpsTracker());
         mActivityIndicator =
                 (ProgressBar) findViewById(R.id.address_progress);
-        startAlarmManager();
+    //    startAlarmManager();
     }
 
     private void startAlarmManager() {
@@ -146,11 +148,6 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, gpsTrackerIntent, 0);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
     }
 
     public void getAddress(View v) {
@@ -217,6 +214,8 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         if (id == R.id.menu_settings) {
             Intent intent = new Intent(this, UserSettingsActivity.class);
             startActivity(intent);
+            cancelAlarmManager();
+            startAlarmManager();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -236,7 +235,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        Log.d("APP IS OPEN", "appIsOpenSetToFalse - MyActivity");
+        Log.d("APP IS OPEN", "MyActivityOnDestroyCalled - appIsOpen set to false");
         editor.putBoolean("appIsOpen", false);
         editor.apply();
         super.onDestroy();
@@ -244,13 +243,13 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
 
     @Override
     protected void onPause() {
-        SharedPreferences sharedPreferences = PreferenceManager
-                .getDefaultSharedPreferences(MyApplication.getAppContext());
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        Log.d("APP IS OPEN", "appIsOpenSetToFalse - MyActivity");
-        editor.putBoolean("appIsOpen", false);
-        editor.apply();
-        super.onPause();
+//       SharedPreferences sharedPreferences = PreferenceManager
+//                .getDefaultSharedPreferences(MyApplication.getAppContext());
+//        SharedPreferences.Editor editor = sharedPreferences.edit();
+//        Log.d("APP IS OPEN", "appIsOpenSetToFalse - MyActivity");
+//        editor.putBoolean("appIsOpen", false);
+//        editor.apply();
+       super.onPause();
     }
 
     //    boolean confirmNetworkProviderAvailable(LocationManager lm) {
@@ -321,10 +320,6 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
     @Override
     public void onConnected(Bundle bundle) {
         Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
-        // If already requested, start periodic updates
-        if (mUpdatesRequested) {
-            locationClient.requestLocationUpdates(mLocationRequest, (com.google.android.gms.location.LocationListener) this);
-        }
     }
 
     @Override
@@ -547,7 +542,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                             rememberButton.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    Intent intent = new Intent(MyActivity.this, CreateTaskActivity.class);
+                                    Intent intent = new Intent(MyActivity.this, RememberSomethingActivity.class);
                                     intent.putExtra("Destination", _addresses[which]);
                                     intent.putExtra("Destination_location", destinationLocation);
                                     intent.putExtra("Current_Location", currentLocation);
@@ -559,7 +554,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                             doSomethingButton.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    Intent intent = new Intent(MyActivity.this, CreateTaskActivity.class);
+                                    Intent intent = new Intent(MyActivity.this, DoSomethingActivity.class);
                                     intent.putExtra("Destination", _addresses[which]);
                                     intent.putExtra("Destination_location", destinationLocation);
                                     intent.putExtra("Current_Location", currentLocation);

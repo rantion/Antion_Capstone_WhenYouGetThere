@@ -1,28 +1,33 @@
 package com.example.rachel.wygt;
 
 import android.app.Activity;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
-import android.app.TaskStackBuilder;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationManager;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
-import android.support.v4.app.NotificationCompat;
+import android.provider.Contacts;
+import android.provider.ContactsContract;
+import android.text.Editable;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.CursorAdapter;
 import android.widget.EditText;
-import android.widget.RadioButton;
+import android.widget.Filterable;
+import android.widget.LinearLayout;
+import android.widget.MultiAutoCompleteTextView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,38 +43,39 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 /**
- * Created by Rachel on 10/15/14.
+ * Created by Rachel on 10/27/14.
  */
-public class CreateTaskActivity extends Activity implements View.OnKeyListener {
+public class DoSomethingActivity extends Activity implements View.OnKeyListener {
 
     private LatLng destinationLocation, currentLocation;
     private String distance, duration, destination;
-    private TaskDataSource dataSource = MyApplication.getDataSource();
-    private static final String PROX_ALERT_INTENT = "Proximity_Alert_Intent";
-
+    private ReminderDataSource reminderMessageDataSource = MyApplication.getReminderMessageDataSource();
+    private ArrayList<Map<String, String>> mPeopleList;
+    private SimpleAdapter mAdapter;
+    private MultiAutoCompleteTextView mTxtPhoneNo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+        setTitle("WhenYouGetThere");
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(MyApplication.getAppContext());
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        Log.d("APP IS OPEN", "appIsOpenSetTrue - CreateTaskActivity");
+        Log.d("APP IS OPEN", "appIsOpenSetTrue - DOTaskActivity");
         editor.putBoolean("appIsOpen", true);
         editor.apply();
-        setContentView(R.layout.create_task);
+        setContentView(R.layout.do_task);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             destinationLocation = (LatLng) extras.get("Destination_location");
@@ -92,65 +98,107 @@ public class CreateTaskActivity extends Activity implements View.OnKeyListener {
                 _buttonPushed.setText(button);
             }
 
+//            Cursor peopleCursor = getContentResolver().query(Contacts.People.CONTENT_URI, null, null, null, null);
+//            ContactListAdapter contactadapter = new ContactListAdapter(this, peopleCursor);
+//            MultiAutoCompleteTextView textView = (MultiAutoCompleteTextView) findViewById(R.id.find_contact_editText);
+//            textView.setAdapter(contactadapter);
+//            textView.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+
+            mPeopleList = new ArrayList<Map<String, String>>();
+            PopulatePeopleList();
+            mTxtPhoneNo = (MultiAutoCompleteTextView) findViewById(R.id.find_contact_editText);
+            mAdapter = new SimpleAdapter(this, mPeopleList, R.layout.custcontview,
+                    new String[] { "Name", "Phone", "Type" }, new int[] {
+                    R.id.ccontName, R.id.ccontNo, R.id.ccontType });
+            mTxtPhoneNo.setThreshold(1);
+            mTxtPhoneNo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Map<String, String> map = (Map<String, String>) parent
+                            .getItemAtPosition(position);
+                    String name = map.get("Name");
+                    String number = map.get("Phone");
+                    String current = mTxtPhoneNo.getText().toString();
+                    mTxtPhoneNo.setText( " "+ name + "<" + number + ">, ");
+                    String newCurrent = mTxtPhoneNo.getText().toString();
+                    mTxtPhoneNo.setSelection(newCurrent.length());
+                }
+            });
+            mTxtPhoneNo.setAdapter(mAdapter);
+            mTxtPhoneNo.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+
+
         }
+
     }
 
-    @Override
-    protected void onStop() {
-//        if (proximityReciever != null) {
-//            unregisterReceiver(proximityReciever);
+    public void PopulatePeopleList() {
+        mPeopleList.clear();
+        Cursor people = getContentResolver().query(
+                ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+        while (people.moveToNext()) {
+            String contactName = people.getString(people
+                    .getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+            String contactId = people.getString(people
+                    .getColumnIndex(ContactsContract.Contacts._ID));
+            String hasPhone = people
+                    .getString(people
+                            .getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
+
+            if ((Integer.parseInt(hasPhone) > 0)) {
+                // You know have the number so now query it like this
+                Cursor phones = getContentResolver().query(
+                        ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                        null,
+                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + contactId,
+                        null, null);
+                while (phones.moveToNext()) {
+                    //store numbers and display a dialog letting the user select which.
+                    String phoneNumber = phones.getString(
+                            phones.getColumnIndex(
+                                    ContactsContract.CommonDataKinds.Phone.NUMBER)
+                    );
+                    String numberType = phones.getString(phones.getColumnIndex(
+                            ContactsContract.CommonDataKinds.Phone.TYPE));
+                    Map<String, String> NamePhoneType = new HashMap<String, String>();
+                    NamePhoneType.put("Name", contactName);
+                    NamePhoneType.put("Phone", phoneNumber);
+                    if (numberType.equals("0"))
+                        NamePhoneType.put("Type", "Work");
+                    else if (numberType.equals("1"))
+                        NamePhoneType.put("Type", "Home");
+                    else if (numberType.equals("2"))
+                        NamePhoneType.put("Type", "Mobile");
+                    else
+                        NamePhoneType.put("Type", "Other");
+                    //Then add this map to the list.
+                    mPeopleList.add(NamePhoneType);
+                }
+                phones.close();
+            }
+        }
+        people.close();
+        startManagingCursor(people);
+    }
+
+//    public void onItemClick(AdapterView<?> av, View v, int index, long arg) {
+//        Map<String, String> map = (Map<String, String>) av.getItemAtPosition(index);
+//        Iterator<String> myVeryOwnIterator = map.keySet().iterator();
+//        while (myVeryOwnIterator.hasNext()) {
+//            String key = (String) myVeryOwnIterator.next();
+//            String value = (String) map.get(key);
+//            Log.d("DOSOMETHING", "Key: "+key+" Value: "+value);
+//            mTxtPhoneNo.setText(value);
 //        }
-        super.onStop();
+//    }
+
+    public void getContacts(View view) {
+        Log.d("DOSOMETHING", "getContacts called");
+//      Intent contactPicker = new Intent(this, ContactPickerActivity.class);
+//        contactPicker.putExtra(ContactData.CHECK_ALL, cbCheckAll.isChecked());
+//        contactPicker.setPackage("com.reptilemobile.MultipleContactsPicker");
+//        startActivityForResult(contactPicker, REQUEST_CODE);
     }
-
-    public void setProximityAlert(View view) {
-
-
-        EditText _miles = (EditText) findViewById(R.id.miles_away);
-        String miles = _miles.getText().toString();
-        RadioButton button = (RadioButton) findViewById(R.id.radio_there);
-        EditText _reminder = (EditText)findViewById(R.id.enter_reminder_field);
-        String reminder = "";
-        double milesAway = 0.0;
-        if (!miles.equals("...")) {
-            milesAway = Double.valueOf(miles);
-        } else if (button.isChecked()) {
-            milesAway = .1;
-        }
-        if(_reminder!=null){
-            reminder = _reminder.getText().toString();
-        }
-////        proximityReciever = new ProximityIntentReceiver();
-//          LocationManager lm = gpsTracker.getLocationManager();
-////        IntentFilter filter = new IntentFilter(PROX_ALERT_INTENT);
-////        registerReceiver(proximityReciever, filter);
-//        Intent intent = new Intent(PROX_ALERT_INTENT);
-//
-//        intent.putExtra("Time", System.currentTimeMillis());
-//        intent.putExtra("Destination", destination);
-//        PendingIntent proximityIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-//        lm.addProximityAlert(destinationLocation.latitude, destinationLocation.longitude, convertToMeters(milesAway), -1, proximityIntent);
-//        Log.d("CreateTaskActivity", "Proximity Alert Created");
-        Toast.makeText(getApplicationContext(),
-                "Reminder Created!", Toast.LENGTH_SHORT)
-                .show();
-//
-//        String string = "Proximity alert created for " + destinationLocation.latitude + "," + destinationLocation.longitude;
-//        TextView prox = (TextView) findViewById(R.id.proximity_data);
-//        prox.setText(string);
-
-//        Map<LatLong, Long> locations =  MyApplication.getLocations();
-      //  locations.put(new LatLong(destinationLocation),convertToMeters(milesAway));
-        dataSource.createTask(destinationLocation,reminder,convertToMeters(milesAway));
-        Log.d("CreateTaskActivity", "Saved Destination");
-
-    }
-
-    public long convertToMeters(double miles) {
-        long meters = (long) (miles * 1609.34);
-        return meters;
-    }
-
 
     private class GetDrivingDistance extends AsyncTask<LatLng, LatLng, JSONObject> {
 
@@ -159,7 +207,7 @@ public class CreateTaskActivity extends Activity implements View.OnKeyListener {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(CreateTaskActivity.this);
+            pDialog = new ProgressDialog(DoSomethingActivity.this);
             pDialog.setMessage("Performing Calculations ...");
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(true);
@@ -236,6 +284,8 @@ public class CreateTaskActivity extends Activity implements View.OnKeyListener {
         }
     }
 
+
+
     @Override
     public boolean onKey(View view, int keyCode, KeyEvent event) {
         if (keyCode == EditorInfo.IME_ACTION_SEARCH ||
@@ -247,7 +297,7 @@ public class CreateTaskActivity extends Activity implements View.OnKeyListener {
                 Log.v("AndroidEnterKeyActivity", "Enter Key Pressed!");
                 switch (view.getId()) {
                     case R.id.enter_reminder_field:
-                        EditText enter = (EditText)findViewById(R.id.enter_reminder_field);
+                        EditText enter = (EditText) findViewById(R.id.enter_reminder_field);
                         Toast.makeText(getApplicationContext(),
                                 enter.getText().toString(), Toast.LENGTH_SHORT)
                                 .show();
@@ -261,24 +311,14 @@ public class CreateTaskActivity extends Activity implements View.OnKeyListener {
     }
 
     @Override
-    protected void onPause() {
-        SharedPreferences sharedPreferences = PreferenceManager
-                .getDefaultSharedPreferences(MyApplication.getAppContext());
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        Log.d("APP IS OPEN", "appIsOpenSetToFalse - CREATE TASK ACTIVITY");
-        editor.putBoolean("appIsOpen", false);
-        editor.apply();
-        super.onPause();
-    }
-
-    @Override
     protected void onDestroy() {
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(MyApplication.getAppContext());
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        Log.d("APP IS OPEN", "appIsOpenSetToFalse - CREATE TASK ACTIVITY");
+        Log.d("APP IS OPEN", "ONDESTROY__appIsOpenSetToFalse - DOSOMETHINGActivity");
         editor.putBoolean("appIsOpen", false);
         editor.apply();
         super.onDestroy();
     }
+
 }

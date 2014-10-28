@@ -1,13 +1,11 @@
 package com.example.rachel.wygt;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -19,7 +17,6 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -39,7 +36,7 @@ public class GPSTracker extends Service implements LocationListener {
     private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1; // 1 minute
     protected LocationManager locationManager;
     private static final int NOTIFICATION_ID = 1000;
-    private TaskDataSource dataSource = MyApplication.getDataSource();
+    private ReminderDataSource reminderMessagedataSource = MyApplication.getReminderMessageDataSource();
 
     public GPSTracker(){
      Log.d("GPSTracker","GPS Tracker created");
@@ -140,8 +137,8 @@ public class GPSTracker extends Service implements LocationListener {
         float accuracy = location.getAccuracy();
         long time = location.getTime();
 
-        List<Task> values  = dataSource.getAllTasks();
-        for(Task task : values){
+        List<ReminderMessage> values  = reminderMessagedataSource.getAllTasks();
+        for(ReminderMessage task : values){
             float[] results = new float[4];
             long radius = task.getRadius();
             Location.distanceBetween(task.getLatitude(), task.getLongitude(), location.getLatitude(), location.getLongitude(), results);
@@ -161,7 +158,7 @@ public class GPSTracker extends Service implements LocationListener {
                 notification.setLatestEventInfo(context,
                         "BD NOTIFICATION IS NOTIFYING YOU", null, pendingIntent);
                 notificationManager.notify(NOTIFICATION_ID, notification);
-                dataSource.deleteTask(task);
+                reminderMessagedataSource.deleteTask(task);
                 Log.d("reminder", "you should see that shit");
 
             }
@@ -172,6 +169,7 @@ public class GPSTracker extends Service implements LocationListener {
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(MyApplication.getAppContext());
         boolean appIsOpen = sharedPreferences.getBoolean("appIsOpen", true);
+
 
         if(!appIsOpen && location.getAccuracy()<500f){
             locationManager.removeUpdates(this);
@@ -214,4 +212,6 @@ public class GPSTracker extends Service implements LocationListener {
     public IBinder onBind(Intent intent) {
         return null;
     }
+
+
 }

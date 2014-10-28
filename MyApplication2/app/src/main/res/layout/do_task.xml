@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/proximity_information"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Send notification when I am...."/>
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/miles_away"
+                android:text="..."
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:text="miles away"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <RadioButton android:id="@+id/radio_there"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/abc_action_bar_default_height"
+                android:text="there"/>
+
+        </RadioGroup>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <MultiAutoCompleteTextViewte
+                android:id="@+id/find_contact_editText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="sent to contact..."
+                android:layout_weight="8"/>
+            <Button
+                android:id="@+id/find_contact_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="getContacts"
+                android:text="Find Contacts">
+
+            </Button>
+            </LinearLayout>
+        <EditText
+            android:id="@+id/enter_reminder_field"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/abc_action_bar_default_height"
+            android:text="enter your reminder/ message here"
+            />
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text = "GO"
+            android:onClick="setProximityAlert"/>
+        <TextView
+            android:id="@+id/proximity_data"
+            android:text=""
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/location_data"
+            android:text=""
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_below="@id/proximity_information"
+        android:id="@+id/Button_pushed"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Button Pushed: "/>
+        <TextView
+            android:id="@+id/button_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""/>
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:id="@+id/destination_layout"
+        android:layout_below="@id/Button_pushed"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+        <TextView
+            android:id="@+id/destination_display"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Destination: "/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/destination_address"
+            android:text=""/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_below="@id/destination_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+        <TextView
+            android:id="@+id/distance_display"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Distance: "/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/distance"
+            android:text=""/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+</LinearLayout>
