@@ -39,8 +39,8 @@ import java.util.concurrent.ExecutionException;
 public class RememberSomethingActivity extends Activity implements View.OnKeyListener {
 
     private LatLng destinationLocation, currentLocation;
-    private String distance, duration, destination;
-    private ReminderDataSource reminderMessageDataSource = MyApplication.getReminderMessageDataSource();
+    private String distance, duration, destination, distanceMeters, durationSeconds;
+    private TaskDataSource taskDataSource = MyApplication.getTaskDataSource();
 
 
 
@@ -51,7 +51,7 @@ public class RememberSomethingActivity extends Activity implements View.OnKeyLis
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(MyApplication.getAppContext());
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        Log.d("APP IS OPEN", "appIsOpenSetTrue - CreateTaskActivity");
+        Log.d("GPS/APP IS OPEN", "appIsOpenSetTrue - RememberSomethingActivity");
         editor.putBoolean("appIsOpen", true);
         editor.apply();
         setContentView(R.layout.remember_task);
@@ -82,43 +82,33 @@ public class RememberSomethingActivity extends Activity implements View.OnKeyLis
 
     public void setProximityAlert(View view) {
 
-
         EditText _miles = (EditText) findViewById(R.id.miles_away);
         String miles = _miles.getText().toString();
         RadioButton button = (RadioButton) findViewById(R.id.radio_there);
         EditText _reminder = (EditText)findViewById(R.id.enter_reminder_field);
+        EditText _minutes = (EditText)findViewById(R.id.minutes_away);
+        String minutes = _minutes.getText().toString();
         String reminder = "";
-        double milesAway = 0.0;
-        if (!miles.equals("...")) {
-            milesAway = Double.valueOf(miles);
-        } else if (button.isChecked()) {
-            milesAway = .1;
+        long metersAway = 50;
+        if (miles.length()>0) {
+            metersAway=convertToMeters(Double.valueOf(miles));
+        }else if(minutes.length()>0){
+            metersAway=getMinutesAwayRadius(Integer.parseInt(minutes));
+        }
+        else if (button.isChecked()) {
+           metersAway = 50;
+        }
+        else{
+            Toast.makeText(getApplicationContext(),"Please Choose A Location Trigger", Toast.LENGTH_SHORT).show();
+            return;
         }
         if(_reminder!=null){
             reminder = _reminder.getText().toString();
         }
-////        proximityReciever = new ProximityIntentReceiver();
-//          LocationManager lm = gpsTracker.getLocationManager();
-////        IntentFilter filter = new IntentFilter(PROX_ALERT_INTENT);
-////        registerReceiver(proximityReciever, filter);
-//        Intent intent = new Intent(PROX_ALERT_INTENT);
-//
-//        intent.putExtra("Time", System.currentTimeMillis());
-//        intent.putExtra("Destination", destination);
-//        PendingIntent proximityIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-//        lm.addProximityAlert(destinationLocation.latitude, destinationLocation.longitude, convertToMeters(milesAway), -1, proximityIntent);
-//        Log.d("CreateTaskActivity", "Proximity Alert Created");
         Toast.makeText(getApplicationContext(),
                 "Reminder Created!", Toast.LENGTH_SHORT)
                 .show();
-//
-//        String string = "Proximity alert created for " + destinationLocation.latitude + "," + destinationLocation.longitude;
-//        TextView prox = (TextView) findViewById(R.id.proximity_data);
-//        prox.setText(string);
-
-//        Map<LatLong, Long> locations =  MyApplication.getLocations();
-      //  locations.put(new LatLong(destinationLocation),convertToMeters(milesAway));
-        reminderMessageDataSource.createReminder(destinationLocation, reminder, convertToMeters(milesAway));
+        taskDataSource.createTask(destinationLocation,reminder,metersAway, Task.REMINDER_MESSAGE_TASK_TYPE);
         Log.d("CreateTaskActivity", "Saved Destination");
 
     }
@@ -126,6 +116,16 @@ public class RememberSomethingActivity extends Activity implements View.OnKeyLis
     public long convertToMeters(double miles) {
         long meters = (long) (miles * 1609.34);
         return meters;
+    }
+
+    public long getMinutesAwayRadius(int minutes){
+        String distanceAway = distanceMeters;
+        String _duration = durationSeconds;
+        int meters = Integer.parseInt(distanceAway);
+        int seconds = Integer.parseInt(_duration);
+        double rate = (meters/seconds);
+        double temp = rate*minutes;
+        return (long)temp*60;
     }
 
 
@@ -191,8 +191,10 @@ public class RememberSomethingActivity extends Activity implements View.OnKeyLis
                             JSONObject element = elements.getJSONObject(0);
                             JSONObject _duration = element.getJSONObject("duration");
                             duration = _duration.getString("text");
+                            durationSeconds = _duration.getString("value");
                             JSONObject distance = element.getJSONObject("distance");
                             distances.add(distance.getString("text"));
+                            distanceMeters = distance.getString("value");
                         }
                         String _distances = null;
                         for (String distance : distances) {
@@ -237,15 +239,28 @@ public class RememberSomethingActivity extends Activity implements View.OnKeyLis
         return false;
     }
 
+
+
     @Override
     protected void onDestroy() {
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(MyApplication.getAppContext());
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        Log.d("APP IS OPEN", "ONDESTROY__appIsOpenSetToFalse - CreateTaskActivity");
+        Log.d("GPS/ APP IS OPEN", "ONDESTROY__appIsOpenSetToFalse - ReminderTaskActivity");
         editor.putBoolean("appIsOpen", false);
         editor.apply();
         super.onDestroy();
+    }
+
+    @Override
+    protected void onStop() {
+        SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(MyApplication.getAppContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Log.d("GPS/APP IS OPEN", "ONSTOP__appIsOpenSetToFalse - ReminderTaskActivity");
+        editor.putBoolean("appIsOpen", false);
+        editor.apply();
+        super.onStop();
     }
 
     @Override
@@ -253,7 +268,7 @@ public class RememberSomethingActivity extends Activity implements View.OnKeyLis
 //        SharedPreferences sharedPreferences = PreferenceManager
 //                .getDefaultSharedPreferences(MyApplication.getAppContext());
 //        SharedPreferences.Editor editor = sharedPreferences.edit();
-//        Log.d("APP IS OPEN", "appIsOpenSetToFalse - CREATE TASK ACTIVITY");
+       Log.d("GPS/APP IS OPEN", "onPause_RememberSomethingActivity");
 //        editor.putBoolean("appIsOpen", false);
 //        editor.apply();
        super.onPause();

@@ -9,31 +9,44 @@ import android.util.Log;
  * Created by Rachel on 10/22/14.
  */
 public class MySQLiteHelper extends SQLiteOpenHelper {
-
-    public static final String TABLE_REMINDER_MESSAGE = "reminder_message";
+    //table names
+    public static final String TABLE_TASK = "task";
+    public static final String TABLE_TASK_CONTACT = "task_contact";
+   //task table column names
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_LATITUDE = "latitude";
     public static final String COLUMN_LONGITUDE = "longitude";
     public static final String COLUMN_TIME = "time";
     public static final String COLUMN_RADIUS = "radius";
     public static final String COLUMN_REMINDER = "reminder";
+    public static final String COLUMN_TASK_TYPE = "task_type";
+    //task_contact table column names
+    public static final String COLUMN_PHONE_NUMBER = "phone_number";
+    public static final String COLUMN_TASK_ID = "task_id";
+    public static final String COLUMN_CONTACT_NAME = "contact_name";
 
-    private static final String DATABASE_NAME = "reminder_message.db";
-    private static final int DATABASE_VERSION = 1;
+
+    private static final String TASK_DB = "task.db";
+    private static final int DATABASE_VERSION = 3;
 
     // Database creation sql statement
-    private static final String CREATE_REMINDER_MESSAGE = "create table "
-            + TABLE_REMINDER_MESSAGE + "(" + COLUMN_ID
+    private static final String CREATE_TASK_DB = "create table "
+            + TABLE_TASK + "(" + COLUMN_ID
             + " integer primary key autoincrement, " + COLUMN_REMINDER
-            + " text not null, "+COLUMN_LATITUDE +" real,"+COLUMN_LONGITUDE+" real, "+COLUMN_RADIUS+" numeric," +COLUMN_TIME+" numeric);";
+            + " text not null, "+COLUMN_LATITUDE +" real,"+COLUMN_LONGITUDE+" real, "+COLUMN_RADIUS+" numeric," +COLUMN_TIME+" numeric,"+COLUMN_TASK_TYPE+" integer);";
+
+    private static final String CREATE_TASK_CONTACT_DB ="create table " +TABLE_TASK_CONTACT+"("+ COLUMN_ID
+            + " integer primary key autoincrement, " +COLUMN_PHONE_NUMBER+" text not null, "+COLUMN_CONTACT_NAME+" text not null, "+ COLUMN_TASK_ID + " integer,"
+            + " FOREIGN KEY ("+COLUMN_TASK_ID+") REFERENCES "+COLUMN_ID+" ("+TABLE_TASK+"));";
 
     public MySQLiteHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        super(context, TASK_DB, null, DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase database) {
-        database.execSQL(CREATE_REMINDER_MESSAGE);
+        database.execSQL(CREATE_TASK_CONTACT_DB);
+        database.execSQL(CREATE_TASK_DB);
     }
 
     @Override
@@ -42,7 +55,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 "Upgrading database from version " + oldVersion + " to "
                         + newVersion + ", which will destroy all old data"
         );
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_REMINDER_MESSAGE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TASK);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TASK_CONTACT);
         onCreate(db);
     }
 

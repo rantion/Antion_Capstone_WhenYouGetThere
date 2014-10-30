@@ -20,6 +20,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -89,8 +90,6 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-      //  cancelAlarmManager();
-        setTitle("WhenYouGetThere");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
         initializeMap();
@@ -235,10 +234,21 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        Log.d("APP IS OPEN", "MyActivityOnDestroyCalled - appIsOpen set to false");
+        Log.d("GPS/APP IS OPEN", "MyActivityOnDestroyCalled - appIsOpen set to false");
         editor.putBoolean("appIsOpen", false);
         editor.apply();
         super.onDestroy();
+    }
+
+    @Override
+    protected void onStop() {
+//        SharedPreferences sharedPreferences = PreferenceManager
+//                .getDefaultSharedPreferences(this);
+//        SharedPreferences.Editor editor = sharedPreferences.edit();
+//        Log.d("GPS/APP IS OPEN", "MyActivityOnStopCalled - appIsOpen set to false");
+//        editor.putBoolean("appIsOpen", false);
+//        editor.apply();
+        super.onStop();
     }
 
     @Override
@@ -246,7 +256,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
 //       SharedPreferences sharedPreferences = PreferenceManager
 //                .getDefaultSharedPreferences(MyApplication.getAppContext());
 //        SharedPreferences.Editor editor = sharedPreferences.edit();
-//        Log.d("APP IS OPEN", "appIsOpenSetToFalse - MyActivity");
+        Log.d("GPS/APP IS OPEN", "onPause_MyActivityCalled... no change to appIsOpen");
 //        editor.putBoolean("appIsOpen", false);
 //        editor.apply();
        super.onPause();
@@ -293,7 +303,26 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         return isAvailable;
     }
 
-//    private void clearDisplay() {
+    @Override
+    public void recreate() {
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
+                {
+                    MyActivity.this.finish();
+                    MyActivity.this.startActivity(MyActivity.this.getIntent());
+                }
+                else MyActivity.this.recreate();
+            }
+        }, 1);
+        super.recreate();
+    }
+
+    //    private void clearDisplay() {
 ////        TextView textView = (TextView)findViewById(R.id.textView);
 ////        textView.setText("");
 //    }

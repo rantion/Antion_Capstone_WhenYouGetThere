@@ -22,12 +22,28 @@
             android:orientation="horizontal">
             <EditText
                 android:id="@+id/miles_away"
-                android:text="..."
+                android:hint="about...."
                 android:layout_width="0dp"
                 android:layout_weight="2"
                 android:layout_height="wrap_content" />
             <TextView
                 android:text="miles away"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/minutes_away"
+                android:hint="about...."
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:text="minutes away"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             </LinearLayout>

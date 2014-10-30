@@ -13,14 +13,17 @@ import android.util.Log;
 public class MyApplication extends Application {
 
     protected static GPSTracker gpsTracker;
-    protected static ReminderDataSource reminderMessageDataSource;
+    protected static TaskContactDataSource taskContactDataSource;
+    protected static TaskDataSource taskDataSource;
     private static Context context;
 
     public void onCreate() {
         MyApplication.context = getApplicationContext();
         try {
-            reminderMessageDataSource = new ReminderDataSource(context);
-            reminderMessageDataSource.open();
+            taskDataSource = new TaskDataSource(context);
+            taskDataSource.open();
+            taskContactDataSource = new TaskContactDataSource(context);
+            taskContactDataSource.open();
         }
         catch(Exception e) {
             e.printStackTrace();
@@ -38,8 +41,13 @@ public class MyApplication extends Application {
         return gpsTracker;
     }
 
-    public static ReminderDataSource getReminderMessageDataSource(){
-        return reminderMessageDataSource;
+
+    public static TaskDataSource getTaskDataSource() {
+        return taskDataSource;
+    }
+
+    public static TaskContactDataSource getTaskContactDataSource() {
+        return taskContactDataSource;
     }
 
 
@@ -52,7 +60,6 @@ public class MyApplication extends Application {
     @Override
     public void onTerminate() {
         Log.d("MyApplication", "My Application Destroyed");
-        reminderMessageDataSource.close();
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPreferences.edit();
