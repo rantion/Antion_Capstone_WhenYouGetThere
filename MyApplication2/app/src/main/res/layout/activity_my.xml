@@ -2,9 +2,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="@color/dark_purple"
     android:orientation="vertical"
-    tools:context=".MyActivity"
-    android:background="#4A3733">
+    tools:context=".MyActivity">
 
     <LinearLayout
         android:id="@+id/EnterLocationLayout"
@@ -12,31 +12,30 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <!--<TextView-->
-            <!--android:layout_width="fill_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="Enter Your Destination: "-->
-            <!--android:gravity="center_horizontal"-->
-            <!--android:textColor="@android:color/white"-->
-            <!--android:textSize="10pt"-->
-            <!--android:focusableInTouchMode="true"-->
-            <!--android:enabled="true" />-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Enter Your Destination: "-->
+        <!--android:gravity="center_horizontal"-->
+        <!--android:textColor="@android:color/white"-->
+        <!--android:textSize="10pt"-->
+        <!--android:focusableInTouchMode="true"-->
+        <!--android:enabled="true" />-->
         <LinearLayout
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin">
 
-            <EditText
+            <com.example.rachel.wygt.EditTextClear
                 android:id="@+id/enter_location_field"
                 android:layout_width="0dp"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:layout_height="@dimen/abc_action_bar_default_height"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:layout_weight="1.03"
                 android:clickable="true"
-                android:onClick="clearField"
                 android:hint="Enter destination"
                 android:textColor="@android:color/white" />
 
@@ -45,16 +44,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/abc_action_bar_default_height"
                 android:layout_alignParentLeft="true"
+                android:layout_gravity="center"
                 android:layout_margin="@dimen/abc_action_bar_icon_vertical_padding"
                 android:layout_toRightOf="@+id/enter_location_field"
-                android:onClick="getAddress"
-                android:src="@drawable/go"
-                android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
-                android:padding="7dp"
-                android:textColor="@android:color/white"
                 android:background="@android:color/transparent"
-                android:layout_gravity="center" />
+                android:onClick="getAddress"
+                android:padding="7dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/go"
+                android:textColor="@android:color/white" />
         </LinearLayout>
 
     </LinearLayout>
@@ -86,47 +85,73 @@
             tools:context=".MyActivity" />
 
         <LinearLayout
-            android:visibility="gone"
             android:id="@+id/destination_bar"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/map_layout"
-            android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
-            android:paddingTop="@dimen/abc_action_bar_icon_vertical_padding"
             android:layout_weight="1"
+            android:weightSum="10"
+            android:background="@android:color/white"
             android:divider="@drawable/divider_vertical"
             android:orientation="horizontal"
-            android:showDividers="middle"
-            android:weightSum="9"
-            android:background="@android:color/white">
-
-            <TextView
-                android:id="@+id/activity_my_destination"
-                android:layout_width="0dp"
-                android:padding="@dimen/abc_action_bar_icon_vertical_padding"
-                android:gravity="center_horizontal"
-                android:layout_weight="3"
-                android:layout_height="fill_parent"
-                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
-                android:layout_marginRight="@dimen/abc_action_bar_icon_vertical_padding"
-                android:text="Destination" />
-
+            android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
+            android:paddingTop="@dimen/abc_action_bar_icon_vertical_padding"
+            android:visibility="gone"
+            android:showDividers="middle">
 
             <LinearLayout
                 android:layout_width="0dp"
+                android:layout_weight="5"
                 android:layout_height="fill_parent"
+                android:orientation="vertical"
+                android:gravity="center_vertical|center_horizontal">
+
+                <TextView
+                    android:id="@+id/activity_my_destination"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Destination"
+                    android:gravity="center_horizontal" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="bottom">
+
+                    <TextView
+                        android:id="@+id/distance_approximation"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="distance"
+                        android:textSize="6pt"
+                        android:gravity="bottom|left" />
+                    <TextView
+                        android:id="@+id/duration_approximation"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="6pt"
+                        android:text="duration"
+                        android:gravity="bottom|right" />
+
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="5"
+                android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
-                android:layout_weight="6"
-                android:gravity="center_horizontal"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="fill_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="4dp"
-                    android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
-                    android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
                     android:text="When I get there I need to..." />
 
 
@@ -143,12 +168,11 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:layout_marginRight="@dimen/abc_action_bar_icon_vertical_padding"
                         android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:layout_weight="1"
+                        android:layout_marginRight="@dimen/abc_action_bar_icon_vertical_padding"
                         android:background="@drawable/button"
-                        android:text="Remember\nSomething"
                         android:onClick="startRememberActivity"
+                        android:text="Remember\nSomething"
                         android:textSize="7pt" />
 
                     <Button
@@ -156,12 +180,11 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:layout_marginRight="@dimen/abc_action_bar_icon_vertical_padding"
                         android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:layout_weight="1"
+                        android:layout_marginRight="@dimen/abc_action_bar_icon_vertical_padding"
                         android:background="@drawable/button"
-                        android:text="Do\nSomething"
                         android:onClick="startDoSomethingActivity"
+                        android:text="Do\nSomething"
                         android:textSize="7pt" />
                 </LinearLayout>
 

@@ -85,14 +85,16 @@ public class TaskDataSource {
         List<Task> tasks = new ArrayList<Task>();
         Cursor cursor = database.rawQuery("select * from "+MySQLiteHelper.TABLE_TASK+" where "+
                 MySQLiteHelper.COLUMN_TASK_TYPE+"="+Task.TEXT_MESSAGE_TASK_TYPE+"", null);
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            Task task = cursorToTask(cursor);
-            tasks.add(task);
-            cursor.moveToNext();
+        if(cursor!=null) {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                Task task = cursorToTask(cursor);
+                tasks.add(task);
+                cursor.moveToNext();
+            }
+            // make sure to close the cursor
+            cursor.close();
         }
-        // make sure to close the cursor
-        cursor.close();
         return tasks;
     }
 
@@ -100,14 +102,18 @@ public class TaskDataSource {
         List<Task> tasks = new ArrayList<Task>();
         Cursor cursor = database.rawQuery("select * from "+MySQLiteHelper.TABLE_TASK+" where "+
                 MySQLiteHelper.COLUMN_TASK_TYPE+"="+Task.CALL_REMINDER_TASK_TYPE+"", null);
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            Task task = cursorToTask(cursor);
-            tasks.add(task);
-            cursor.moveToNext();
+
+        if(cursor!= null){
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                Task task = cursorToTask(cursor);
+                tasks.add(task);
+                cursor.moveToNext();
+            }
+            // make sure to close the cursor
+            cursor.close();
         }
-        // make sure to close the cursor
-        cursor.close();
+
         return tasks;
     }
 
@@ -115,18 +121,18 @@ public class TaskDataSource {
         List<Task> tasks = new ArrayList<Task>();
         Cursor cursor = database.rawQuery("select * from "+MySQLiteHelper.TABLE_TASK+" where "+
                 MySQLiteHelper.COLUMN_TASK_TYPE+"="+Task.REMINDER_MESSAGE_TASK_TYPE+"", null);
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            Task task = cursorToTask(cursor);
-            tasks.add(task);
-            cursor.moveToNext();
+        if(cursor!=null) {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                Task task = cursorToTask(cursor);
+                tasks.add(task);
+                cursor.moveToNext();
+            }
+            // make sure to close the cursor
+            cursor.close();
         }
-        // make sure to close the cursor
-        cursor.close();
         return tasks;
     }
-
-
 
     private Task cursorToTask(Cursor cursor) {
         Task task = new Task();

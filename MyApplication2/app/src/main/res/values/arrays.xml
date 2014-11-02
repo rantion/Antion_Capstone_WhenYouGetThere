@@ -37,4 +37,9 @@
         <item name="15">15</item>
 
     </string-array>
+
+    <string-array name="miles_minutes">
+        <item name = "miles">miles</item>
+        <item name = "minutes">minutes</item>
+    </string-array>
 </resources>

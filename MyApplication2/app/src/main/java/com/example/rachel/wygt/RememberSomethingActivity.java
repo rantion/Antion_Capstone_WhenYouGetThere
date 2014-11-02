@@ -2,7 +2,10 @@ package com.example.rachel.wygt;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -11,7 +14,9 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,20 +46,28 @@ public class RememberSomethingActivity extends Activity implements View.OnKeyLis
     private LatLng destinationLocation, currentLocation;
     private String distance, duration, destination, distanceMeters, durationSeconds;
     private TaskDataSource taskDataSource = MyApplication.getTaskDataSource();
-
+    private SeekBar mediaVlmSeekBar = null;
+    private SeekBar ringerVlmSeekBar = null;
+    private SeekBar alarmVlmSeekBar = null;
+    private SeekBar notifyVlmSeekBar = null;
+    private AudioManager audioManager = null;
+    private int mediaMax, ringerMax, notifyMax, alarmMax, ringCurrent;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("WhenYouGetThere");
+        this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        this.setVolumeControlStream(AudioManager.STREAM_RING);
+        this.setVolumeControlStream(AudioManager.STREAM_ALARM);
+        this.setVolumeControlStream(AudioManager.STREAM_NOTIFICATION);
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(MyApplication.getAppContext());
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Log.d("GPS/APP IS OPEN", "appIsOpenSetTrue - RememberSomethingActivity");
         editor.putBoolean("appIsOpen", true);
         editor.apply();
-        setContentView(R.layout.remember_task);
+        setContentView(R.layout.activity_remember_something);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             destinationLocation = (LatLng) extras.get("Destination_location");
@@ -76,39 +89,207 @@ public class RememberSomethingActivity extends Activity implements View.OnKeyLis
             if (_buttonPushed != null) {
                 _buttonPushed.setText(button);
             }
+            initControls();
 
         }
     }
+
+    private Drawable getVolumeIcon(int max, int current, int type) {
+        Drawable icon = null;
+        float third = (max/3);
+        float twoThirds = (third*2);
+        if(current==0){
+            if(type == SoundSettings.SOUND_TYPE_RINGER && current == 0) {
+                icon = getResources().getDrawable(R.drawable.vibrate);
+            }
+            else{
+                icon = getResources().getDrawable(R.drawable.mute);
+            }
+        }
+        else if (current < third ){
+            icon = getResources().getDrawable(R.drawable.volume1);
+        }
+        else if (current >= third && current <= twoThirds) {
+            icon = getResources().getDrawable(R.drawable.volume2);
+        }
+        else if (current >= twoThirds) {
+            icon = getResources().getDrawable(R.drawable.volume3);
+        }
+        return icon;
+    }
+
+    private void initControls() {
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+        mediaVlmSeekBar = (SeekBar) findViewById(R.id.mediaSeek);
+        mediaMax = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        int mediaCurrent = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        mediaVlmSeekBar.setMax(mediaMax);
+        mediaVlmSeekBar.setProgress(mediaCurrent);
+        ImageView mediaIcon = (ImageView)findViewById(R.id.mediaIcon);
+        mediaIcon.setImageDrawable(getVolumeIcon(mediaMax,mediaCurrent,SoundSettings.SOUND_TYPE_MEDIA));
+
+        ringerVlmSeekBar = (SeekBar) findViewById(R.id.ringerSeek);
+        ringerMax = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING);
+        ringCurrent = audioManager.getStreamVolume(AudioManager.STREAM_RING);
+        ringerVlmSeekBar.setMax(ringerMax);
+        ringerVlmSeekBar.setProgress(ringCurrent);
+        ImageView ringerIcon = (ImageView)findViewById(R.id.ringerIcon);
+        ringerIcon.setImageDrawable(getVolumeIcon(ringerMax, ringCurrent, SoundSettings.SOUND_TYPE_RINGER));
+
+        alarmVlmSeekBar = (SeekBar) findViewById(R.id.systemSeek);
+        alarmMax = audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+        int alarmCurrent = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+        alarmVlmSeekBar.setMax(alarmMax);
+        alarmVlmSeekBar.setProgress(alarmCurrent);
+        ImageView alarmIcon = (ImageView)findViewById(R.id.systemIcon);
+        alarmIcon.setImageDrawable(getVolumeIcon(alarmMax,alarmCurrent,SoundSettings.SOUND_TYPE_ALARM));
+
+        notifyVlmSeekBar = (SeekBar) findViewById(R.id.notificationSeek);
+        notifyMax = audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION);
+        int notifyCurrent = audioManager.getStreamVolume(AudioManager.STREAM_NOTIFICATION);
+        notifyVlmSeekBar.setMax(notifyMax);
+        notifyVlmSeekBar.setProgress(notifyCurrent);
+        ImageView notifyIcon = (ImageView)findViewById(R.id.notificationIcon);
+        notifyIcon.setImageDrawable(getVolumeIcon(notifyMax,notifyCurrent,SoundSettings.SOUND_TYPE_NOTIFICATION));
+
+        if(ringCurrent == 0){
+            ringIs0();
+        }
+
+        try {
+            mediaVlmSeekBar
+                    .setOnSeekBarChangeListener(mediaChangeListener);
+            ringerVlmSeekBar
+                    .setOnSeekBarChangeListener(ringerChangeListener);
+            alarmVlmSeekBar
+                    .setOnSeekBarChangeListener(alarmChangeListener);
+            notifyVlmSeekBar
+                    .setOnSeekBarChangeListener(notificationChangeListener);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private SeekBar.OnSeekBarChangeListener notificationChangeListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            ImageView notify = (ImageView) findViewById(R.id.notificationIcon);
+            notify.setImageDrawable(getVolumeIcon(notifyMax,progress,SoundSettings.SOUND_TYPE_NOTIFICATION));
+            audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, progress, 0);
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    };
+
+    private SeekBar.OnSeekBarChangeListener alarmChangeListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            ImageView alarm = (ImageView) findViewById(R.id.systemIcon);
+            alarm.setImageDrawable(getVolumeIcon(alarmMax, progress, SoundSettings.SOUND_TYPE_ALARM));
+            audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, progress, 0);
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    };
+
+    private void ringIs0(){
+        audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION,0, 0);
+        audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM,0,0);
+        alarmVlmSeekBar.setProgress(0);
+        notifyVlmSeekBar.setProgress(0);
+        notifyVlmSeekBar.setEnabled(false);
+        alarmVlmSeekBar.setEnabled(false);
+    }
+
+    private SeekBar.OnSeekBarChangeListener ringerChangeListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            ImageView ringer = (ImageView) findViewById(R.id.ringerIcon);
+          ringer.setImageDrawable(getVolumeIcon(ringerMax, progress, SoundSettings.SOUND_TYPE_RINGER));
+            if(progress == 0){
+              ringIs0();
+            }
+            else {
+                notifyVlmSeekBar.setEnabled(true);
+                alarmVlmSeekBar.setEnabled(true);
+            }
+            audioManager.setStreamVolume(AudioManager.STREAM_RING, progress, 0);
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    };
+
+    private SeekBar.OnSeekBarChangeListener mediaChangeListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            ImageView media = (ImageView) findViewById(R.id.mediaIcon);
+            media.setImageDrawable(getVolumeIcon(mediaMax,progress,SoundSettings.SOUND_TYPE_MEDIA));
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0);
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    };
 
     public void setProximityAlert(View view) {
 
         EditText _miles = (EditText) findViewById(R.id.miles_away);
         String miles = _miles.getText().toString();
         RadioButton button = (RadioButton) findViewById(R.id.radio_there);
-        EditText _reminder = (EditText)findViewById(R.id.enter_reminder_field);
-        EditText _minutes = (EditText)findViewById(R.id.minutes_away);
+        EditText _reminder = (EditText) findViewById(R.id.enter_reminder_field);
+        EditText _minutes = (EditText) findViewById(R.id.minutes_away);
         String minutes = _minutes.getText().toString();
         String reminder = "";
         long metersAway = 50;
-        if (miles.length()>0) {
-            metersAway=convertToMeters(Double.valueOf(miles));
-        }else if(minutes.length()>0){
-            metersAway=getMinutesAwayRadius(Integer.parseInt(minutes));
-        }
-        else if (button.isChecked()) {
-           metersAway = 50;
-        }
-        else{
-            Toast.makeText(getApplicationContext(),"Please Choose A Location Trigger", Toast.LENGTH_SHORT).show();
+        if (miles.length() > 0) {
+            metersAway = convertToMeters(Double.valueOf(miles));
+        } else if (minutes.length() > 0) {
+            metersAway = getMinutesAwayRadius(Integer.parseInt(minutes));
+        } else if (button.isChecked()) {
+            metersAway = 50;
+        } else {
+            Toast.makeText(getApplicationContext(), "Please Choose A Location Trigger", Toast.LENGTH_SHORT).show();
             return;
         }
-        if(_reminder!=null){
+        if (_reminder != null) {
             reminder = _reminder.getText().toString();
         }
         Toast.makeText(getApplicationContext(),
                 "Reminder Created!", Toast.LENGTH_SHORT)
                 .show();
-        taskDataSource.createTask(destinationLocation,reminder,metersAway, Task.REMINDER_MESSAGE_TASK_TYPE);
+        taskDataSource.createTask(destinationLocation, reminder, metersAway, Task.REMINDER_MESSAGE_TASK_TYPE);
         Log.d("CreateTaskActivity", "Saved Destination");
 
     }
@@ -118,14 +299,14 @@ public class RememberSomethingActivity extends Activity implements View.OnKeyLis
         return meters;
     }
 
-    public long getMinutesAwayRadius(int minutes){
+    public long getMinutesAwayRadius(int minutes) {
         String distanceAway = distanceMeters;
         String _duration = durationSeconds;
         int meters = Integer.parseInt(distanceAway);
         int seconds = Integer.parseInt(_duration);
-        double rate = (meters/seconds);
-        double temp = rate*minutes;
-        return (long)temp*60;
+        double rate = (meters / seconds);
+        double temp = rate * minutes;
+        return (long) temp * 60;
     }
 
 
@@ -226,7 +407,7 @@ public class RememberSomethingActivity extends Activity implements View.OnKeyLis
                 Log.v("AndroidEnterKeyActivity", "Enter Key Pressed!");
                 switch (view.getId()) {
                     case R.id.enter_reminder_field:
-                        EditText enter = (EditText)findViewById(R.id.enter_reminder_field);
+                        EditText enter = (EditText) findViewById(R.id.enter_reminder_field);
                         Toast.makeText(getApplicationContext(),
                                 enter.getText().toString(), Toast.LENGTH_SHORT)
                                 .show();
@@ -238,7 +419,6 @@ public class RememberSomethingActivity extends Activity implements View.OnKeyLis
         }
         return false;
     }
-
 
 
     @Override
@@ -268,10 +448,10 @@ public class RememberSomethingActivity extends Activity implements View.OnKeyLis
 //        SharedPreferences sharedPreferences = PreferenceManager
 //                .getDefaultSharedPreferences(MyApplication.getAppContext());
 //        SharedPreferences.Editor editor = sharedPreferences.edit();
-       Log.d("GPS/APP IS OPEN", "onPause_RememberSomethingActivity");
+        Log.d("GPS/APP IS OPEN", "onPause_RememberSomethingActivity");
 //        editor.putBoolean("appIsOpen", false);
 //        editor.apply();
-       super.onPause();
+        super.onPause();
     }
 
 

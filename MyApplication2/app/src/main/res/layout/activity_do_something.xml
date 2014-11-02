@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/dark_purple"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/choose_text_phone"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="When I get there I need to..."
+                android:textColor="#ffffffff" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/destination_layout"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/destination_display"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Destination: "
+                        android:textColor="#ffffffff" />
+
+                    <TextView
+                        android:id="@+id/destination_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textColor="#ffffffff" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/distance_display"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Distance: "
+                        android:textColor="#ffffffff" />
+
+                    <TextView
+                        android:id="@+id/distance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textColor="#ffffffff" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Duration: "
+                        android:textColor="#ffffffff" />
+
+                    <TextView
+                        android:id="@+id/duration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textColor="#ffffffff" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="0dp"
+                    android:layout_weight="1"
+                    android:background="@color/lighter_purple"
+                    android:onClick="textSelected"
+                    android:text="Send text(s)"
+                    android:textColor="#ffffffff" />
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="0dp"
+                    android:layout_weight="1"
+                    android:background="@color/greenish"
+                    android:onClick="phoneSelected"
+                    android:padding="0dp"
+                    android:text="Call Someone"
+                    android:textColor="#ffffffff" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/proximity_information_text"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/baby_blue_lavender"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/send_blank_when"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="@color/white" />
+
+            <LinearLayout
+                android:id="@+id/there_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/there_checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="thereChecker"
+                    android:checked="true"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="there" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/distance_chooser_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding">
+
+                <CheckBox
+                    android:id="@+id/distance_checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="distanceChecked"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="about..." />
+
+                <com.example.rachel.wygt.EditTextClear
+                    android:clickable="false"
+                    android:id="@+id/miles_away"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="5" />
+
+                <Spinner
+                    android:clickable="false"
+                    android:id="@+id/miles_minutes_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/miles_minutes"
+                    android:prompt="@string/choose_type" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="away" />
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/enter_contacts_call_reminder"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@color/baby_blue_teal"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="remind me to call.....\n(this does not work for facebook contacts)" />
+
+            <AutoCompleteTextView
+                android:id="@+id/auto_contacts"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+                android:hint="enter contact.." />
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:background="@color/greenish"
+                android:onClick="setCallReminder"
+                android:text="Done"
+                android:textColor="#ffffffff" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/enter_contacts_text"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@color/baby_blue_lavender"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                android:text="Start Typing your contact names, separated by a comma \n(this does not work for facebook contacts)" />
+
+            <MultiAutoCompleteTextView
+                android:id="@+id/multiAuto_contacts"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="8"
+                android:hint="sent to contact(s)..." />
+
+            <com.example.rachel.wygt.EditTextClear
+                android:id="@+id/enter_reminder_field"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/abc_action_bar_default_height"
+                android:hint="enter your text message here" />
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                android:background="@color/lighter_purple"
+                android:onClick="sendTextMessage"
+                android:text="Done"
+                android:textColor="#ffffffff" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>
+

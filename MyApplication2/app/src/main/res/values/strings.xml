@@ -5,5 +5,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="full_app_name">WhenYouGetThere</string>
+    <string name="choose_type">choose distance type</string>
 
 </resources>

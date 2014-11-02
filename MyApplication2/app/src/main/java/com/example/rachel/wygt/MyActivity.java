@@ -6,6 +6,7 @@ import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -54,11 +55,23 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 
 public class MyActivity extends FragmentActivity implements GooglePlayServicesClient.ConnectionCallbacks,
@@ -87,6 +100,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
     boolean canGetLocation = false;
     private LocationManager lm;
     Location location; // location
+    private String destinationDuration, destinationDistance, destDistMeters, destDistSeconds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,7 +165,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
 
     public void getAddress(View v) {
         InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         Log.d(LOGTAG, "getAddress clicked");
         if (Build.VERSION.SDK_INT >=
                 Build.VERSION_CODES.JELLY_BEAN
@@ -345,6 +359,23 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
 ////        textView.setText(newText);
 //
 //    }
+
+
+    public String getDestinationDistance() {
+        return destinationDistance;
+    }
+
+    public void setDestinationDistance(String destinationDistance) {
+        this.destinationDistance = destinationDistance;
+    }
+
+    public String getDestinationDuration() {
+        return destinationDuration;
+    }
+
+    public void setDestinationDuration(String destinationDuration) {
+        this.destinationDuration = destinationDuration;
+    }
 
     @Override
     public void onConnected(Bundle bundle) {
@@ -544,9 +575,18 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                         @Override
                         public void onClick(DialogInterface dialog, final int which) {
                             Address selectedAddress = addressArray[which];
+                            mLocation = gpsTracker.getLocation();
+                            final LatLng currentLocation = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
                             final LatLng destinationLocation = new LatLng(selectedAddress.getLatitude(), selectedAddress.getLongitude());
                             if (_marker != null) {
                                 _marker.remove();
+                            }
+                            try {
+                                (new GetDrivingDistance()).execute(destinationLocation,currentLocation).get();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            } catch (ExecutionException e) {
+                                e.printStackTrace();
                             }
                             MarkerOptions marker = new MarkerOptions();
                             marker.position(destinationLocation).title(selectedAddress.getAddressLine(0));
@@ -566,8 +606,6 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                             }
                             Button rememberButton = (Button) findViewById(R.id.remember_button);
                             Button doSomethingButton = (Button) findViewById(R.id.do_something_button);
-                            mLocation = gpsTracker.getLocation();
-                            final LatLng currentLocation = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
                             rememberButton.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -576,6 +614,10 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                                     intent.putExtra("Destination_location", destinationLocation);
                                     intent.putExtra("Current_Location", currentLocation);
                                     intent.putExtra("Button", "Remember");
+                                    intent.putExtra("Distance",destinationDistance);
+                                    intent.putExtra("Duration", destinationDuration);
+                                    intent.putExtra("DistanceMeters", destDistMeters);
+                                    intent.putExtra("DurationSeconds", destDistSeconds);
                                     startActivity(intent);
                                 }
                             });
@@ -588,6 +630,10 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                                     intent.putExtra("Destination_location", destinationLocation);
                                     intent.putExtra("Current_Location", currentLocation);
                                     intent.putExtra("Button", "Do Something");
+                                    intent.putExtra("Distance",destinationDistance);
+                                    intent.putExtra("Duration", destinationDuration);
+                                    intent.putExtra("DistanceMeters", destDistMeters);
+                                    intent.putExtra("DurationSeconds", destDistSeconds);
                                     startActivity(intent);
                                 }
                             });
@@ -638,6 +684,98 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
             mActivityIndicator.setVisibility(View.GONE);
             long threadId = Thread.currentThread().getId();
             Log.d(LOGTAG, "onPostExecute threadID: " + threadId);
+        }
+    }
+
+    private class GetDrivingDistance extends AsyncTask<LatLng, LatLng, JSONObject> {
+
+        private ProgressDialog pDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(MyActivity.this);
+            pDialog.setMessage("Calculating Distance ...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+
+        @Override
+        protected JSONObject doInBackground(LatLng... params) {
+            Thread.currentThread().setPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND + android.os.Process.THREAD_PRIORITY_MORE_FAVORABLE);
+            LatLng _origin = params[0];
+            LatLng _destination = params[1];
+            String origin = _origin.latitude + "," + _origin.longitude;
+            String destination = _destination.latitude + "," + _destination.longitude;
+            String url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" +
+                    origin + "&destinations=" + destination +
+                    "&mode=driving&sensor=false&language=en-EN&units=imperial";
+            Double finalDistance = 0.0;
+
+
+            JSONObject _jsonObject = null;
+            try {
+                HttpClient httpClient = new DefaultHttpClient();
+                HttpResponse httpResponse = httpClient.execute(new HttpGet(url));
+                StatusLine status = httpResponse.getStatusLine();
+                if (status.getStatusCode() != 200) {
+                    Log.d("**DistanceMatrixHelper**", "HTTP error, invalid server status code: " + httpResponse.getStatusLine());
+                }
+                HttpEntity httpEntity = httpResponse.getEntity();
+                String response = EntityUtils.toString(httpEntity);
+                Log.d("RESPONSE", response);
+                _jsonObject = new JSONObject(response);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return _jsonObject;
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject jsonObject) {
+            pDialog.dismiss();
+            String duration = "";
+            JSONArray rows = null;
+            List<String> distances = new ArrayList<String>();
+            if (jsonObject != null) {
+                try {
+                    rows = jsonObject.getJSONArray("rows");
+                    for (int i = 0; i < rows.length(); i++) {
+                        JSONObject row = rows.getJSONObject(i);
+                        JSONArray elements = row.getJSONArray("elements");
+                        for (int j = 0; i < elements.length(); i++) {
+                            JSONObject element = elements.getJSONObject(0);
+                            JSONObject _duration = element.getJSONObject("duration");
+                            duration = _duration.getString("text");
+                           MyActivity.this.destDistSeconds = _duration.getString("value");
+                            JSONObject distance = element.getJSONObject("distance");
+
+                           MyActivity.this.destDistMeters = distance.getString("value");
+                            distances.add(distance.getString("text"));
+                        }
+                        String _distances = null;
+                        for (String distance : distances) {
+                            _distances = distance;
+                        }
+                        TextView _duration = (TextView) findViewById(R.id.duration_approximation);
+                        TextView _distance = (TextView) findViewById(R.id.distance_approximation);
+                      String  distance = _distances;
+                        _distance.setText(distance);
+                        _duration.setText("ETA: "+duration);
+                       MyActivity.this.setDestinationDistance(distance);
+                       MyActivity.this.setDestinationDuration(duration);
+
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
         }
     }
 }

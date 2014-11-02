@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".CreateTaskActivity">
+
+    <LinearLayout
+        android:id="@+id/proximity_information"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Send notification when I am...." />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/miles_away"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:hint="about...." />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="miles away" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/sound_settings"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/ringer_adjust"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10px"
+                android:text="Adjust Ringer volume" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/ringerIcon"
+                    android:layout_width="@dimen/abc_dropdownitem_icon_width"
+                    android:layout_height="@dimen/abc_dropdownitem_icon_width"/>
+
+                <SeekBar
+                    android:id="@+id/ringerSeek"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/media_adjust"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10px"
+                android:text="Adjust Media player volume" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/mediaIcon"
+                    android:layout_width="@dimen/abc_dropdownitem_icon_width"
+                    android:layout_height="@dimen/abc_dropdownitem_icon_width" />
+
+                <SeekBar
+                    android:id="@+id/mediaSeek"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/notification_adjust"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10px"
+                android:text="Adjust Notification volume" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/notificationIcon"
+                    android:layout_width="@dimen/abc_dropdownitem_icon_width"
+                    android:layout_height="@dimen/abc_dropdownitem_icon_width" />
+
+                <SeekBar
+                    android:id="@+id/notificationSeek"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/alarm_adjust"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10px"
+                android:text="Adjust System volume" />
+
+            <LinearLayout
+                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/systemIcon"
+                    android:layout_width="@dimen/abc_dropdownitem_icon_width"
+                    android:layout_height="@dimen/abc_dropdownitem_icon_width" />
+
+                <SeekBar
+                    android:id="@+id/systemSeek"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/minutes_away"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:hint="about...." />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="minutes away" />
+    </LinearLayout>
+
+    <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/radio_there"
+            android:layout_width="@dimen/abc_dropdownitem_icon_width"
+            android:layout_height="@dimen/abc_action_bar_default_height"
+            android:text="there" />
+
+    </RadioGroup>
+
+    <EditText
+        android:id="@+id/enter_reminder_field"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/abc_action_bar_default_height"
+        android:text="enter your reminder/ message here" />
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:onClick="setProximityAlert"
+        android:text="GO" />
+
+    <TextView
+        android:id="@+id/proximity_data"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/location_data"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="" />
+
+
+    <LinearLayout
+        android:id="@+id/Button_pushed"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/proximity_information"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Button Pushed: " />
+
+        <TextView
+            android:id="@+id/button_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/destination_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/Button_pushed"
+        android:orientation="horizontal">
+
+
+        <TextView
+            android:id="@+id/destination_display"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Destination: " />
+
+        <TextView
+            android:id="@+id/destination_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/destination_layout"
+        android:orientation="horizontal">
+
+
+        <TextView
+            android:id="@+id/distance_display"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Distance: " />
+
+        <TextView
+            android:id="@+id/distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+</LinearLayout>

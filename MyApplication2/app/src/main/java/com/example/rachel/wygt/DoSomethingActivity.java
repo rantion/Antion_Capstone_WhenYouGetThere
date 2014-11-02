@@ -2,10 +2,8 @@ package com.example.rachel.wygt;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -14,14 +12,17 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SimpleAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,7 +44,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Rachel on 10/27/14.
@@ -52,65 +52,102 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
 
     private LatLng destinationLocation, currentLocation;
     private String distance, duration, destination, distanceMeters, durationSeconds;
-    private ArrayList<Map<String, String>> mPeopleList;
+    private ArrayList<Map<String, String>> mPeopleList = MyApplication.getmPeopleList();
     private SimpleAdapter mAdapter;
     private MultiAutoCompleteTextView mTxtPhoneNo;
     private TaskDataSource taskDataSource = MyApplication.getTaskDataSource();
     private TaskContactDataSource taskContactDataSource = MyApplication.getTaskContactDataSource();
+    private CheckBox thereCheckbox, distanceCheckbox;
+    private Spinner milesMinutes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_do_something);
+        thereCheckbox = (CheckBox) findViewById(R.id.there_checkbox);
+        milesMinutes = (Spinner) findViewById(R.id.miles_minutes_spinner);
+        distanceCheckbox = (CheckBox) findViewById(R.id.distance_checkbox);
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(MyApplication.getAppContext());
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Log.d("GPS/APP IS OPEN", "appIsOpenSetTrue - DoSomethingActivity");
         editor.putBoolean("appIsOpen", true);
         editor.apply();
-        setContentView(R.layout.do_task);
-        RadioGroup group = (RadioGroup) findViewById(R.id.radio_text_call);
-        group.check(R.id.radio_text);
         Bundle extras = getIntent().getExtras();
+        EditText _distanceEdit = (EditText) findViewById(R.id.miles_away);
+        _distanceEdit.setEnabled(false);
         if (extras != null) {
             destinationLocation = (LatLng) extras.get("Destination_location");
             currentLocation = (LatLng) extras.get("Current_Location");
-            (new GetDrivingDistance()).execute(destinationLocation, currentLocation);
+            distance = extras.getString("Distance");
+            duration = extras.getString("Duration");
+            durationSeconds = extras.getString("DurationSeconds");
+            distanceMeters = extras.getString("DistanceMeters");
             (new PopulateContacts()).execute();
             destination = (String) extras.get("Destination");
             String button = (String) extras.get("Button");
             TextView _destination = (TextView) findViewById(R.id.destination_address);
-            TextView _buttonPushed = (TextView) findViewById(R.id.button_type);
+            TextView _duration = (TextView) findViewById(R.id.duration);
+            TextView _distance = (TextView) findViewById(R.id.distance);
             if (_destination != null) {
                 _destination.setText(destination);
             }
-            if (_buttonPushed != null) {
-                _buttonPushed.setText(button);
-            }
+            _duration.setText(duration);
+            _distance.setText(distance);
             TextView send = (TextView) findViewById(R.id.send_blank_when);
             send.setText("Send text(s) when I am....");
 
         }
+        hideKeyboard();
+    }
 
+    public void hideKeyboard() {
+        if(getCurrentFocus()!=null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
+    }
+
+    public void thereChecker(View view) {
+        CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox);
+        distance.setChecked(false);
+        EditText number = (EditText) findViewById(R.id.miles_away);
+        number.setEnabled(false);
+        number.setClickable(false);
+        Spinner miles = (Spinner) findViewById(R.id.miles_minutes_spinner);
+        miles.setClickable(false);
+    }
+
+    public void distanceChecked(View view) {
+        CheckBox there = (CheckBox) findViewById(R.id.there_checkbox);
+        there.setChecked(false);
+        EditText number = (EditText) findViewById(R.id.miles_away);
+        number.setEnabled(true);
+        number.setClickable(true);
+        number.setFocusableInTouchMode(true);
+        Spinner miles = (Spinner) findViewById(R.id.miles_minutes_spinner);
+        miles.setClickable(true);
     }
 
     public void sendTextMessage(View view) {
-        EditText _miles = (EditText) findViewById(R.id.miles_away);
-        String miles = _miles.getText().toString();
-        RadioButton button = (RadioButton) findViewById(R.id.radio_there);
-        EditText _reminder = (EditText) findViewById(R.id.enter_reminder_field);
+        long metersAway = 150;
         MultiAutoCompleteTextView _contacts = (MultiAutoCompleteTextView) findViewById(R.id.multiAuto_contacts);
-        String reminder = "";
-        double milesAway = 0.03;
-        if (miles.length() > 0) {
-            milesAway = Double.valueOf(miles);
-        } else if (button.isChecked()) {
-            milesAway = .03;
+        EditText _reminder = (EditText) findViewById(R.id.enter_reminder_field);
+        String reminder = "filler";
+        if (distanceCheckbox.isChecked()) {
+            EditText _miles = (EditText) findViewById(R.id.miles_away);
+            String miles = _miles.getText().toString();
+            if (milesMinutes.getSelectedItem().equals("miles")) {
+                metersAway = convertToMeters(Double.valueOf(miles));
+            } else if (milesMinutes.getSelectedItem().equals("minutes")) {
+                metersAway = getMinutesAwayRadius(Integer.parseInt(miles));
+            }
         }
         if (_reminder != null) {
             reminder = _reminder.getText().toString();
         }
-        Task task = taskDataSource.createTask(destinationLocation, reminder, convertToMeters(milesAway), Task.TEXT_MESSAGE_TASK_TYPE);
+        Task task = taskDataSource.createTask(destinationLocation, reminder, metersAway, Task.TEXT_MESSAGE_TASK_TYPE);
         Log.d("DOSOMETHINGActivity", "Saved Destination");
         String contacts = _contacts.getText().toString();
         String[] num1 = contacts.split("<");
@@ -133,14 +170,14 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
                 .show();
     }
 
-    public long getMinutesAwayRadius(int minutes){
+    public long getMinutesAwayRadius(int minutes) {
         String distanceAway = distanceMeters;
         String _duration = durationSeconds;
         int meters = Integer.parseInt(distanceAway);
         int seconds = Integer.parseInt(_duration);
-        double rate = (meters/seconds);
-        double temp = rate*minutes;
-        return (long)temp*60;
+        double rate = (meters / seconds);
+        double temp = rate * minutes;
+        return (long) temp * 60;
     }
 
     public void setCallReminder(View view) {
@@ -176,76 +213,13 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
 
 
     private class PopulateContacts extends AsyncTask<Void, Void, ArrayList<Map<String, String>>> {
-
-        private ArrayList<Map<String, String>> mPeopleList = new ArrayList<Map<String, String>>();
-        private ProgressDialog prDialog;
-
-        @Override
-        protected void onPreExecute() {
-
-            prDialog = new ProgressDialog(DoSomethingActivity.this);
-            prDialog.setMessage("Loading Contacts ...");
-            prDialog.setIndeterminate(false);
-            prDialog.setCancelable(true);
-            prDialog.show();
-            super.onPreExecute();
-        }
-
         @Override
         protected ArrayList<Map<String, String>> doInBackground(Void... params) {
-            Thread.currentThread().setPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND + android.os.Process.THREAD_PRIORITY_MORE_FAVORABLE);
-            mPeopleList.clear();
-            Cursor people = getContentResolver().query(
-                    ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
-            while (people.moveToNext()) {
-                String contactName = people.getString(people
-                        .getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-                String contactId = people.getString(people
-                        .getColumnIndex(ContactsContract.Contacts._ID));
-                String hasPhone = people
-                        .getString(people
-                                .getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
-
-                if ((Integer.parseInt(hasPhone) > 0)) {
-                    // You know have the number so now query it like this
-                    Cursor phones = getContentResolver().query(
-                            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                            null,
-                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + contactId,
-                            null, null);
-                    while (phones.moveToNext()) {
-                        //store numbers and display a dialog letting the user select which.
-                        String phoneNumber = phones.getString(
-                                phones.getColumnIndex(
-                                        ContactsContract.CommonDataKinds.Phone.NUMBER)
-                        );
-                        String numberType = phones.getString(phones.getColumnIndex(
-                                ContactsContract.CommonDataKinds.Phone.TYPE));
-                        Map<String, String> NamePhoneType = new HashMap<String, String>();
-                        NamePhoneType.put("Name", contactName);
-                        NamePhoneType.put("Phone", phoneNumber);
-                        if (numberType.equals("0"))
-                            NamePhoneType.put("Type", "Work");
-                        else if (numberType.equals("1"))
-                            NamePhoneType.put("Type", "Home");
-                        else if (numberType.equals("2"))
-                            NamePhoneType.put("Type", "Mobile");
-                        else
-                            NamePhoneType.put("Type", "Other");
-                        //Then add this map to the list.
-                        mPeopleList.add(NamePhoneType);
-                    }
-                    phones.close();
-                }
-            }
-            people.close();
-            startManagingCursor(people);
-            return mPeopleList;
+            return DoSomethingActivity.this.mPeopleList;
         }
 
         @Override
         protected void onPostExecute(ArrayList<Map<String, String>> maps) {
-            prDialog.dismiss();
             final List<String> numbers = new ArrayList<String>();
             mAdapter = new SimpleAdapter(MyApplication.getAppContext(), mPeopleList, R.layout.custcontview,
                     new String[]{"Name", "Phone", "Type"}, new int[]{
@@ -294,20 +268,20 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     }
 
     public void phoneSelected(View view) {
-        RadioGroup group = (RadioGroup) findViewById(R.id.radio_text_call);
-        group.check(R.id.radio_call);
         TextView send = (TextView) findViewById(R.id.send_blank_when);
-        send.setText("Send reminder when I am....");
+        send.setText("Send me reminder when I am....");
         LinearLayout text = (LinearLayout) findViewById(R.id.enter_contacts_text);
         text.setVisibility(View.GONE);
+        LinearLayout proximity = (LinearLayout) findViewById(R.id.proximity_information_text);
+        proximity.setBackgroundColor(getResources().getColor(R.color.baby_blue_teal));
         LinearLayout phone = (LinearLayout) findViewById(R.id.enter_contacts_call_reminder);
         phone.setVisibility(View.VISIBLE);
 
     }
 
     public void textSelected(View view) {
-        RadioGroup group = (RadioGroup) findViewById(R.id.radio_text_call);
-        group.check(R.id.radio_text);
+        LinearLayout proximity = (LinearLayout) findViewById(R.id.proximity_information_text);
+        proximity.setBackgroundColor(getResources().getColor(R.color.baby_blue_lavender));
         TextView send = (TextView) findViewById(R.id.send_blank_when);
         send.setText("Send text(s) when I am....");
         LinearLayout text = (LinearLayout) findViewById(R.id.enter_contacts_text);
@@ -322,93 +296,6 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
         return meters;
     }
 
-
-    private class GetDrivingDistance extends AsyncTask<LatLng, LatLng, JSONObject> {
-
-        private ProgressDialog pDialog;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            pDialog = new ProgressDialog(DoSomethingActivity.this);
-            pDialog.setMessage("Performing Calculations ...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
-            pDialog.show();
-        }
-
-        @Override
-        protected JSONObject doInBackground(LatLng... params) {
-            Thread.currentThread().setPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND + android.os.Process.THREAD_PRIORITY_MORE_FAVORABLE);
-            LatLng _origin = params[0];
-            LatLng _destination = params[1];
-            String origin = _origin.latitude + "," + _origin.longitude;
-            String destination = _destination.latitude + "," + _destination.longitude;
-            String url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" +
-                    origin + "&destinations=" + destination +
-                    "&mode=driving&sensor=false&language=en-EN&units=imperial";
-            Double finalDistance = 0.0;
-
-
-            JSONObject _jsonObject = null;
-            try {
-                HttpClient httpClient = new DefaultHttpClient();
-                HttpResponse httpResponse = httpClient.execute(new HttpGet(url));
-                StatusLine status = httpResponse.getStatusLine();
-                if (status.getStatusCode() != 200) {
-                    Log.d("**DistanceMatrixHelper**", "HTTP error, invalid server status code: " + httpResponse.getStatusLine());
-                }
-                HttpEntity httpEntity = httpResponse.getEntity();
-                String response = EntityUtils.toString(httpEntity);
-                Log.d("RESPONSE", response);
-                _jsonObject = new JSONObject(response);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return _jsonObject;
-        }
-
-        @Override
-        protected void onPostExecute(JSONObject jsonObject) {
-            pDialog.dismiss();
-            JSONArray rows = null;
-            List<String> distances = new ArrayList<String>();
-            if (jsonObject != null) {
-                try {
-                    rows = jsonObject.getJSONArray("rows");
-                    for (int i = 0; i < rows.length(); i++) {
-                        JSONObject row = rows.getJSONObject(i);
-                        JSONArray elements = row.getJSONArray("elements");
-                        for (int j = 0; i < elements.length(); i++) {
-                            JSONObject element = elements.getJSONObject(0);
-                            JSONObject _duration = element.getJSONObject("duration");
-                            duration = _duration.getString("text");
-                            durationSeconds = _duration.getString("value");
-                            JSONObject distance = element.getJSONObject("distance");
-                            distanceMeters = distance.getString("value");
-                            distances.add(distance.getString("text"));
-                        }
-                        String _distances = null;
-                        for (String distance : distances) {
-                            _distances = distance + "\n\n";
-                        }
-                        TextView _distance = (TextView) findViewById(R.id.distance);
-//                        _distance.setText(_distances);
-                        distance = _distances;
-                        _distance.setText(distance + "\n ETA: " + duration);
-
-
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        }
-    }
 
     @Override
     public boolean onKey(View view, int keyCode, KeyEvent event) {
