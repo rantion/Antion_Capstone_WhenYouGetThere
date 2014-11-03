@@ -13,6 +13,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String TABLE_TASK = "task";
     public static final String TABLE_TASK_CONTACT = "task_contact";
     public static final String TABLE_TASK_LIST_ITEM = "task_list_item";
+    public static final String TABLE_TASK_SOUND = "task_sound";
    //task table column names
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_LATITUDE = "latitude";
@@ -28,23 +29,37 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     //task_list_item table column names
     public static final String COLUMN_LIST_ITEM = "list_item";
     public static final String COLUMN_LIST_INDEX = "list_index";
+    //task_sound table column names
+    public static final String COLUMN_MEDIA_LVL = "media_lvl";
+    public static final String COLUMN_RINGER_LVL = "ringer_lvl";
+    public static final String COLUMN_SYSTEM_LVL = "system_lvl";
+    public static final String COLUMN_NOTIFICATION_LVL = "notification_lvl";
+
 
 
     private static final String TASK_DB = "task.db";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     // Database creation sql statement
     private static final String CREATE_TASK_DB = "create table "
             + TABLE_TASK + "(" + COLUMN_ID
             + " integer primary key autoincrement, " + COLUMN_REMINDER
-            + " text not null, "+COLUMN_LATITUDE +" real,"+COLUMN_LONGITUDE+" real, "+COLUMN_RADIUS+" numeric," +COLUMN_TIME+" numeric,"+COLUMN_TASK_TYPE+" integer);";
+            + " text, "+COLUMN_LATITUDE +" real,"+COLUMN_LONGITUDE+" real, "+COLUMN_RADIUS+
+            " numeric," +COLUMN_TIME+" numeric,"+COLUMN_TASK_TYPE+" integer);";
 
     private static final String CREATE_TASK_CONTACT_DB ="create table " +TABLE_TASK_CONTACT+"("+ COLUMN_ID
-            + " integer primary key autoincrement, " +COLUMN_PHONE_NUMBER+" text not null, "+COLUMN_CONTACT_NAME+" text not null, "+ COLUMN_TASK_ID + " integer,"
+            + " integer primary key autoincrement, " +COLUMN_PHONE_NUMBER+" text not null, "+COLUMN_CONTACT_NAME
+            +" text not null, "+ COLUMN_TASK_ID + " integer,"
             + " FOREIGN KEY ("+COLUMN_TASK_ID+") REFERENCES "+COLUMN_ID+" ("+TABLE_TASK+"));";
 
     private static final String CREATE_TASK_LIST_ITEM_DB ="create table " +TABLE_TASK_LIST_ITEM+"("+ COLUMN_ID
-            + " integer primary key autoincrement, " +COLUMN_LIST_ITEM+" text not null, "+COLUMN_LIST_INDEX+" integer, "+ COLUMN_TASK_ID + " integer,"
+            + " integer primary key autoincrement, " +COLUMN_LIST_ITEM+" text not null, "+COLUMN_LIST_INDEX+
+            " integer, "+ COLUMN_TASK_ID + " integer,"
+            + " FOREIGN KEY ("+COLUMN_TASK_ID+") REFERENCES "+COLUMN_ID+" ("+TABLE_TASK+"));";
+
+    private static final String CREATE_TASK_SOUND_DB = "create table " +TABLE_TASK_SOUND+"("+ COLUMN_ID
+            + " integer primary key autoincrement, " +COLUMN_MEDIA_LVL+" integer, "+COLUMN_RINGER_LVL+" integer, "+
+            COLUMN_SYSTEM_LVL+" integer, "+COLUMN_NOTIFICATION_LVL+" integer, "+ COLUMN_TASK_ID + " integer,"
             + " FOREIGN KEY ("+COLUMN_TASK_ID+") REFERENCES "+COLUMN_ID+" ("+TABLE_TASK+"));";
 
     public MySQLiteHelper(Context context) {

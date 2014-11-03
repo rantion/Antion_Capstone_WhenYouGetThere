@@ -82,12 +82,8 @@ public class RememberSomethingActivity extends Activity implements View.OnKeyLis
             destination = (String) extras.get("Destination");
             String button = (String) extras.get("Button");
             TextView _destination = (TextView) findViewById(R.id.destination_address);
-            TextView _buttonPushed = (TextView) findViewById(R.id.button_type);
             if (_destination != null) {
                 _destination.setText(destination);
-            }
-            if (_buttonPushed != null) {
-                _buttonPushed.setText(button);
             }
             initControls();
 
@@ -265,32 +261,32 @@ public class RememberSomethingActivity extends Activity implements View.OnKeyLis
 
     public void setProximityAlert(View view) {
 
-        EditText _miles = (EditText) findViewById(R.id.miles_away);
-        String miles = _miles.getText().toString();
-        RadioButton button = (RadioButton) findViewById(R.id.radio_there);
-        EditText _reminder = (EditText) findViewById(R.id.enter_reminder_field);
-        EditText _minutes = (EditText) findViewById(R.id.minutes_away);
-        String minutes = _minutes.getText().toString();
-        String reminder = "";
-        long metersAway = 50;
-        if (miles.length() > 0) {
-            metersAway = convertToMeters(Double.valueOf(miles));
-        } else if (minutes.length() > 0) {
-            metersAway = getMinutesAwayRadius(Integer.parseInt(minutes));
-        } else if (button.isChecked()) {
-            metersAway = 50;
-        } else {
-            Toast.makeText(getApplicationContext(), "Please Choose A Location Trigger", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (_reminder != null) {
-            reminder = _reminder.getText().toString();
-        }
-        Toast.makeText(getApplicationContext(),
-                "Reminder Created!", Toast.LENGTH_SHORT)
-                .show();
-        taskDataSource.createTask(destinationLocation, reminder, metersAway, Task.REMINDER_MESSAGE_TASK_TYPE);
-        Log.d("CreateTaskActivity", "Saved Destination");
+//        EditText _miles = (EditText) findViewById(R.id.miles_away);
+//        String miles = _miles.getText().toString();
+//        RadioButton button = (RadioButton) findViewById(R.id.radio_there);
+//        EditText _reminder = (EditText) findViewById(R.id.enter_reminder_field);
+//        EditText _minutes = (EditText) findViewById(R.id.minutes_away);
+//        String minutes = _minutes.getText().toString();
+//        String reminder = "";
+//        long metersAway = 50;
+//        if (miles.length() > 0) {
+//            metersAway = convertToMeters(Double.valueOf(miles));
+//        } else if (minutes.length() > 0) {
+//            metersAway = getMinutesAwayRadius(Integer.parseInt(minutes));
+//        } else if (button.isChecked()) {
+//            metersAway = 50;
+//        } else {
+//            Toast.makeText(getApplicationContext(), "Please Choose A Location Trigger", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//        if (_reminder != null) {
+//            reminder = _reminder.getText().toString();
+//        }
+//        Toast.makeText(getApplicationContext(),
+//                "Reminder Created!", Toast.LENGTH_SHORT)
+//                .show();
+//        taskDataSource.createTask(destinationLocation, reminder, metersAway, Task.REMINDER_MESSAGE_TASK_TYPE);
+//        Log.d("CreateTaskActivity", "Saved Destination");
 
     }
 

@@ -2,8 +2,11 @@ package com.example.rachel.wygt;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -17,10 +20,12 @@ import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.SeekBar;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -55,19 +60,24 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     private ArrayList<Map<String, String>> mPeopleList = MyApplication.getmPeopleList();
     private SimpleAdapter mAdapter;
     private MultiAutoCompleteTextView mTxtPhoneNo;
+    private TaskSoundDataSource taskSoundDataSource = MyApplication.getTaskSoundDataSource();
     private TaskDataSource taskDataSource = MyApplication.getTaskDataSource();
     private TaskContactDataSource taskContactDataSource = MyApplication.getTaskContactDataSource();
-    private CheckBox thereCheckbox, distanceCheckbox;
-    private Spinner milesMinutes;
+    private SeekBar mediaVlmSeekBar = null;
+    private SeekBar ringerVlmSeekBar = null;
+    private SeekBar alarmVlmSeekBar = null;
+    private SeekBar notifyVlmSeekBar = null;
+    private AudioManager audioManager = null;
+    private int mediaMax, ringerMax, notifyMax, alarmMax, ringCurrent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_do_something);
-        thereCheckbox = (CheckBox) findViewById(R.id.there_checkbox);
-        milesMinutes = (Spinner) findViewById(R.id.miles_minutes_spinner);
-        distanceCheckbox = (CheckBox) findViewById(R.id.distance_checkbox);
+        this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        this.setVolumeControlStream(AudioManager.STREAM_RING);
+        this.setVolumeControlStream(AudioManager.STREAM_ALARM);
+        this.setVolumeControlStream(AudioManager.STREAM_NOTIFICATION);
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(MyApplication.getAppContext());
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -75,8 +85,6 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
         editor.putBoolean("appIsOpen", true);
         editor.apply();
         Bundle extras = getIntent().getExtras();
-        EditText _distanceEdit = (EditText) findViewById(R.id.miles_away);
-        _distanceEdit.setEnabled(false);
         if (extras != null) {
             destinationLocation = (LatLng) extras.get("Destination_location");
             currentLocation = (LatLng) extras.get("Current_Location");
@@ -95,39 +103,300 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
             }
             _duration.setText(duration);
             _distance.setText(distance);
-            TextView send = (TextView) findViewById(R.id.send_blank_when);
-            send.setText("Send text(s) when I am....");
-
         }
         hideKeyboard();
+        initControls();
     }
 
+    private Drawable getVolumeIcon(int max, int current, int type) {
+        Drawable icon = null;
+        float third = (max/3);
+        float twoThirds = (third*2);
+        if(current==0){
+            if(type == SoundSettings.SOUND_TYPE_RINGER && current == 0) {
+                icon = getResources().getDrawable(R.drawable.vibrate);
+            }
+            else{
+                icon = getResources().getDrawable(R.drawable.mute);
+            }
+        }
+        else if (current < third ){
+            icon = getResources().getDrawable(R.drawable.volume1);
+        }
+        else if (current >= third && current <= twoThirds) {
+            icon = getResources().getDrawable(R.drawable.volume2);
+        }
+        else if (current >= twoThirds) {
+            icon = getResources().getDrawable(R.drawable.volume3);
+        }
+        return icon;
+    }
+
+    private void initControls() {
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+        mediaVlmSeekBar = (SeekBar) findViewById(R.id.mediaSeek);
+        mediaMax = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        int mediaCurrent = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        mediaVlmSeekBar.setMax(mediaMax);
+        mediaVlmSeekBar.setProgress(mediaCurrent);
+        ImageView mediaIcon = (ImageView)findViewById(R.id.mediaIcon);
+        mediaIcon.setImageDrawable(getVolumeIcon(mediaMax,mediaCurrent,SoundSettings.SOUND_TYPE_MEDIA));
+
+        ringerVlmSeekBar = (SeekBar) findViewById(R.id.ringerSeek);
+        ringerMax = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING);
+        ringCurrent = audioManager.getStreamVolume(AudioManager.STREAM_RING);
+        ringerVlmSeekBar.setMax(ringerMax);
+        ringerVlmSeekBar.setProgress(ringCurrent);
+        ImageView ringerIcon = (ImageView)findViewById(R.id.ringerIcon);
+        ringerIcon.setImageDrawable(getVolumeIcon(ringerMax, ringCurrent, SoundSettings.SOUND_TYPE_RINGER));
+
+        alarmVlmSeekBar = (SeekBar) findViewById(R.id.systemSeek);
+        alarmMax = audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+        int alarmCurrent = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+        alarmVlmSeekBar.setMax(alarmMax);
+        alarmVlmSeekBar.setProgress(alarmCurrent);
+        ImageView alarmIcon = (ImageView)findViewById(R.id.systemIcon);
+        alarmIcon.setImageDrawable(getVolumeIcon(alarmMax,alarmCurrent,SoundSettings.SOUND_TYPE_ALARM));
+
+        notifyVlmSeekBar = (SeekBar) findViewById(R.id.notificationSeek);
+        notifyMax = audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION);
+        int notifyCurrent = audioManager.getStreamVolume(AudioManager.STREAM_NOTIFICATION);
+        notifyVlmSeekBar.setMax(notifyMax);
+        notifyVlmSeekBar.setProgress(notifyCurrent);
+        ImageView notifyIcon = (ImageView)findViewById(R.id.notificationIcon);
+        notifyIcon.setImageDrawable(getVolumeIcon(notifyMax,notifyCurrent,SoundSettings.SOUND_TYPE_NOTIFICATION));
+
+        if(ringCurrent == 0){
+            ringIs0();
+        }
+
+        try {
+            mediaVlmSeekBar
+                    .setOnSeekBarChangeListener(mediaChangeListener);
+            ringerVlmSeekBar
+                    .setOnSeekBarChangeListener(ringerChangeListener);
+            alarmVlmSeekBar
+                    .setOnSeekBarChangeListener(alarmChangeListener);
+            notifyVlmSeekBar
+                    .setOnSeekBarChangeListener(notificationChangeListener);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private SeekBar.OnSeekBarChangeListener notificationChangeListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            ImageView notify = (ImageView) findViewById(R.id.notificationIcon);
+            notify.setImageDrawable(getVolumeIcon(notifyMax,progress,SoundSettings.SOUND_TYPE_NOTIFICATION));
+            audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, progress, 0);
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    };
+
+    private SeekBar.OnSeekBarChangeListener alarmChangeListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            ImageView alarm = (ImageView) findViewById(R.id.systemIcon);
+            alarm.setImageDrawable(getVolumeIcon(alarmMax, progress, SoundSettings.SOUND_TYPE_ALARM));
+            audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, progress, 0);
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    };
+
+    private void ringIs0(){
+        audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION,0, 0);
+        audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM,0,0);
+        alarmVlmSeekBar.setProgress(0);
+        notifyVlmSeekBar.setProgress(0);
+        notifyVlmSeekBar.setEnabled(false);
+        alarmVlmSeekBar.setEnabled(false);
+    }
+
+    private SeekBar.OnSeekBarChangeListener ringerChangeListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            ImageView ringer = (ImageView) findViewById(R.id.ringerIcon);
+            ringer.setImageDrawable(getVolumeIcon(ringerMax, progress, SoundSettings.SOUND_TYPE_RINGER));
+            if(progress == 0){
+                ringIs0();
+            }
+            else {
+                notifyVlmSeekBar.setEnabled(true);
+                alarmVlmSeekBar.setEnabled(true);
+            }
+            audioManager.setStreamVolume(AudioManager.STREAM_RING, progress, 0);
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    };
+
+    private SeekBar.OnSeekBarChangeListener mediaChangeListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            ImageView media = (ImageView) findViewById(R.id.mediaIcon);
+            media.setImageDrawable(getVolumeIcon(mediaMax,progress,SoundSettings.SOUND_TYPE_MEDIA));
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0);
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    };
+
     public void hideKeyboard() {
-        if(getCurrentFocus()!=null) {
+        if (getCurrentFocus() != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
     }
 
-    public void thereChecker(View view) {
-        CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox);
+    public void thereCheckerText(View view) {
+        CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_text);
         distance.setChecked(false);
-        EditText number = (EditText) findViewById(R.id.miles_away);
+        EditText number = (EditText) findViewById(R.id.miles_away_text);
         number.setEnabled(false);
         number.setClickable(false);
-        Spinner miles = (Spinner) findViewById(R.id.miles_minutes_spinner);
+        Spinner miles = (Spinner) findViewById(R.id.spinner_text_miles_minute);
         miles.setClickable(false);
     }
 
-    public void distanceChecked(View view) {
-        CheckBox there = (CheckBox) findViewById(R.id.there_checkbox);
+    public void thereCheckerCall(View view) {
+        CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_call);
+        distance.setChecked(false);
+        EditText number = (EditText) findViewById(R.id.miles_away_call);
+        number.setEnabled(false);
+        number.setClickable(false);
+        Spinner miles = (Spinner) findViewById(R.id.spinner_call_miles_minutes);
+        miles.setClickable(false);
+    }
+
+    public void distanceCheckedText(View view) {
+        CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_text);
         there.setChecked(false);
-        EditText number = (EditText) findViewById(R.id.miles_away);
+        EditText number = (EditText) findViewById(R.id.miles_away_text);
         number.setEnabled(true);
         number.setClickable(true);
         number.setFocusableInTouchMode(true);
-        Spinner miles = (Spinner) findViewById(R.id.miles_minutes_spinner);
+        Spinner miles = (Spinner) findViewById(R.id.spinner_text_miles_minute);
         miles.setClickable(true);
+    }
+
+    public void distanceCheckedCall(View view) {
+        CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_call);
+        there.setChecked(false);
+        EditText number = (EditText) findViewById(R.id.miles_away_call);
+        number.setEnabled(true);
+        number.setClickable(true);
+        number.setFocusableInTouchMode(true);
+        Spinner miles = (Spinner) findViewById(R.id.spinner_call_miles_minutes);
+        miles.setClickable(true);
+    }
+
+    public void thereCheckerReminder(View view) {
+        CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_reminder);
+        distance.setChecked(false);
+        EditText number = (EditText) findViewById(R.id.miles_away_reminder);
+        number.setEnabled(false);
+        number.setClickable(false);
+        Spinner miles = (Spinner) findViewById(R.id.spinner_reminder_miles_minutes);
+        miles.setClickable(false);
+    }
+
+    public void distanceCheckedReminder(View view) {
+        CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_reminder);
+        there.setChecked(false);
+        EditText number = (EditText) findViewById(R.id.miles_away_reminder);
+        number.setEnabled(true);
+        number.setClickable(true);
+        number.setFocusableInTouchMode(true);
+        Spinner miles = (Spinner) findViewById(R.id.spinner_reminder_miles_minutes);
+        miles.setClickable(true);
+    }
+
+    public void thereCheckerSound(View view) {
+        CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_sound);
+        distance.setChecked(false);
+        EditText number = (EditText) findViewById(R.id.miles_away_sound);
+        number.setEnabled(false);
+        number.setClickable(false);
+        Spinner miles = (Spinner) findViewById(R.id.spinner_sound_miles_minutes);
+        miles.setClickable(false);
+    }
+
+    public void distanceCheckedSound(View view) {
+        CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_sound);
+        there.setChecked(false);
+        EditText number = (EditText) findViewById(R.id.miles_away_sound);
+        number.setEnabled(true);
+        number.setClickable(true);
+        number.setFocusableInTouchMode(true);
+        Spinner miles = (Spinner) findViewById(R.id.spinner_sound_miles_minutes);
+        miles.setClickable(true);
+    }
+
+    public void setSound(View view){
+        long metersAway = 150;
+        CheckBox distanceCheckbox = (CheckBox) findViewById(R.id.distance_checkbox_sound);
+        Spinner milesMinutes = (Spinner) findViewById(R.id.spinner_sound_miles_minutes);
+        if (distanceCheckbox.isChecked()) {
+            EditText _miles = (EditText) findViewById(R.id.miles_away_sound);
+            String miles = _miles.getText().toString();
+            if (miles.length() == 0) {
+                Toast.makeText(this, "Please Enter a Distance", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (milesMinutes.getSelectedItem().equals("miles")) {
+                metersAway = convertToMeters(Double.valueOf(miles));
+            } else if (milesMinutes.getSelectedItem().equals("minutes")) {
+                metersAway = getMinutesAwayRadius(Integer.parseInt(miles));
+            }
+        }
+
+        int media = mediaVlmSeekBar.getProgress();
+        int ring = ringerVlmSeekBar.getProgress();
+        int system = alarmVlmSeekBar.getProgress();
+        int nofity = notifyVlmSeekBar.getProgress();
+        Task task = taskDataSource.createTask(destinationLocation, "", metersAway, Task.SOUND_SETTING_TASK_TYPE);
+        taskSoundDataSource.createSoundSettings(media,ring,nofity,system,task.getId());
+        Toast.makeText(getApplicationContext(),
+                "Sound Setting Created!", Toast.LENGTH_SHORT)
+                .show();
+
+
     }
 
     public void sendTextMessage(View view) {
@@ -135,9 +404,15 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
         MultiAutoCompleteTextView _contacts = (MultiAutoCompleteTextView) findViewById(R.id.multiAuto_contacts);
         EditText _reminder = (EditText) findViewById(R.id.enter_reminder_field);
         String reminder = "filler";
+        CheckBox distanceCheckbox = (CheckBox) findViewById(R.id.distance_checkbox_text);
+        Spinner milesMinutes = (Spinner) findViewById(R.id.spinner_text_miles_minute);
         if (distanceCheckbox.isChecked()) {
-            EditText _miles = (EditText) findViewById(R.id.miles_away);
+            EditText _miles = (EditText) findViewById(R.id.miles_away_text);
             String miles = _miles.getText().toString();
+            if (miles.length() == 0) {
+                Toast.makeText(this, "Please Enter a Distance", Toast.LENGTH_SHORT).show();
+                return;
+            }
             if (milesMinutes.getSelectedItem().equals("miles")) {
                 metersAway = convertToMeters(Double.valueOf(miles));
             } else if (milesMinutes.getSelectedItem().equals("minutes")) {
@@ -181,18 +456,26 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     }
 
     public void setCallReminder(View view) {
+        long metersAway = 150;
         Log.d("DoSomethingActivity", "setCallReminderCalled");
-        EditText _miles = (EditText) findViewById(R.id.miles_away);
-        String miles = _miles.getText().toString();
-        RadioButton button = (RadioButton) findViewById(R.id.radio_there);
-        AutoCompleteTextView _contacts = (AutoCompleteTextView) findViewById(R.id.auto_contacts);
-        double milesAway = 0.03;
-        if (miles.length() > 0) {
-            milesAway = Double.valueOf(miles);
-        } else if (button.isChecked()) {
-            milesAway = .03;
+        CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_call);
+        Spinner milesMin = (Spinner) findViewById(R.id.spinner_call_miles_minutes);
+        if (distance.isChecked()) {
+            EditText _miles = (EditText) findViewById(R.id.miles_away_call);
+            String miles = _miles.getText().toString();
+            if (miles.length() == 0) {
+                Toast.makeText(this, "Please Enter a Distance", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (milesMin.getSelectedItem().equals("miles")) {
+                metersAway = convertToMeters(Double.valueOf(miles));
+            } else if (milesMin.getSelectedItem().equals("minutes")) {
+                metersAway = getMinutesAwayRadius(Integer.parseInt(miles));
+            }
         }
-        Task task = taskDataSource.createTask(destinationLocation, "", convertToMeters(milesAway), Task.CALL_REMINDER_TASK_TYPE);
+
+        AutoCompleteTextView _contacts = (AutoCompleteTextView) findViewById(R.id.auto_contacts);
+        Task task = taskDataSource.createTask(destinationLocation, "", metersAway, Task.CALL_REMINDER_TASK_TYPE);
         String contacts = _contacts.getText().toString();
         String[] num1 = contacts.split("<");
         for (int i = 1; i < num1.length; i++) {
@@ -206,6 +489,9 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
                 name = num4[1];
             }
             TaskContact contact = taskContactDataSource.createTaskContact(num2[0], name, task.getId());
+            Toast.makeText(getApplicationContext(),
+                    "Call Reminder Created!", Toast.LENGTH_SHORT)
+                    .show();
             Log.d("DOSOMETHINGACTIVITY", contact.toString());
         }
 
@@ -268,32 +554,76 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     }
 
     public void phoneSelected(View view) {
-        TextView send = (TextView) findViewById(R.id.send_blank_when);
-        send.setText("Send me reminder when I am....");
-        LinearLayout text = (LinearLayout) findViewById(R.id.enter_contacts_text);
-        text.setVisibility(View.GONE);
-        LinearLayout proximity = (LinearLayout) findViewById(R.id.proximity_information_text);
-        proximity.setBackgroundColor(getResources().getColor(R.color.baby_blue_teal));
         LinearLayout phone = (LinearLayout) findViewById(R.id.enter_contacts_call_reminder);
-        phone.setVisibility(View.VISIBLE);
+        if (phone.getVisibility() != View.VISIBLE) {
+            phone.setVisibility(View.VISIBLE);
+        } else if (phone.getVisibility() == View.VISIBLE) {
+            phone.setVisibility(View.GONE);
+        }
+    }
 
+    public void soundSelected(View view) {
+        LinearLayout sound = (LinearLayout) findViewById(R.id.sound_layout);
+        if (sound.getVisibility() != View.VISIBLE) {
+            sound.setVisibility(View.VISIBLE);
+        } else if (sound.getVisibility() == View.VISIBLE) {
+            sound.setVisibility(View.GONE);
+        }
     }
 
     public void textSelected(View view) {
-        LinearLayout proximity = (LinearLayout) findViewById(R.id.proximity_information_text);
-        proximity.setBackgroundColor(getResources().getColor(R.color.baby_blue_lavender));
-        TextView send = (TextView) findViewById(R.id.send_blank_when);
-        send.setText("Send text(s) when I am....");
         LinearLayout text = (LinearLayout) findViewById(R.id.enter_contacts_text);
-        text.setVisibility(View.VISIBLE);
-        LinearLayout phone = (LinearLayout) findViewById(R.id.enter_contacts_call_reminder);
-        phone.setVisibility(View.GONE);
+        if (text.getVisibility() != View.VISIBLE) {
+            text.setVisibility(View.VISIBLE);
+        } else if (text.getVisibility() == View.VISIBLE) {
+            text.setVisibility(View.GONE);
+        }
+    }
+
+    public void reminderSelected(View view) {
+        LinearLayout reminder = (LinearLayout) findViewById(R.id.reminder_layout);
+        if (reminder.getVisibility() != View.VISIBLE) {
+            reminder.setVisibility(View.VISIBLE);
+        } else if (reminder.getVisibility() == View.VISIBLE) {
+            reminder.setVisibility(View.GONE);
+        }
     }
 
 
     public long convertToMeters(double miles) {
         long meters = (long) (miles * 1609.34);
         return meters;
+    }
+
+    public void setReminder(View view) {
+        long metersAway = 150;
+        Log.d("DoSomethingActivity", "setReminderCalled");
+        CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_reminder);
+        Spinner milesMin = (Spinner) findViewById(R.id.spinner_reminder_miles_minutes);
+        EditText _reminder = (EditText) findViewById(R.id.reminder_edit_text);
+        String reminder = "";
+        if (distance.isChecked()) {
+            EditText _miles = (EditText) findViewById(R.id.miles_away_reminder);
+            String miles = _miles.getText().toString();
+            if (miles.length() == 0) {
+                Toast.makeText(this, "Please Enter a Distance", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (milesMin.getSelectedItem().equals("miles")) {
+                metersAway = convertToMeters(Double.valueOf(miles));
+            } else if (milesMin.getSelectedItem().equals("minutes")) {
+                metersAway = getMinutesAwayRadius(Integer.parseInt(miles));
+            }
+        }
+        if (_reminder != null) {
+            reminder = _reminder.getText().toString();
+        }
+        Toast.makeText(getApplicationContext(),
+                "Reminder Created!", Toast.LENGTH_SHORT)
+                .show();
+        taskDataSource.createTask(destinationLocation, reminder, metersAway, Task.REMINDER_MESSAGE_TASK_TYPE);
+        Log.d("CreateTaskActivity", "Saved Destination");
+
     }
 
 

@@ -29,6 +29,7 @@ public class MyApplication extends Application {
     protected static GPSTracker gpsTracker;
     protected static TaskContactDataSource taskContactDataSource;
     protected static TaskDataSource taskDataSource;
+    protected static TaskSoundDataSource taskSoundDataSource;
     private static Context context;
     private static ArrayList<Map<String, String>> mPeopleList;
 
@@ -39,6 +40,8 @@ public class MyApplication extends Application {
             taskDataSource.open();
             taskContactDataSource = new TaskContactDataSource(context);
             taskContactDataSource.open();
+            taskSoundDataSource = new TaskSoundDataSource(context);
+            taskSoundDataSource.open();
         }
         catch(Exception e) {
             e.printStackTrace();
@@ -58,6 +61,13 @@ public class MyApplication extends Application {
         return gpsTracker;
     }
 
+    public static TaskSoundDataSource getTaskSoundDataSource() {
+        return taskSoundDataSource;
+    }
+
+    public static void setTaskSoundDataSource(TaskSoundDataSource taskSoundDataSource) {
+        MyApplication.taskSoundDataSource = taskSoundDataSource;
+    }
 
     public static TaskDataSource getTaskDataSource() {
         return taskDataSource;

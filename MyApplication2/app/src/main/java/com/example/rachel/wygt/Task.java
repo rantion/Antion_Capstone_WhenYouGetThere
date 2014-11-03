@@ -13,6 +13,7 @@ public class Task {
     public static final int TEXT_MESSAGE_TASK_TYPE = 1;
     public static final int REMINDER_MESSAGE_TASK_TYPE = 2;
     public static final int CALL_REMINDER_TASK_TYPE = 3;
+    public static final int SOUND_SETTING_TASK_TYPE= 4;
 
     public long getId() {
         return id;
