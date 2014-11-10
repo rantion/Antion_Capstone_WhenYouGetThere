@@ -41,5 +41,6 @@
     <string-array name="miles_minutes">
         <item name = "miles">miles</item>
         <item name = "minutes">minutes</item>
+        <item name = "meters">meters</item>
     </string-array>
 </resources>

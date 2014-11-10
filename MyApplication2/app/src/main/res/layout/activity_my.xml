@@ -81,7 +81,7 @@
             class="com.google.android.gms.maps.MapFragment"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="25"
+            android:layout_weight="30"
             tools:context=".MyActivity" />
 
         <LinearLayout
@@ -101,8 +101,8 @@
 
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_weight="5"
-                android:layout_height="fill_parent"
+                android:layout_weight="6"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:gravity="center_vertical|center_horizontal">
 
@@ -110,14 +110,16 @@
                     android:id="@+id/activity_my_destination"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Destination"
-                    android:gravity="center_horizontal" />
+                    android:gravity="center_horizontal"
+                    android:text="Destination" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="bottom">
+                    android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+                    android:clipChildren="false"
+                    >
 
                     <TextView
                         android:id="@+id/distance_approximation"
@@ -125,11 +127,13 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="distance"
+                        android:layout_marginRight="@dimen/abc_action_bar_icon_vertical_padding"
                         android:textSize="6pt"
                         android:gravity="bottom|left" />
                     <TextView
                         android:id="@+id/duration_approximation"
                         android:layout_width="0dp"
+                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textSize="6pt"
@@ -142,17 +146,17 @@
 
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_weight="5"
+                android:layout_weight="4"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="4dp"
-                    android:text="When I get there I need to..." />
+                    android:text="Upon arriving..." />
 
 
                 <LinearLayout
@@ -160,31 +164,16 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="left"
                     android:gravity="center_horizontal"
-                    android:orientation="vertical"
-                    android:weightSum="2">
-
-                    <Button
-                        android:id="@+id/remember_button"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:layout_marginRight="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:background="@drawable/button"
-                        android:onClick="startRememberActivity"
-                        android:text="Remember\nSomething"
-                        android:textSize="7pt" />
-
+                    android:orientation="vertical">
                     <Button
                         android:id="@+id/do_something_button"
                         android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_height="fill_parent"
                         android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
                         android:layout_marginRight="@dimen/abc_action_bar_icon_vertical_padding"
                         android:background="@drawable/button"
                         android:onClick="startDoSomethingActivity"
-                        android:text="Do\nSomething"
+                        android:text="Set Tasks"
                         android:textSize="7pt" />
                 </LinearLayout>
 

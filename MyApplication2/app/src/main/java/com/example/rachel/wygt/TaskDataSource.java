@@ -21,8 +21,10 @@ public class TaskDataSource {
     private SQLiteDatabase database;
     private MySQLiteHelper dbHelper;
     private String[] allColumns = { MySQLiteHelper.COLUMN_ID,
-            MySQLiteHelper.COLUMN_REMINDER , MySQLiteHelper.COLUMN_LATITUDE, MySQLiteHelper.COLUMN_LONGITUDE, MySQLiteHelper.COLUMN_RADIUS,
-            MySQLiteHelper.COLUMN_TIME, MySQLiteHelper.COLUMN_TASK_TYPE
+            MySQLiteHelper.COLUMN_REMINDER , MySQLiteHelper.COLUMN_LATITUDE, MySQLiteHelper.COLUMN_LONGITUDE,
+            MySQLiteHelper.COLUMN_ADDRESS, MySQLiteHelper.COLUMN_RADIUS,MySQLiteHelper.COLUMN_RADIUS_TYPE,
+            MySQLiteHelper.COLUMN_TIME,MySQLiteHelper.COLUMN_ORIGINAL_RADIUS_VALUE, MySQLiteHelper.COLUMN_TASK_TYPE,
+
     };
 
     public TaskDataSource(Context context) {
@@ -37,7 +39,7 @@ public class TaskDataSource {
         dbHelper.close();
     }
 
-    public Task createTask(LatLng location, String reminder, long radius, int taskType) {
+    public Task createTask(LatLng location, String reminder, long radius, int taskType, String address, String radius_type, int original) {
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_REMINDER, reminder);
         values.put(MySQLiteHelper.COLUMN_LATITUDE, location.latitude);
@@ -45,6 +47,9 @@ public class TaskDataSource {
         values.put(MySQLiteHelper.COLUMN_RADIUS, radius);
         values.put(MySQLiteHelper.COLUMN_TIME, System.currentTimeMillis());
         values.put(MySQLiteHelper.COLUMN_TASK_TYPE, taskType);
+        values.put(MySQLiteHelper.COLUMN_ADDRESS,address);
+        values.put(MySQLiteHelper.COLUMN_RADIUS_TYPE, radius_type);
+        values.put(MySQLiteHelper.COLUMN_ORIGINAL_RADIUS_VALUE, original);
         long insertId = database.insert(MySQLiteHelper.TABLE_TASK, null,
                 values);
         Cursor cursor = database.query(MySQLiteHelper.TABLE_TASK,
@@ -81,6 +86,21 @@ public class TaskDataSource {
         return tasks;
     }
 
+    public void updateTask(Task task){
+        ContentValues values = new ContentValues();
+        values.put(MySQLiteHelper.COLUMN_REMINDER, task.getReminder());
+        values.put(MySQLiteHelper.COLUMN_LATITUDE, task.getLatitude());
+        values.put(MySQLiteHelper.COLUMN_LONGITUDE, task.getLongitude());
+        values.put(MySQLiteHelper.COLUMN_RADIUS, task.getRadius());
+        values.put(MySQLiteHelper.COLUMN_TIME, System.currentTimeMillis());
+        values.put(MySQLiteHelper.COLUMN_TASK_TYPE, task.getTaskType());
+        values.put(MySQLiteHelper.COLUMN_ADDRESS,task.getAddress());
+        values.put(MySQLiteHelper.COLUMN_RADIUS_TYPE, task.getRadius_type());
+        values.put(MySQLiteHelper.COLUMN_ORIGINAL_RADIUS_VALUE, task.getOriginalRadius());
+        database.update(MySQLiteHelper.TABLE_TASK, values, MySQLiteHelper.COLUMN_ID+"="+task.getId(), null);
+
+    }
+
     public List<Task> getTextTasks(){
         List<Task> tasks = new ArrayList<Task>();
         Cursor cursor = database.rawQuery("select * from "+MySQLiteHelper.TABLE_TASK+" where "+
@@ -96,6 +116,22 @@ public class TaskDataSource {
             cursor.close();
         }
         return tasks;
+    }
+
+    public Task getTaskById(long id){
+        Task task = null;
+        Cursor cursor = database.rawQuery("select * from "+MySQLiteHelper.TABLE_TASK+" where "+
+                MySQLiteHelper.COLUMN_ID+"="+id+"", null);
+        if(cursor!=null) {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                 task = cursorToTask(cursor);
+                cursor.moveToNext();
+            }
+            // make sure to close the cursor
+            cursor.close();
+        }
+        return task;
     }
 
     public List<Task> getCallReminderTasks(){
@@ -134,15 +170,35 @@ public class TaskDataSource {
         return tasks;
     }
 
+    public List<Task> getSoundTasks(){
+        List<Task> tasks = new ArrayList<Task>();
+        Cursor cursor = database.rawQuery("select * from "+MySQLiteHelper.TABLE_TASK+" where "+
+                MySQLiteHelper.COLUMN_TASK_TYPE+"="+Task.SOUND_SETTING_TASK_TYPE+"", null);
+        if(cursor!=null) {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                Task task = cursorToTask(cursor);
+                tasks.add(task);
+                cursor.moveToNext();
+            }
+            // make sure to close the cursor
+            cursor.close();
+        }
+        return tasks;
+    }
+
     private Task cursorToTask(Cursor cursor) {
         Task task = new Task();
         task.setId(cursor.getLong(0));
         task.setReminder(cursor.getString(1));
         task.setLatitude(cursor.getDouble(2));
         task.setLongitude(cursor.getDouble(3));
-        task.setRadius(cursor.getLong(4));
-        task.setTime(cursor.getLong(5));
-        task.setTaskType(cursor.getInt(6));
+        task.setRadius(cursor.getLong(5));
+        task.setTime(cursor.getLong(7));
+        task.setTaskType(cursor.getInt(9));
+        task.setAddress(cursor.getString(4));
+        task.setRadius_type(cursor.getString(6));
+        task.setOriginalRadius(cursor.getInt(8));
         return task;
     }
 }

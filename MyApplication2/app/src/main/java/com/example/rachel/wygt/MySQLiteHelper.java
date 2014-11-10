@@ -20,8 +20,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_LONGITUDE = "longitude";
     public static final String COLUMN_TIME = "time";
     public static final String COLUMN_RADIUS = "radius";
+    public static final String COLUMN_RADIUS_TYPE = "radius_type";
     public static final String COLUMN_REMINDER = "reminder";
     public static final String COLUMN_TASK_TYPE = "task_type";
+    public static final String COLUMN_ADDRESS = "address";
+    public static final String COLUMN_ORIGINAL_RADIUS_VALUE="radius_value";
     //task_contact table column names
     public static final String COLUMN_PHONE_NUMBER = "phone_number";
     public static final String COLUMN_TASK_ID = "task_id";
@@ -38,14 +41,14 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
 
     private static final String TASK_DB = "task.db";
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 12;
 
     // Database creation sql statement
     private static final String CREATE_TASK_DB = "create table "
             + TABLE_TASK + "(" + COLUMN_ID
             + " integer primary key autoincrement, " + COLUMN_REMINDER
-            + " text, "+COLUMN_LATITUDE +" real,"+COLUMN_LONGITUDE+" real, "+COLUMN_RADIUS+
-            " numeric," +COLUMN_TIME+" numeric,"+COLUMN_TASK_TYPE+" integer);";
+            + " text, "+COLUMN_LATITUDE +" real,"+COLUMN_LONGITUDE+" real, "+COLUMN_ADDRESS+" text, "+COLUMN_RADIUS+
+            " numeric,"+COLUMN_RADIUS_TYPE+" text, " +COLUMN_TIME+" numeric,"+COLUMN_ORIGINAL_RADIUS_VALUE+" integer, "+COLUMN_TASK_TYPE+" integer);";
 
     private static final String CREATE_TASK_CONTACT_DB ="create table " +TABLE_TASK_CONTACT+"("+ COLUMN_ID
             + " integer primary key autoincrement, " +COLUMN_PHONE_NUMBER+" text not null, "+COLUMN_CONTACT_NAME
@@ -71,6 +74,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         database.execSQL(CREATE_TASK_CONTACT_DB);
         database.execSQL(CREATE_TASK_DB);
         database.execSQL(CREATE_TASK_LIST_ITEM_DB);
+        database.execSQL(CREATE_TASK_SOUND_DB);
     }
 
     @Override
@@ -82,6 +86,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TASK);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TASK_CONTACT);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TASK_LIST_ITEM);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TASK_SOUND);
         onCreate(db);
     }
 

@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:background="@color/dark_purple"
+    android:layout_height="match_parent"
+    android:weightSum="100">
+    <TextView
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="8"
+        android:textColor="@color/white"
+        android:gravity="center_horizontal"
+        android:textSize="10pt"
+        android:text="Edit Text Message Task"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="8"
+        android:layout_gravity="center_horizontal"
+        android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
+        android:src="@drawable/text"/>
+
+    <LinearLayout
+        android:id="@+id/edit_text_task"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="84"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+            android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/white"
+                android:text="Destination: "/>
+            <TextView
+                android:id="@+id/edit_text_destination"
+                android:layout_width="0dp"
+                android:layout_weight="3"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="Neumont University\nS Main st...\nsdjfhjds"/>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Send text(s) when I am...."
+                android:textColor="@color/white" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/edit_text_there_checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:onClick="thereCheckedEditText" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:text="there" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                android:clickable="false">
+
+                <CheckBox
+                    android:id="@+id/edit_text_distance_checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="distanceCheckedEditText" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:text="about..." />
+
+                <com.example.rachel.wygt.EditTextClear
+                    android:id="@+id/edit_text_distance_away"
+                    android:textColor="@color/white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="5" />
+
+                <Spinner
+                    android:id="@+id/edit_text_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:entries="@array/miles_minutes"
+                    android:prompt="@string/choose_type"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:text="away" />
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:layout_marginRight="@dimen/activity_vertical_margin"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:text="Contacts" />
+
+        <MultiAutoCompleteTextView
+            android:textColor="@color/white"
+            android:textColorHint="@color/light_grey"
+            android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:layout_marginRight="@dimen/activity_vertical_margin"
+            android:id="@+id/edit_text_contacts"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="8"
+            android:hint="sent to contact(s)..." />
+
+        <com.example.rachel.wygt.EditTextClear
+            android:textColor="@color/white"
+            android:textColorHint="@color/light_grey"
+            android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:layout_marginRight="@dimen/activity_vertical_margin"
+            android:id="@+id/edit_text_message"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/abc_action_bar_default_height"
+            android:hint="enter your text message here" />
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dip"
+            android:layout_marginRight="40dip"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:orientation="horizontal">
+            <Button
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/abc_action_bar_icon_vertical_padding"
+                android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+                android:background="@color/lighter_purple"
+                android:text="Delete"
+                android:onClick="deleteText"
+                android:textColor="#ffffffff" />
+            <Button
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+                android:background="@color/lighter_purple"
+                android:text="Save Changes"
+                android:onClick="updateText"
+                android:textColor="#ffffffff" />
+
+            </LinearLayout>
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

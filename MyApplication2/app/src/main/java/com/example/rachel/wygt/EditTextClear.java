@@ -35,13 +35,16 @@ public class EditTextClear extends EditText {
     void init() {
 
         // Set bounds of the Clear button so it will look ok
-        imgCloseButton.setBounds(0, 0, 75, 75);
-
-        // There may be initial text in the field, so we may need to display the  button
+        this.setCompoundDrawablePadding((int)getResources().getDimension(R.dimen.abc_dropdownitem_text_padding_left));
+        int currentHeight = (int)getResources().getDimension(R.dimen.abc_action_bar_default_height);
+        int percent = currentHeight/2;
+        imgCloseButton.setBounds(0, 0,(int)getResources().getDimension(R.dimen.abc_action_bar_default_height)-percent,(int)getResources().getDimension(R.dimen.abc_action_bar_default_height)-percent);
+            // There may be initial text in the field, so we may need to display the  button
         handleClearButton();
 
         //if the Close image is displayed and the user remove his finger from the button, clear it. Otherwise do nothing
         this.setOnTouchListener(new OnTouchListener() {
+            int percent = (int)getResources().getDimension(R.dimen.abc_action_bar_default_height)/2;
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
@@ -53,7 +56,7 @@ public class EditTextClear extends EditText {
                 if (event.getAction() != MotionEvent.ACTION_UP)
                     return false;
 
-                if (event.getX() > et.getWidth() - et.getPaddingRight() -75) {
+                if (event.getX() > et.getWidth() - et.getPaddingRight() -(int)getResources().getDimension(R.dimen.abc_action_bar_default_height)-percent) {
                     et.setText("");
                     EditTextClear.this.handleClearButton();
                 }
@@ -90,11 +93,10 @@ public class EditTextClear extends EditText {
     void handleClearButton() {
         if (this.getText().toString().equals(""))
         {
-            // add the clear button
             this.setCompoundDrawables(this.getCompoundDrawables()[0], this.getCompoundDrawables()[1], null, this.getCompoundDrawables()[3]);
         }
         else
-        {            //remove clear button
+        {
             this.setCompoundDrawables(this.getCompoundDrawables()[0], this.getCompoundDrawables()[1], imgCloseButton, this.getCompoundDrawables()[3]);
         }
     }

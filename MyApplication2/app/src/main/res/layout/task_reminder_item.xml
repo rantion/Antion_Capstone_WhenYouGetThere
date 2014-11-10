@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/crud_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/greenish"
+    android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
+    android:orientation="horizontal"
+    android:weightSum="100">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+        android:layout_weight="10">
+
+        <ImageView
+            android:id="@+id/task_item_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/vibrate" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="90"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="100">
+
+            <TextView
+                android:id="@+id/task_item_location"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                android:layout_marginLeft="@dimen/activity_vertical_margin"
+                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+                android:layout_weight="70"
+                android:text="Neumont University\n143 S Main St, Salt Lake City"
+                android:textColor="@color/white"
+                android:textSize="5pt" />
+
+            <TextView
+                android:id="@+id/task_item_radius"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+                android:layout_weight="30"
+                android:layout_marginRight="@dimen/abc_action_bar_icon_vertical_padding"
+                android:layout_marginLeft="@dimen/activity_vertical_margin"
+                android:gravity="top|right"
+                android:text="5 miles"
+                android:textColor="@color/white"
+                android:textSize="5pt" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/task_item_message"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
+            android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="THIS IS WHERE THE MESSAGE WILL GO"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -9,14 +9,33 @@ public class Task {
     private long id;
     private long time = System.currentTimeMillis();
     private String reminder;
+    private String address;
+    private String radius_type;
     private int TaskType;
     public static final int TEXT_MESSAGE_TASK_TYPE = 1;
     public static final int REMINDER_MESSAGE_TASK_TYPE = 2;
     public static final int CALL_REMINDER_TASK_TYPE = 3;
     public static final int SOUND_SETTING_TASK_TYPE= 4;
+    public int originalRadius;
+
+    public int getOriginalRadius() {
+        return originalRadius;
+    }
+
+    public void setOriginalRadius(int originalRadius) {
+        this.originalRadius = originalRadius;
+    }
 
     public long getId() {
         return id;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public void setId(long id) {
@@ -77,5 +96,13 @@ public class Task {
 
     public static int getReminderMessageTaskType() {
         return REMINDER_MESSAGE_TASK_TYPE;
+    }
+
+    public String getRadius_type() {
+        return radius_type;
+    }
+
+    public void setRadius_type(String radius_type) {
+        this.radius_type = radius_type;
     }
 }

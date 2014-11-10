@@ -1,6 +1,7 @@
 package com.example.rachel.wygt;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -14,9 +15,11 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.telephony.SmsManager;
@@ -40,12 +43,14 @@ public class GPSTracker extends Service implements LocationListener {
     private final String LOGTAG = "GPS TRACKER";
     private static final String SENT = "SMS_SENT";
     private static final String DELIVERED = "SMS_DELIVERED";
+    private TaskSoundDataSource taskSoundDataSource = MyApplication.getTaskSoundDataSource();
     private TaskContactDataSource taskContactDataSource = MyApplication.getTaskContactDataSource();
     private TaskDataSource taskDataSource = MyApplication.getTaskDataSource();
     protected LocationManager locationManager;
-    Location location; // location
-    double latitude; // latitude
-    double longitude; // longitude
+    Location location;
+    double latitude;
+    double longitude;
+    private AudioManager audioManager = (AudioManager) MyApplication.getAppContext().getSystemService(Context.AUDIO_SERVICE);
 
 
     public GPSTracker() {
@@ -68,15 +73,15 @@ public class GPSTracker extends Service implements LocationListener {
                 Bundle extras = arg1.getExtras();
                 String message = "";
                 String phoneNumber = "";
-                if(extras!= null){
-                  message = extras.getString("message");
-                  phoneNumber = extras.getString("phoneNumber");
+                if (extras != null) {
+                    message = extras.getString("message");
+                    phoneNumber = extras.getString("phoneNumber");
                 }
                 switch (getResultCode()) {
                     case Activity.RESULT_OK:
                         Toast.makeText(context, "SMS sent",
                                 Toast.LENGTH_SHORT).show();
-                        Log.d(LOGTAG+"/SMS", "SMS sent to "+phoneNumber+" "+message);
+                        Log.d(LOGTAG + "/SMS", "SMS sent to " + phoneNumber + " " + message);
                         break;
                     case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
                         Toast.makeText(context, "Generic failure",
@@ -106,7 +111,7 @@ public class GPSTracker extends Service implements LocationListener {
                 Bundle extras = arg1.getExtras();
                 String message = "";
                 String phoneNumber = "";
-                if(extras!= null){
+                if (extras != null) {
                     message = extras.getString("message");
                     phoneNumber = extras.getString("phoneNumber");
                 }
@@ -114,12 +119,12 @@ public class GPSTracker extends Service implements LocationListener {
                     case Activity.RESULT_OK:
                         Toast.makeText(context, "SMS delivered",
                                 Toast.LENGTH_SHORT).show();
-                        Log.d(LOGTAG+"/SMS", "SMS delivered");
+                        Log.d(LOGTAG + "/SMS", "SMS delivered");
                         break;
                     case Activity.RESULT_CANCELED:
                         Toast.makeText(context, "SMS not delivered",
                                 Toast.LENGTH_SHORT).show();
-                        sendSMS(phoneNumber,message);
+                        sendSMS(phoneNumber, message);
                         break;
                 }
             }
@@ -165,7 +170,7 @@ public class GPSTracker extends Service implements LocationListener {
                                 LocationManager.GPS_PROVIDER,
                                 MIN_TIME_BW_UPDATES,
                                 MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-                       // Log.d(LOGTAG, "GPS Enabled");
+                        // Log.d(LOGTAG, "GPS Enabled");
                         if (locationManager != null) {
                             location = locationManager
                                     .getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -214,6 +219,7 @@ public class GPSTracker extends Service implements LocationListener {
         checkTextReminders();
         checkMessageReminders();
         checkCallReminders();
+        checkSoundSettings();
 
         String logMessage = LogHelper.FormatLocationInfo(provider, latitude, longitude, accuracy, time);
         Log.d(LOGTAG, "Monitor Location: " + logMessage);
@@ -225,10 +231,61 @@ public class GPSTracker extends Service implements LocationListener {
             locationManager.removeUpdates(this);
             Log.d(LOGTAG, "locationManager removing updates");
         }
+        boolean alarmUp = (PendingIntent.getBroadcast(MyApplication.getAppContext(), 0,
+                new Intent("com.example.wygt.alarm"),
+                PendingIntent.FLAG_NO_CREATE) != null);
+        if (alarmUp = false) {
+            startAlarmManager();
+        } else {
+            Log.d(LOGTAG, "Alarm is running");
+        }
+    }
+
+    private void startAlarmManager() {
+        Log.d("GPS-MyActivity", "startAlarmManager");
+        Context context = getBaseContext();
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent gpsTrackerIntent = new Intent("com.example.wygt.alarm");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, gpsTrackerIntent, 0);
+        SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(this);
+        String interval = sharedPreferences.getString("prefSyncFrequency", "5");
+        int intervalInMinutes = Integer.parseInt(interval);
+        Log.d("GPS-MyActivity", "Shared Preferences interval: " + intervalInMinutes);
+        alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime(),
+                intervalInMinutes * 60000, // 60000 = 1 minute
+                pendingIntent);
+    }
+
+    private void checkSoundSettings() {
+        Log.d(LOGTAG,"checking sound settings");
+        List<Task> _tasks = taskDataSource.getSoundTasks();
+        Log.d(LOGTAG+"/Sound",_tasks.size() +" tasks");
+        for (Task task : _tasks) {
+            float[] results = new float[4];
+            long radius = task.getRadius();
+            Location.distanceBetween(task.getLatitude(), task.getLongitude(), location.getLatitude(), location.getLongitude(), results);
+            if (results[0] < (float) radius) {
+                long taskId = task.getId();
+                List<SoundSettings> sounds = taskSoundDataSource.getTaskSoundsByTaskId(taskId);
+                for (SoundSettings sound : sounds) {
+                    taskSoundDataSource.deleteTaskSound(sound);
+                    audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, sound.getAlarm(), 0);
+                    audioManager.setStreamVolume(AudioManager.STREAM_RING, sound.getRinger(), 0);
+                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, sound.getMedia(), 0);
+                    audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, sound.getNotification(), 0);
+                }
+                taskDataSource.deleteTask(task);
+            }
+            Log.d(LOGTAG+"/Sound","task out of radius " + task.getLatitude() + "," + task.getLongitude() + "Radius: " + task.getRadius() + " distance: " + results[0]);
+        }
     }
 
     private void checkCallReminders() {
+        Log.d(LOGTAG,"checking call reminders");
         List<Task> _tasks = taskDataSource.getCallReminderTasks();
+        Log.d(LOGTAG+"/Call",_tasks.size() +" tasks");
         for (Task task : _tasks) {
             float[] results = new float[4];
             long radius = task.getRadius();
@@ -245,7 +302,7 @@ public class GPSTracker extends Service implements LocationListener {
                     taskContactDataSource.deleteTaskContact(con);
                 }
             }
-
+            Log.d(LOGTAG+"/Call","task out of radius " + task.getLatitude() + "," + task.getLongitude() + "Radius: " + task.getRadius() + " distance: " + results[0]);
         }
     }
 
@@ -264,17 +321,20 @@ public class GPSTracker extends Service implements LocationListener {
         notification.when = System.currentTimeMillis();
         notification.bigContentView = contentView;
         String uri = "tel:" + number.trim();
-        Intent intent = new Intent(Intent.ACTION_CALL);
-        intent.setData(Uri.parse(uri));
-        PendingIntent pendingIntent = PendingIntent.getActivity(MyApplication.getAppContext(), 0, intent, 0);
+        Intent intent = new Intent("com.example.wygt.call");
+        intent.putExtra("URI", Uri.parse(uri));
+        intent.putExtra("ID", 1001);
+      //  Intent intent = new Intent(Intent.ACTION_CALL);
+     //   intent.setData(Uri.parse(uri));
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(MyApplication.getAppContext(), (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         contentView.setOnClickPendingIntent(R.id.call_reminder_call_button, pendingIntent);
         return notification;
     }
 
     private void checkTextReminders() {
-        Log.d(LOGTAG+"/SMS", "checking Text Reminders");
+        Log.d(LOGTAG + "/SMS", "checking Text Reminders");
         List<Task> tasks = taskDataSource.getTextTasks();
-        Log.d(LOGTAG+"/SMS", tasks.size()+" tasks");
+        Log.d(LOGTAG + "/SMS", tasks.size() + " tasks");
         for (Task task : tasks) {
             float[] results = new float[4];
             long radius = task.getRadius();
@@ -287,9 +347,8 @@ public class GPSTracker extends Service implements LocationListener {
                     taskContactDataSource.deleteTaskContact(con);
                 }
                 taskDataSource.deleteTask(task);
-            }
-            else{
-          Log.d("GPS TRACKER","task out of radius "+task.getLatitude()+","+ task.getLongitude()+"Radius: "+task.getRadius()+" distance: "+results[0]);
+            } else {
+                Log.d("GPS TRACKER", "task out of radius " + task.getLatitude() + "," + task.getLongitude() + "Radius: " + task.getRadius() + " distance: " + results[0]);
             }
         }
     }
@@ -305,17 +364,19 @@ public class GPSTracker extends Service implements LocationListener {
         deliveredIntent.putExtra("phoneNumber", phoneNumber);
         deliveredIntent.putExtra("message", message);
         PendingIntent deliveredPI = PendingIntent.getBroadcast(context, 0,
-                deliveredIntent,PendingIntent.FLAG_ONE_SHOT);
+                deliveredIntent, PendingIntent.FLAG_ONE_SHOT);
 
         //---when the SMS has been sent---
 
         SmsManager sms = SmsManager.getDefault();
         sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);
-        Log.d(LOGTAG+"/SMS", "Sending " + message + " to " + phoneNumber);
+        Log.d(LOGTAG + "/SMS", "Sending " + message + " to " + phoneNumber);
     }
 
     private void checkMessageReminders() {
+        Log.d(LOGTAG,"Checking message reminders");
         List<Task> values = taskDataSource.getReminderMessageTasks();
+        Log.d(LOGTAG+"/Message",values.size()+ " tasks" );
         for (Task task : values) {
             float[] results = new float[4];
             long radius = task.getRadius();
@@ -336,6 +397,7 @@ public class GPSTracker extends Service implements LocationListener {
                 taskDataSource.deleteTask(task);
                 Log.d("reminder", "you should see that shit");
             }
+            Log.d(LOGTAG+"/Message","task out of radius " + task.getLatitude() + "," + task.getLongitude() + "Radius: " + task.getRadius() + " distance: " + results[0]);
         }
     }
 

@@ -100,17 +100,19 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
     boolean canGetLocation = false;
     private LocationManager lm;
     Location location; // location
+    private CallNotificationReceiver callReciever = new CallNotificationReceiver();
     private String destinationDuration, destinationDistance, destDistMeters, destDistSeconds;
+    private PreferenceChangeListener preferenceListener = new PreferenceChangeListener();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
-        initializeMap();
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
-//        currentlyTracking = sharedPreferences.getBoolean("currentlyTracking", false);
         lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+        confirmNetworkProviderAvailable(lm);
+        sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceListener);
         servicesConnected();
         EditText addressBox = (EditText) findViewById(R.id.enter_location_field);
         addressBox.setOnKeyListener(this);
@@ -125,23 +127,41 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
             editor.apply();
             startAlarmManager();
         }
-        Log.d("GPS/APP IS OPEN","appIsOpenSetToTrue - MyActivity");
+        Log.d("GPS/APP IS OPEN", "appIsOpenSetToTrue - MyActivity");
         editor.putBoolean("appIsOpen", true);
         editor.apply();
+        initializeMap();
         lm.requestLocationUpdates(
                 LocationManager.NETWORK_PROVIDER,
                 0,
                 0, MyApplication.getGpsTracker());
         mActivityIndicator =
                 (ProgressBar) findViewById(R.id.address_progress);
-    //    startAlarmManager();
+
+        boolean alarmUp = (PendingIntent.getBroadcast(MyApplication.getAppContext(), 0,
+                new Intent("com.example.wygt.alarm"),
+                PendingIntent.FLAG_NO_CREATE) != null);
+        Log.d(LOGTAG, "wtf man");
+        if (alarmUp = false) {
+            startAlarmManager();
+        } else {
+            Log.d(LOGTAG, "Alarm is running");
+        }
+        //    startAlarmManager();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Log.d("MYACTIVITY", "back key pressed");
+        moveTaskToBack(true);
+        MyActivity.this.finish();
     }
 
     private void startAlarmManager() {
         Log.d("GPS-MyActivity", "startAlarmManager");
         Context context = getBaseContext();
         alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        gpsTrackerIntent = new Intent(context, GpsTrackerAlarmReceiver.class);
+        gpsTrackerIntent = new Intent("com.example.wygt.alarm");
         pendingIntent = PendingIntent.getBroadcast(context, 0, gpsTrackerIntent, 0);
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
@@ -227,8 +247,10 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         if (id == R.id.menu_settings) {
             Intent intent = new Intent(this, UserSettingsActivity.class);
             startActivity(intent);
-            cancelAlarmManager();
-            startAlarmManager();
+        }
+        if (id == R.id.list) {
+            Intent intent = new Intent(this, TaskListActivity.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -273,38 +295,38 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         Log.d("GPS/APP IS OPEN", "onPause_MyActivityCalled... no change to appIsOpen");
 //        editor.putBoolean("appIsOpen", false);
 //        editor.apply();
-       super.onPause();
+        super.onPause();
     }
 
-    //    boolean confirmNetworkProviderAvailable(LocationManager lm) {
-//        boolean networkAvailable = confirmAirplaneModeIsOff() &&
-//                confirmNetworkProviderEnabled(lm) &&
-//                confirmWifiAvailable();
-//        return networkAvailable;
-//    }
+    boolean confirmNetworkProviderAvailable(LocationManager lm) {
+        boolean networkAvailable = confirmAirplaneModeIsOff() &&
+                confirmNetworkProviderEnabled(lm) &&
+                confirmWifiAvailable();
+        return networkAvailable;
+    }
 
-//    public boolean confirmNetworkProviderEnabled(LocationManager lm) {
-//        boolean isAvailable = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-//
-//        if (!isAvailable) {
-//            AlertUserDialog dialog = new AlertUserDialog("Please Enable Location Services", Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//            dialog.show(getFragmentManager(), null);
-//        }
-//        return isAvailable;
-//    }
+    public boolean confirmNetworkProviderEnabled(LocationManager lm) {
+        boolean isAvailable = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
-//    public boolean confirmAirplaneModeIsOff() {
-//
-//        Log.d(LOGTAG, "inside AirPlaneMode");
-//        boolean isOff =
-//                Settings.System.getInt(getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0) == 0;
-//        Log.d(LOGTAG, "AirPlane Mode Is : " + isOff);
-//        if (!isOff) {
-//            AlertUserDialog dialog = new AlertUserDialog("Please disable Airplane mode", Settings.ACTION_AIRPLANE_MODE_SETTINGS);
-//            dialog.show(getFragmentManager(), null);
-//        }
-//        return isOff;
-//    }
+        if (!isAvailable) {
+            AlertUserDialog dialog = new AlertUserDialog("Please Enable Location Services", Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            dialog.show(getFragmentManager(), null);
+        }
+        return isAvailable;
+    }
+
+    public boolean confirmAirplaneModeIsOff() {
+
+        Log.d(LOGTAG, "inside AirPlaneMode");
+        boolean isOff =
+                Settings.System.getInt(getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0) == 0;
+        Log.d(LOGTAG, "AirPlane Mode Is : " + isOff);
+        if (!isOff) {
+            AlertUserDialog dialog = new AlertUserDialog("Please disable Airplane mode", Settings.ACTION_AIRPLANE_MODE_SETTINGS);
+            dialog.show(getFragmentManager(), null);
+        }
+        return isOff;
+    }
 
     public boolean confirmWifiAvailable() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
@@ -320,17 +342,13 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
     @Override
     public void recreate() {
         Handler handler = new Handler();
-        handler.postDelayed(new Runnable()
-        {
+        handler.postDelayed(new Runnable() {
             @Override
-            public void run()
-            {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
-                {
+            public void run() {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
                     MyActivity.this.finish();
                     MyActivity.this.startActivity(MyActivity.this.getIntent());
-                }
-                else MyActivity.this.recreate();
+                } else MyActivity.this.recreate();
             }
         }, 1);
         super.recreate();
@@ -432,24 +450,24 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
 
         }
 
-        if (keyCode == EditorInfo.IME_ACTION_SEARCH ||
-                keyCode == EditorInfo.IME_ACTION_DONE ||
-                event.getAction() == KeyEvent.ACTION_DOWN &&
-                        event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-
-            if (!event.isShiftPressed()) {
-                Log.v("AndroidEnterKeyActivity", "Enter Key Pressed!");
-                switch (view.getId()) {
-                    case R.id.enter_location_field:
-                        mActivityIndicator.setVisibility(View.GONE);
-                        LinearLayout navBar = (LinearLayout) findViewById(R.id.destination_bar);
-                        navBar.setVisibility(View.GONE);
-                        break;
-                }
-                return true;
-            }
-
-        }
+//        if (keyCode == EditorInfo.IME_ACTION_SEARCH ||
+//                keyCode == EditorInfo.IME_ACTION_DONE ||
+//                event.getAction() == KeyEvent.ACTION_DOWN &&
+//                        event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+//
+//            if (!event.isShiftPressed()) {
+//                Log.v("AndroidEnterKeyActivity", "Enter Key Pressed!");
+//                switch (view.getId()) {
+//                    case R.id.enter_location_field:
+//                        mActivityIndicator.setVisibility(View.GONE);
+//                        LinearLayout navBar = (LinearLayout) findViewById(R.id.destination_bar);
+//                        navBar.setVisibility(View.GONE);
+//                        break;
+//                }
+//                return true;
+//            }
+//
+//        }
         return false;
     }
 
@@ -560,7 +578,11 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                     int lastIndex = address.getMaxAddressLineIndex();
                     String addressLine = "";
                     for (int i = 0; i <= lastIndex; i++) {
-                        addressLine = addressLine + address.getAddressLine(i) + "\n";
+                        if (i != lastIndex) {
+                            addressLine = addressLine + address.getAddressLine(i) + "\n";
+                        } else {
+                            addressLine = addressLine + address.getAddressLine(i);
+                        }
                     }
                     addressArray[j] = address;
                     _addresses[j] = addressLine;
@@ -582,7 +604,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                                 _marker.remove();
                             }
                             try {
-                                (new GetDrivingDistance()).execute(destinationLocation,currentLocation).get();
+                                (new GetDrivingDistance()).execute(destinationLocation, currentLocation).get();
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             } catch (ExecutionException e) {
@@ -604,23 +626,23 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                                     destAddress.setText(_addresses[which]);
                                 }
                             }
-                            Button rememberButton = (Button) findViewById(R.id.remember_button);
+                            //  Button rememberButton = (Button) findViewById(R.id.remember_button);
                             Button doSomethingButton = (Button) findViewById(R.id.do_something_button);
-                            rememberButton.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Intent intent = new Intent(MyActivity.this, RememberSomethingActivity.class);
-                                    intent.putExtra("Destination", _addresses[which]);
-                                    intent.putExtra("Destination_location", destinationLocation);
-                                    intent.putExtra("Current_Location", currentLocation);
-                                    intent.putExtra("Button", "Remember");
-                                    intent.putExtra("Distance",destinationDistance);
-                                    intent.putExtra("Duration", destinationDuration);
-                                    intent.putExtra("DistanceMeters", destDistMeters);
-                                    intent.putExtra("DurationSeconds", destDistSeconds);
-                                    startActivity(intent);
-                                }
-                            });
+//                            rememberButton.setOnClickListener(new View.OnClickListener() {
+//                                @Override
+//                                public void onClick(View v) {
+//                                    Intent intent = new Intent(MyActivity.this, RememberSomethingActivity.class);
+//                                    intent.putExtra("Destination", _addresses[which]);
+//                                    intent.putExtra("Destination_location", destinationLocation);
+//                                    intent.putExtra("Current_Location", currentLocation);
+//                                    intent.putExtra("Button", "Remember");
+//                                    intent.putExtra("Distance",destinationDistance);
+//                                    intent.putExtra("Duration", destinationDuration);
+//                                    intent.putExtra("DistanceMeters", destDistMeters);
+//                                    intent.putExtra("DurationSeconds", destDistSeconds);
+//                                    startActivity(intent);
+//                                }
+//                            });
 
                             doSomethingButton.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -630,7 +652,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                                     intent.putExtra("Destination_location", destinationLocation);
                                     intent.putExtra("Current_Location", currentLocation);
                                     intent.putExtra("Button", "Do Something");
-                                    intent.putExtra("Distance",destinationDistance);
+                                    intent.putExtra("Distance", destinationDistance);
                                     intent.putExtra("Duration", destinationDuration);
                                     intent.putExtra("DistanceMeters", destDistMeters);
                                     intent.putExtra("DurationSeconds", destDistSeconds);
@@ -751,10 +773,10 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                             JSONObject element = elements.getJSONObject(0);
                             JSONObject _duration = element.getJSONObject("duration");
                             duration = _duration.getString("text");
-                           MyActivity.this.destDistSeconds = _duration.getString("value");
+                            MyActivity.this.destDistSeconds = _duration.getString("value");
                             JSONObject distance = element.getJSONObject("distance");
 
-                           MyActivity.this.destDistMeters = distance.getString("value");
+                            MyActivity.this.destDistMeters = distance.getString("value");
                             distances.add(distance.getString("text"));
                         }
                         String _distances = null;
@@ -763,11 +785,11 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                         }
                         TextView _duration = (TextView) findViewById(R.id.duration_approximation);
                         TextView _distance = (TextView) findViewById(R.id.distance_approximation);
-                      String  distance = _distances;
+                        String distance = _distances;
                         _distance.setText(distance);
-                        _duration.setText("ETA: "+duration);
-                       MyActivity.this.setDestinationDistance(distance);
-                       MyActivity.this.setDestinationDuration(duration);
+                        _duration.setText("ETA: " + duration);
+                        MyActivity.this.setDestinationDistance(distance);
+                        MyActivity.this.setDestinationDuration(duration);
 
 
                     }

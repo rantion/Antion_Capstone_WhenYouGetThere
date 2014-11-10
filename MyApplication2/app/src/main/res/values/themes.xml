@@ -11,4 +11,11 @@
         parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
         <item name="android:background">@color/grey_green</item>
     </style>
+
+    <!--<style name ="MyListTaskActivity">-->
+        <!--<item name="android:background">@color/dark_green2</item>-->
+        <!--<item name="android:layout_height">fill_parent</item>-->
+        <!--<item name="android:actionBarStyle">@style/MyActionBar</item>-->
+    <!--</style>-->
+
 </resources>

@@ -16,8 +16,8 @@ import java.util.List;
 public class TaskSoundDataSource {
     private SQLiteDatabase database;
     private MySQLiteHelper dbHelper;
-    private String[] allColumns = {MySQLiteHelper.COLUMN_ID, MySQLiteHelper.COLUMN_RINGER_LVL, MySQLiteHelper.COLUMN_MEDIA_LVL,
-            MySQLiteHelper.COLUMN_NOTIFICATION_LVL, MySQLiteHelper.COLUMN_SYSTEM_LVL, MySQLiteHelper.COLUMN_TASK_ID};
+    private String[] allColumns = {MySQLiteHelper.COLUMN_ID, MySQLiteHelper.COLUMN_MEDIA_LVL,MySQLiteHelper.COLUMN_RINGER_LVL,
+            MySQLiteHelper.COLUMN_SYSTEM_LVL, MySQLiteHelper.COLUMN_NOTIFICATION_LVL, MySQLiteHelper.COLUMN_TASK_ID};
 
     public TaskSoundDataSource(Context context) {
         dbHelper = new MySQLiteHelper(context);
@@ -31,12 +31,12 @@ public class TaskSoundDataSource {
         dbHelper.close();
     }
 
-    public SoundSettings createSoundSettings(int media, int ring, int nofity, int system, long taskId) {
+    public SoundSettings createSoundSettings(int media, int ring, int notify, int system, long taskId) {
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_RINGER_LVL, ring);
         values.put(MySQLiteHelper.COLUMN_MEDIA_LVL, media);
         values.put(MySQLiteHelper.COLUMN_SYSTEM_LVL, system);
-        values.put(MySQLiteHelper.COLUMN_NOTIFICATION_LVL, nofity);
+        values.put(MySQLiteHelper.COLUMN_NOTIFICATION_LVL, notify);
         values.put(MySQLiteHelper.COLUMN_TASK_ID, taskId);
         long insertId = database.insert(MySQLiteHelper.TABLE_TASK_SOUND, null,
                 values);
@@ -92,10 +92,10 @@ public class TaskSoundDataSource {
     private SoundSettings cursorToSoundSettings(Cursor cursor) {
         SoundSettings soundSettings = new SoundSettings();
         soundSettings.setId(cursor.getLong(0));
-        soundSettings.setRinger(cursor.getInt(1));
-        soundSettings.setMedia(cursor.getInt(2));
-        soundSettings.setNotification(cursor.getInt(3));
-        soundSettings.setAlarm(cursor.getInt(4));
+        soundSettings.setRinger(cursor.getInt(2));
+        soundSettings.setMedia(cursor.getInt(1));
+        soundSettings.setNotification(cursor.getInt(4));
+        soundSettings.setAlarm(cursor.getInt(3));
         soundSettings.setTaskId(cursor.getLong(5));
         return soundSettings;
     }

@@ -11,8 +11,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -66,13 +68,14 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     private SeekBar mediaVlmSeekBar = null;
     private SeekBar ringerVlmSeekBar = null;
     private SeekBar alarmVlmSeekBar = null;
-    private SeekBar notifyVlmSeekBar = null;
     private AudioManager audioManager = null;
+    private SeekBar notifyVlmSeekBar = null;
     private int mediaMax, ringerMax, notifyMax, alarmMax, ringCurrent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_do_something);
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         this.setVolumeControlStream(AudioManager.STREAM_RING);
@@ -110,26 +113,32 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
 
     private Drawable getVolumeIcon(int max, int current, int type) {
         Drawable icon = null;
-        float third = (max/3);
-        float twoThirds = (third*2);
-        if(current==0){
-            if(type == SoundSettings.SOUND_TYPE_RINGER && current == 0) {
+        float third = (max / 3);
+        float twoThirds = (third * 2);
+        if (current == 0) {
+            if (type == SoundSettings.SOUND_TYPE_RINGER && current == 0) {
                 icon = getResources().getDrawable(R.drawable.vibrate);
-            }
-            else{
+            } else {
                 icon = getResources().getDrawable(R.drawable.mute);
             }
-        }
-        else if (current < third ){
+        } else if (current < third) {
             icon = getResources().getDrawable(R.drawable.volume1);
-        }
-        else if (current >= third && current <= twoThirds) {
+        } else if (current >= third && current <= twoThirds) {
             icon = getResources().getDrawable(R.drawable.volume2);
-        }
-        else if (current >= twoThirds) {
+        } else if (current >= twoThirds) {
             icon = getResources().getDrawable(R.drawable.volume3);
         }
         return icon;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return true;
     }
 
     private void initControls() {
@@ -140,15 +149,15 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
         int mediaCurrent = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         mediaVlmSeekBar.setMax(mediaMax);
         mediaVlmSeekBar.setProgress(mediaCurrent);
-        ImageView mediaIcon = (ImageView)findViewById(R.id.mediaIcon);
-        mediaIcon.setImageDrawable(getVolumeIcon(mediaMax,mediaCurrent,SoundSettings.SOUND_TYPE_MEDIA));
+        ImageView mediaIcon = (ImageView) findViewById(R.id.mediaIcon);
+        mediaIcon.setImageDrawable(getVolumeIcon(mediaMax, mediaCurrent, SoundSettings.SOUND_TYPE_MEDIA));
 
         ringerVlmSeekBar = (SeekBar) findViewById(R.id.ringerSeek);
         ringerMax = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING);
         ringCurrent = audioManager.getStreamVolume(AudioManager.STREAM_RING);
         ringerVlmSeekBar.setMax(ringerMax);
         ringerVlmSeekBar.setProgress(ringCurrent);
-        ImageView ringerIcon = (ImageView)findViewById(R.id.ringerIcon);
+        ImageView ringerIcon = (ImageView) findViewById(R.id.ringerIcon);
         ringerIcon.setImageDrawable(getVolumeIcon(ringerMax, ringCurrent, SoundSettings.SOUND_TYPE_RINGER));
 
         alarmVlmSeekBar = (SeekBar) findViewById(R.id.systemSeek);
@@ -156,18 +165,18 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
         int alarmCurrent = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
         alarmVlmSeekBar.setMax(alarmMax);
         alarmVlmSeekBar.setProgress(alarmCurrent);
-        ImageView alarmIcon = (ImageView)findViewById(R.id.systemIcon);
-        alarmIcon.setImageDrawable(getVolumeIcon(alarmMax,alarmCurrent,SoundSettings.SOUND_TYPE_ALARM));
+        ImageView alarmIcon = (ImageView) findViewById(R.id.systemIcon);
+        alarmIcon.setImageDrawable(getVolumeIcon(alarmMax, alarmCurrent, SoundSettings.SOUND_TYPE_ALARM));
 
         notifyVlmSeekBar = (SeekBar) findViewById(R.id.notificationSeek);
         notifyMax = audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION);
         int notifyCurrent = audioManager.getStreamVolume(AudioManager.STREAM_NOTIFICATION);
         notifyVlmSeekBar.setMax(notifyMax);
         notifyVlmSeekBar.setProgress(notifyCurrent);
-        ImageView notifyIcon = (ImageView)findViewById(R.id.notificationIcon);
-        notifyIcon.setImageDrawable(getVolumeIcon(notifyMax,notifyCurrent,SoundSettings.SOUND_TYPE_NOTIFICATION));
+        ImageView notifyIcon = (ImageView) findViewById(R.id.notificationIcon);
+        notifyIcon.setImageDrawable(getVolumeIcon(notifyMax, notifyCurrent, SoundSettings.SOUND_TYPE_NOTIFICATION));
 
-        if(ringCurrent == 0){
+        if (ringCurrent == 0) {
             ringIs0();
         }
 
@@ -189,8 +198,8 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             ImageView notify = (ImageView) findViewById(R.id.notificationIcon);
-            notify.setImageDrawable(getVolumeIcon(notifyMax,progress,SoundSettings.SOUND_TYPE_NOTIFICATION));
-            audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, progress, 0);
+            notify.setImageDrawable(getVolumeIcon(notifyMax, progress, SoundSettings.SOUND_TYPE_NOTIFICATION));
+            //         audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, progress, 0);
         }
 
         @Override
@@ -209,7 +218,7 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             ImageView alarm = (ImageView) findViewById(R.id.systemIcon);
             alarm.setImageDrawable(getVolumeIcon(alarmMax, progress, SoundSettings.SOUND_TYPE_ALARM));
-            audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, progress, 0);
+            //         audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, progress, 0);
         }
 
         @Override
@@ -223,9 +232,9 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
         }
     };
 
-    private void ringIs0(){
-        audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION,0, 0);
-        audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM,0,0);
+    private void ringIs0() {
+        audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, 0, 0);
+        audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, 0, 0);
         alarmVlmSeekBar.setProgress(0);
         notifyVlmSeekBar.setProgress(0);
         notifyVlmSeekBar.setEnabled(false);
@@ -237,14 +246,13 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             ImageView ringer = (ImageView) findViewById(R.id.ringerIcon);
             ringer.setImageDrawable(getVolumeIcon(ringerMax, progress, SoundSettings.SOUND_TYPE_RINGER));
-            if(progress == 0){
+            if (progress == 0) {
                 ringIs0();
-            }
-            else {
+            } else {
                 notifyVlmSeekBar.setEnabled(true);
                 alarmVlmSeekBar.setEnabled(true);
             }
-            audioManager.setStreamVolume(AudioManager.STREAM_RING, progress, 0);
+            //    audioManager.setStreamVolume(AudioManager.STREAM_RING, progress, 0);
         }
 
         @Override
@@ -262,8 +270,8 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             ImageView media = (ImageView) findViewById(R.id.mediaIcon);
-            media.setImageDrawable(getVolumeIcon(mediaMax,progress,SoundSettings.SOUND_TYPE_MEDIA));
-            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0);
+            media.setImageDrawable(getVolumeIcon(mediaMax, progress, SoundSettings.SOUND_TYPE_MEDIA));
+            //       audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0);
         }
 
         @Override
@@ -286,6 +294,10 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
 
     public void thereCheckerText(View view) {
         CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_text);
+        LinearLayout distanceL = (LinearLayout)findViewById(R.id.distance_chooser_layout);
+        LinearLayout thereL = (LinearLayout)findViewById(R.id.there_layout);
+        thereL.setBackgroundColor(getResources().getColor(R.color.baby_blue_lavender));
+        distanceL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
         distance.setChecked(false);
         EditText number = (EditText) findViewById(R.id.miles_away_text);
         number.setEnabled(false);
@@ -295,6 +307,10 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     }
 
     public void thereCheckerCall(View view) {
+        LinearLayout distanceL = (LinearLayout)findViewById(R.id.distance_chooser_layout_call);
+        LinearLayout thereL = (LinearLayout)findViewById(R.id.there_layout_call);
+        thereL.setBackgroundColor(getResources().getColor(R.color.baby_blue_teal));
+        distanceL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
         CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_call);
         distance.setChecked(false);
         EditText number = (EditText) findViewById(R.id.miles_away_call);
@@ -306,6 +322,10 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
 
     public void distanceCheckedText(View view) {
         CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_text);
+        LinearLayout distanceL = (LinearLayout)findViewById(R.id.distance_chooser_layout);
+        LinearLayout thereL = (LinearLayout)findViewById(R.id.there_layout);
+        thereL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
+        distanceL.setBackgroundColor(getResources().getColor(R.color.baby_blue_lavender));
         there.setChecked(false);
         EditText number = (EditText) findViewById(R.id.miles_away_text);
         number.setEnabled(true);
@@ -316,6 +336,10 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     }
 
     public void distanceCheckedCall(View view) {
+        LinearLayout distanceL = (LinearLayout)findViewById(R.id.distance_chooser_layout_call);
+        LinearLayout thereL = (LinearLayout)findViewById(R.id.there_layout_call);
+        thereL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
+        distanceL.setBackgroundColor(getResources().getColor(R.color.baby_blue_teal));
         CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_call);
         there.setChecked(false);
         EditText number = (EditText) findViewById(R.id.miles_away_call);
@@ -328,6 +352,10 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
 
     public void thereCheckerReminder(View view) {
         CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_reminder);
+        LinearLayout distanceL = (LinearLayout)findViewById(R.id.distance_chooser_layout_reminder);
+        LinearLayout thereL = (LinearLayout)findViewById(R.id.there_layout_reminder);
+        thereL.setBackgroundColor(getResources().getColor(R.color.baby_blue_lavender));
+        distanceL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
         distance.setChecked(false);
         EditText number = (EditText) findViewById(R.id.miles_away_reminder);
         number.setEnabled(false);
@@ -337,6 +365,10 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     }
 
     public void distanceCheckedReminder(View view) {
+        LinearLayout distanceL = (LinearLayout)findViewById(R.id.distance_chooser_layout_reminder);
+        LinearLayout thereL = (LinearLayout)findViewById(R.id.there_layout_reminder);
+        thereL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
+        distanceL.setBackgroundColor(getResources().getColor(R.color.baby_blue_lavender));
         CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_reminder);
         there.setChecked(false);
         EditText number = (EditText) findViewById(R.id.miles_away_reminder);
@@ -348,6 +380,10 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     }
 
     public void thereCheckerSound(View view) {
+        LinearLayout distanceL = (LinearLayout)findViewById(R.id.distance_chooser_layout_sound);
+        LinearLayout thereL = (LinearLayout)findViewById(R.id.there_layout_sound);
+        thereL.setBackgroundColor(getResources().getColor(R.color.baby_blue_teal));
+        distanceL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
         CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_sound);
         distance.setChecked(false);
         EditText number = (EditText) findViewById(R.id.miles_away_sound);
@@ -358,6 +394,10 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     }
 
     public void distanceCheckedSound(View view) {
+        LinearLayout distanceL = (LinearLayout)findViewById(R.id.distance_chooser_layout_sound);
+        LinearLayout thereL = (LinearLayout)findViewById(R.id.there_layout_sound);
+        thereL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
+        distanceL.setBackgroundColor(getResources().getColor(R.color.baby_blue_teal));
         CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_sound);
         there.setChecked(false);
         EditText number = (EditText) findViewById(R.id.miles_away_sound);
@@ -368,8 +408,10 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
         miles.setClickable(true);
     }
 
-    public void setSound(View view){
+    public void setSound(View view) {
         long metersAway = 150;
+        String radiusType = "there";
+        int original =0;
         CheckBox distanceCheckbox = (CheckBox) findViewById(R.id.distance_checkbox_sound);
         Spinner milesMinutes = (Spinner) findViewById(R.id.spinner_sound_miles_minutes);
         if (distanceCheckbox.isChecked()) {
@@ -379,10 +421,17 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
                 Toast.makeText(this, "Please Enter a Distance", Toast.LENGTH_SHORT).show();
                 return;
             }
+            original = Integer.parseInt(miles);
             if (milesMinutes.getSelectedItem().equals("miles")) {
+                radiusType = "miles";
                 metersAway = convertToMeters(Double.valueOf(miles));
             } else if (milesMinutes.getSelectedItem().equals("minutes")) {
+                radiusType = "minutes";
                 metersAway = getMinutesAwayRadius(Integer.parseInt(miles));
+            }
+            else if(milesMinutes.getSelectedItem().equals("meters")){
+                radiusType = "meters";
+                metersAway = Long.valueOf(miles);
             }
         }
 
@@ -390,8 +439,8 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
         int ring = ringerVlmSeekBar.getProgress();
         int system = alarmVlmSeekBar.getProgress();
         int nofity = notifyVlmSeekBar.getProgress();
-        Task task = taskDataSource.createTask(destinationLocation, "", metersAway, Task.SOUND_SETTING_TASK_TYPE);
-        taskSoundDataSource.createSoundSettings(media,ring,nofity,system,task.getId());
+        Task task = taskDataSource.createTask(destinationLocation, "", metersAway, Task.SOUND_SETTING_TASK_TYPE, destination, radiusType, original);
+        taskSoundDataSource.createSoundSettings(media, ring, nofity, system, task.getId());
         Toast.makeText(getApplicationContext(),
                 "Sound Setting Created!", Toast.LENGTH_SHORT)
                 .show();
@@ -401,6 +450,8 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
 
     public void sendTextMessage(View view) {
         long metersAway = 150;
+        String radiusType = "there";
+        int original = 0;
         MultiAutoCompleteTextView _contacts = (MultiAutoCompleteTextView) findViewById(R.id.multiAuto_contacts);
         EditText _reminder = (EditText) findViewById(R.id.enter_reminder_field);
         String reminder = "filler";
@@ -413,16 +464,23 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
                 Toast.makeText(this, "Please Enter a Distance", Toast.LENGTH_SHORT).show();
                 return;
             }
+            original = Integer.parseInt(miles);
             if (milesMinutes.getSelectedItem().equals("miles")) {
                 metersAway = convertToMeters(Double.valueOf(miles));
+                radiusType = "miles";
             } else if (milesMinutes.getSelectedItem().equals("minutes")) {
                 metersAway = getMinutesAwayRadius(Integer.parseInt(miles));
+                radiusType = "minutes";
+            }
+            else if(milesMinutes.getSelectedItem().equals("meters")){
+                metersAway = Long.valueOf(miles);
+                radiusType = "meters";
             }
         }
         if (_reminder != null) {
             reminder = _reminder.getText().toString();
         }
-        Task task = taskDataSource.createTask(destinationLocation, reminder, metersAway, Task.TEXT_MESSAGE_TASK_TYPE);
+        Task task = taskDataSource.createTask(destinationLocation, reminder, metersAway, Task.TEXT_MESSAGE_TASK_TYPE, destination, radiusType, original);
         Log.d("DOSOMETHINGActivity", "Saved Destination");
         String contacts = _contacts.getText().toString();
         String[] num1 = contacts.split("<");
@@ -457,6 +515,8 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
 
     public void setCallReminder(View view) {
         long metersAway = 150;
+        int original = 0;
+        String radiusType = "there";
         Log.d("DoSomethingActivity", "setCallReminderCalled");
         CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_call);
         Spinner milesMin = (Spinner) findViewById(R.id.spinner_call_miles_minutes);
@@ -467,15 +527,22 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
                 Toast.makeText(this, "Please Enter a Distance", Toast.LENGTH_SHORT).show();
                 return;
             }
+            original = Integer.parseInt(miles);
             if (milesMin.getSelectedItem().equals("miles")) {
                 metersAway = convertToMeters(Double.valueOf(miles));
+                radiusType = "miles";
             } else if (milesMin.getSelectedItem().equals("minutes")) {
                 metersAway = getMinutesAwayRadius(Integer.parseInt(miles));
+                radiusType = "minutes";
+            }
+            else if(milesMin.getSelectedItem().equals("meters")){
+                metersAway = Long.valueOf(miles);
+                radiusType = "meters";
             }
         }
 
         AutoCompleteTextView _contacts = (AutoCompleteTextView) findViewById(R.id.auto_contacts);
-        Task task = taskDataSource.createTask(destinationLocation, "", metersAway, Task.CALL_REMINDER_TASK_TYPE);
+        Task task = taskDataSource.createTask(destinationLocation, "", metersAway, Task.CALL_REMINDER_TASK_TYPE, destination, radiusType, original);
         String contacts = _contacts.getText().toString();
         String[] num1 = contacts.split("<");
         for (int i = 1; i < num1.length; i++) {
@@ -597,6 +664,8 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
 
     public void setReminder(View view) {
         long metersAway = 150;
+        int original = 0;
+        String radiusType = "there";
         Log.d("DoSomethingActivity", "setReminderCalled");
         CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_reminder);
         Spinner milesMin = (Spinner) findViewById(R.id.spinner_reminder_miles_minutes);
@@ -609,19 +678,30 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
                 Toast.makeText(this, "Please Enter a Distance", Toast.LENGTH_SHORT).show();
                 return;
             }
+            original = Integer.parseInt(miles);
             if (milesMin.getSelectedItem().equals("miles")) {
                 metersAway = convertToMeters(Double.valueOf(miles));
+                radiusType = "miles";
             } else if (milesMin.getSelectedItem().equals("minutes")) {
                 metersAway = getMinutesAwayRadius(Integer.parseInt(miles));
+                radiusType = "minutes";
+            }
+            else if(milesMin.getSelectedItem().equals("meters")){
+                metersAway = Long.valueOf(miles);
+                radiusType = "meters";
             }
         }
         if (_reminder != null) {
             reminder = _reminder.getText().toString();
         }
+        if (metersAway < 100) {
+            Toast.makeText(this, "Please enter a greater radius", Toast.LENGTH_LONG).show();
+            return;
+        }
         Toast.makeText(getApplicationContext(),
                 "Reminder Created!", Toast.LENGTH_SHORT)
                 .show();
-        taskDataSource.createTask(destinationLocation, reminder, metersAway, Task.REMINDER_MESSAGE_TASK_TYPE);
+        taskDataSource.createTask(destinationLocation, reminder, metersAway, Task.REMINDER_MESSAGE_TASK_TYPE, destination, radiusType, original);
         Log.d("CreateTaskActivity", "Saved Destination");
 
     }
