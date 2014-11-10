@@ -93,7 +93,7 @@ public class TaskAdapter extends ArrayAdapter<Task> {
             imageView.setImageDrawable(icon);
             message.setText("Sound Settings");
         }
-        ImageButton delete = (ImageButton)rowView.findViewById(R.id.delete_task_from_layout);
+        ImageView delete = (ImageView)rowView.findViewById(R.id.delete_task_from_layout);
         delete.setTag(position);
         delete.setOnClickListener(new View.OnClickListener() {
             @Override

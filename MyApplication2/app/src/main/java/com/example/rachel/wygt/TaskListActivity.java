@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -56,6 +57,7 @@ public class TaskListActivity extends ListActivity {
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
+        Log.d("TASKLISTACTIVITY", "ITEM SELECTED");
         final Task task = tasks.get(position);
         if(task.getTaskType() == Task.TEXT_MESSAGE_TASK_TYPE){
             List<TaskContact> contacts = taskContactDataSource.getTaskContactsByTaskId(task.getId());
