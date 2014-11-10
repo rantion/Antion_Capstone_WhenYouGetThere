@@ -4,10 +4,14 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -27,6 +31,7 @@ public class TaskListActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         tasks = taskDataSource.getAllTasks();
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         LayoutInflater inflater = (LayoutInflater) this
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         TaskAdapter adapter = new TaskAdapter(this,
@@ -40,8 +45,18 @@ public class TaskListActivity extends ListActivity {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return true;
+    }
+
+    @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
-        Task task = tasks.get(position);
+        final Task task = tasks.get(position);
         if(task.getTaskType() == Task.TEXT_MESSAGE_TASK_TYPE){
             List<TaskContact> contacts = taskContactDataSource.getTaskContactsByTaskId(task.getId());
             String contactInfo = "";

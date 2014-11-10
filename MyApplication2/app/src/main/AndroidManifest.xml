@@ -58,7 +58,8 @@
 
         <activity
             android:name=".TaskListActivity"
-            android:label="@string/full_app_name">
+            android:label="@string/full_app_name"
+            android:parentActivityName=".MyActivity">
 
         </activity>
 

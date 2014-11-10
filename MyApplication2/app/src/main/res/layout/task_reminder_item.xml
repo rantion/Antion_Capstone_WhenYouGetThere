@@ -64,15 +64,37 @@
                 android:textSize="5pt" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/task_item_message"
+        <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
-            android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-            android:gravity="center_vertical|center_horizontal"
-            android:text="THIS IS WHERE THE MESSAGE WILL GO"
-            android:textColor="@color/white" />
+            android:weightSum="10">
+            <TextView
+                android:id="@+id/task_item_message"
+                android:layout_width="0dp"
+                android:layout_weight="9"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="THIS IS WHERE THE MESSAGE WILL GO"
+                android:textColor="@color/white" />
+            <ImageButton
+                android:id="@+id/delete_task_from_layout"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:layout_gravity="right"
+                android:layout_height="30dip"
+                android:src="@drawable/clear"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
+
+                />
+            </LinearLayout>
+
     </LinearLayout>
 
 

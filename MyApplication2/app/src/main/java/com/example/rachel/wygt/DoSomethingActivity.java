@@ -71,12 +71,17 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     private AudioManager audioManager = null;
     private SeekBar notifyVlmSeekBar = null;
     private int mediaMax, ringerMax, notifyMax, alarmMax, ringCurrent;
+    private LinearLayout textLayout, callLayout, reminderLayout, soundLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_do_something);
+        textLayout = (LinearLayout)findViewById(R.id.enter_contacts_text);
+        callLayout = (LinearLayout)findViewById(R.id.enter_contacts_call_reminder);
+        reminderLayout = (LinearLayout)findViewById(R.id.reminder_layout);
+        soundLayout = (LinearLayout)findViewById(R.id.sound_layout);
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         this.setVolumeControlStream(AudioManager.STREAM_RING);
         this.setVolumeControlStream(AudioManager.STREAM_ALARM);
@@ -444,8 +449,10 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
         Toast.makeText(getApplicationContext(),
                 "Sound Setting Created!", Toast.LENGTH_SHORT)
                 .show();
-
-
+        textLayout.setVisibility(View.GONE);
+        reminderLayout.setVisibility(View.GONE);
+        callLayout.setVisibility(View.GONE);
+        soundLayout.setVisibility(View.GONE);
     }
 
     public void sendTextMessage(View view) {
@@ -501,6 +508,10 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
         Toast.makeText(getApplicationContext(),
                 "TextMessageTask Created!", Toast.LENGTH_SHORT)
                 .show();
+        textLayout.setVisibility(View.GONE);
+        reminderLayout.setVisibility(View.GONE);
+        callLayout.setVisibility(View.GONE);
+        soundLayout.setVisibility(View.GONE);
     }
 
     public long getMinutesAwayRadius(int minutes) {
@@ -561,6 +572,10 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
                     .show();
             Log.d("DOSOMETHINGACTIVITY", contact.toString());
         }
+        textLayout.setVisibility(View.GONE);
+        reminderLayout.setVisibility(View.GONE);
+        callLayout.setVisibility(View.GONE);
+        soundLayout.setVisibility(View.GONE);
 
     }
 
@@ -621,39 +636,55 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     }
 
     public void phoneSelected(View view) {
+        hideKeyboard();
         LinearLayout phone = (LinearLayout) findViewById(R.id.enter_contacts_call_reminder);
         if (phone.getVisibility() != View.VISIBLE) {
             phone.setVisibility(View.VISIBLE);
         } else if (phone.getVisibility() == View.VISIBLE) {
             phone.setVisibility(View.GONE);
         }
+        textLayout.setVisibility(View.GONE);
+        reminderLayout.setVisibility(View.GONE);
+        soundLayout.setVisibility(View.GONE);
     }
 
     public void soundSelected(View view) {
+        hideKeyboard();
         LinearLayout sound = (LinearLayout) findViewById(R.id.sound_layout);
         if (sound.getVisibility() != View.VISIBLE) {
             sound.setVisibility(View.VISIBLE);
         } else if (sound.getVisibility() == View.VISIBLE) {
             sound.setVisibility(View.GONE);
         }
+        textLayout.setVisibility(View.GONE);
+        reminderLayout.setVisibility(View.GONE);
+        callLayout.setVisibility(View.GONE);
     }
 
     public void textSelected(View view) {
+        hideKeyboard();
         LinearLayout text = (LinearLayout) findViewById(R.id.enter_contacts_text);
         if (text.getVisibility() != View.VISIBLE) {
             text.setVisibility(View.VISIBLE);
         } else if (text.getVisibility() == View.VISIBLE) {
             text.setVisibility(View.GONE);
         }
+        reminderLayout.setVisibility(View.GONE);
+        callLayout.setVisibility(View.GONE);
+        soundLayout.setVisibility(View.GONE);
     }
 
     public void reminderSelected(View view) {
+        hideKeyboard();
         LinearLayout reminder = (LinearLayout) findViewById(R.id.reminder_layout);
         if (reminder.getVisibility() != View.VISIBLE) {
             reminder.setVisibility(View.VISIBLE);
         } else if (reminder.getVisibility() == View.VISIBLE) {
             reminder.setVisibility(View.GONE);
         }
+        textLayout.setVisibility(View.GONE);
+        callLayout.setVisibility(View.GONE);
+        soundLayout.setVisibility(View.GONE);
     }
 
 
@@ -703,6 +734,10 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
                 .show();
         taskDataSource.createTask(destinationLocation, reminder, metersAway, Task.REMINDER_MESSAGE_TASK_TYPE, destination, radiusType, original);
         Log.d("CreateTaskActivity", "Saved Destination");
+        textLayout.setVisibility(View.GONE);
+        reminderLayout.setVisibility(View.GONE);
+        callLayout.setVisibility(View.GONE);
+        soundLayout.setVisibility(View.GONE);
 
     }
 

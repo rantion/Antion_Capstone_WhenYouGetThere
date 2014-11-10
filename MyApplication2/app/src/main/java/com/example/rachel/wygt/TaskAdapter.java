@@ -2,13 +2,17 @@ package com.example.rachel.wygt;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.google.android.gms.common.images.ImageManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -21,6 +25,8 @@ import java.util.List;
 public class TaskAdapter extends ArrayAdapter<Task> {
     private final Context context;
     private final List<Task> tasks;
+    private TaskDataSource tds = MyApplication.getTaskDataSource();
+    private TaskSoundDataSource tsds = MyApplication.getTaskSoundDataSource();
     private TaskContactDataSource tcds = MyApplication.getTaskContactDataSource();
 
     public TaskAdapter(Context context, int resource, List objects) {
@@ -34,12 +40,12 @@ public class TaskAdapter extends ArrayAdapter<Task> {
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.task_reminder_item, parent, false);
+        final View rowView = inflater.inflate(R.layout.task_reminder_item, parent, false);
         TextView location = (TextView) rowView.findViewById(R.id.task_item_location);
         TextView radius = (TextView) rowView.findViewById(R.id.task_item_radius);
         TextView message = (TextView) rowView.findViewById(R.id.task_item_message);
         ImageView imageView = (ImageView) rowView.findViewById(R.id.task_item_icon);
-        Task task = tasks.get(position);
+        final Task task = tasks.get(position);
         String[] addressL = task.getAddress().split("\n");
         String address = "";
         address = addressL[0] + "\n" + addressL[1];
@@ -87,6 +93,29 @@ public class TaskAdapter extends ArrayAdapter<Task> {
             imageView.setImageDrawable(icon);
             message.setText("Sound Settings");
         }
+        ImageButton delete = (ImageButton)rowView.findViewById(R.id.delete_task_from_layout);
+        delete.setTag(position);
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               Log.d("TASKADAPTER", "OnClickSelected");
+              if(task.getTaskType()==Task.SOUND_SETTING_TASK_TYPE){
+                  List<SoundSettings> sounds = tsds.getTaskSoundsByTaskId(task.getId());
+                  for(SoundSettings sound: sounds){
+                      tsds.deleteTaskSound(sound);
+                  }
+              }
+              if(task.getTaskType() == Task.TEXT_MESSAGE_TASK_TYPE || task.getTaskType() == Task.CALL_REMINDER_TASK_TYPE){
+                  List<TaskContact> contacts = tcds.getTaskContactsByTaskId(task.getId());
+                  for(TaskContact contact: contacts){
+                      tcds.deleteTaskContact(contact);
+                  }
+              }
+              tds.deleteTask(task);
+              tasks.remove(task);
+              notifyDataSetChanged();
+            }
+        });
         return rowView;
     }
 }

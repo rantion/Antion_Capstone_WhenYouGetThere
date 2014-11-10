@@ -2,6 +2,7 @@ package com.example.rachel.wygt;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.media.AudioManager;
@@ -138,6 +139,8 @@ public class EditSoundTaskActivity extends Activity {
             taskDataSource.deleteTask(task);
         }
         Toast.makeText(this, "Sound Setting Task Deleted", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, TaskListActivity.class);
+        startActivity(intent);
     }
 
 
@@ -227,7 +230,7 @@ public class EditSoundTaskActivity extends Activity {
         mediaVlmSeekBar.setMax(mediaMax);
         mediaVlmSeekBar.setProgress(_media);
         ImageView mediaIcon = (ImageView) findViewById(R.id.edit_sound_mediaIcon);
-        mediaIcon.setImageDrawable(getVolumeIcon(mediaMax,_media, SoundSettings.SOUND_TYPE_MEDIA));
+        mediaIcon.setImageDrawable(getVolumeIcon(mediaMax, _media, SoundSettings.SOUND_TYPE_MEDIA));
 
         ringerVlmSeekBar = (SeekBar) findViewById(R.id.edit_sound_ringerSeek);
         ringerMax = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING);

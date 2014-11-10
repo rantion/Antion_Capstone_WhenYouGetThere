@@ -1,6 +1,7 @@
 package com.example.rachel.wygt;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -111,8 +112,8 @@ public class EditSMSTaskActivity extends Activity {
 
     public void thereCheckedEditText(View view) {
         distance.setChecked(false);
-       distanceM.setEnabled(false);
-       distanceM.setClickable(false);
+        distanceM.setEnabled(false);
+        distanceM.setClickable(false);
         spinner.setClickable(false);
     }
 
@@ -130,6 +131,8 @@ public class EditSMSTaskActivity extends Activity {
             taskDataSource.deleteTask(task);
         }
         Toast.makeText(this, "Text Task Deleted", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, TaskListActivity.class);
+        startActivity(intent);
     }
 
 
@@ -221,7 +224,7 @@ public class EditSMSTaskActivity extends Activity {
                     R.id.ccontName, R.id.ccontNo, R.id.ccontType}
             );
 
-           contacts.setThreshold(1);
+            contacts.setThreshold(1);
             contacts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

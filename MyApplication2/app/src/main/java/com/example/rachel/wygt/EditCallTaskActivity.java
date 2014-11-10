@@ -1,6 +1,7 @@
 package com.example.rachel.wygt;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -128,6 +129,8 @@ public class EditCallTaskActivity extends Activity {
             taskDataSource.deleteTask(task);
         }
         Toast.makeText(this, "Call Task Deleted", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, TaskListActivity.class);
+        startActivity(intent);
     }
 
 

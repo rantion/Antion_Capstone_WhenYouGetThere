@@ -476,6 +476,7 @@
             android:layout_height="wrap_content"
             android:background="@color/baby_blue_teal"
             android:visibility="gone"
+            android:gravity="bottom"
             android:orientation="vertical">
 
             <LinearLayout
