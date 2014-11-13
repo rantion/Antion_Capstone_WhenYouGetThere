@@ -33,6 +33,7 @@ public class MyApplication extends Application {
     protected static MyLocationDataSource myLocationDataSource;
     private static Context context;
     private static ArrayList<Map<String, String>> mPeopleList;
+    public static final int REQUESTCODE = 123456789;
 
     public void onCreate() {
         MyApplication.context = getApplicationContext();

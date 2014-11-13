@@ -102,10 +102,13 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
     Location location; // location
     private CallNotificationReceiver callReciever = new CallNotificationReceiver();
     private String destinationDuration, destinationDistance, destDistMeters, destDistSeconds;
+    private String destinationAddress;
+    private LatLng destinationLocation;
     private PreferenceChangeListener preferenceListener = new PreferenceChangeListener();
+    private MyLocationDataSource locationDataSouce = MyApplication.getMyLocationDataSource();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
         SharedPreferences sharedPreferences = PreferenceManager
@@ -137,7 +140,8 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                 0, MyApplication.getGpsTracker());
         mActivityIndicator =
                 (ProgressBar) findViewById(R.id.address_progress);
-
+        cancelAlarmManager();
+        startAlarmManager();
         boolean alarmUp = (PendingIntent.getBroadcast(MyApplication.getAppContext(), 0,
                 new Intent("com.example.wygt.alarm"),
                 PendingIntent.FLAG_NO_CREATE) != null);
@@ -147,10 +151,10 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         } else {
             Log.d(LOGTAG, "Alarm is running");
         }
-        //    startAlarmManager();
     }
 
     public void starSaveLocation(View view){
+
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final EditText input = new EditText(this);
         builder.setView(input);
@@ -158,7 +162,9 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                 .setCancelable(false)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-
+                          String name = input.getText().toString();
+                          locationDataSouce.createMyLocation(name, destinationAddress, destinationLocation.latitude, destinationLocation.longitude);
+                          Toast.makeText(MyApplication.getAppContext(), "location saved!", Toast.LENGTH_SHORT).show();
                     }
                 });
         AlertDialog alert = builder.create();
@@ -177,7 +183,8 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         Context context = getBaseContext();
         alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         gpsTrackerIntent = new Intent("com.example.wygt.alarm");
-        pendingIntent = PendingIntent.getBroadcast(context, 0, gpsTrackerIntent, 0);
+        gpsTrackerIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        pendingIntent = PendingIntent.getBroadcast(context, MyApplication.REQUESTCODE, gpsTrackerIntent, 0);
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
         String interval = sharedPreferences.getString("prefSyncFrequency", "5");
@@ -193,7 +200,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         Log.d(LOGTAG, "cancelAlarmManager");
         Context context = getBaseContext();
         Intent intent = new Intent("com.example.wygt.alarm");
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, MyApplication.REQUESTCODE, intent, 0);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);
     }
@@ -625,7 +632,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                             Address selectedAddress = addressArray[which];
                             mLocation = gpsTracker.getLocation();
                             final LatLng currentLocation = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
-                            final LatLng destinationLocation = new LatLng(selectedAddress.getLatitude(), selectedAddress.getLongitude());
+                            destinationLocation = new LatLng(selectedAddress.getLatitude(), selectedAddress.getLongitude());
                             if (_marker != null) {
                                 _marker.remove();
                             }
@@ -636,6 +643,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                             } catch (ExecutionException e) {
                                 e.printStackTrace();
                             }
+                            destinationAddress = (String)_addresses[which];
                             MarkerOptions marker = new MarkerOptions();
                             marker.position(destinationLocation).title(selectedAddress.getAddressLine(0));
                             _marker = googleMap.addMarker(marker);

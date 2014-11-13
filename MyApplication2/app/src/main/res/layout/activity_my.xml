@@ -96,6 +96,7 @@
             android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
             android:paddingTop="@dimen/abc_action_bar_icon_vertical_padding"
             android:showDividers="middle"
+            android:visibility="gone"
             android:weightSum="10">
 
             <LinearLayout
