@@ -150,6 +150,21 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         //    startAlarmManager();
     }
 
+    public void starSaveLocation(View view){
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final EditText input = new EditText(this);
+        builder.setView(input);
+        builder.setMessage("Please Enter A Location Name")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
     @Override
     public void onBackPressed() {
         Log.d("MYACTIVITY", "back key pressed");
@@ -177,8 +192,8 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
     private void cancelAlarmManager() {
         Log.d(LOGTAG, "cancelAlarmManager");
         Context context = getBaseContext();
-        Intent gpsTrackerIntent = new Intent(context, GpsTrackerAlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, gpsTrackerIntent, 0);
+        Intent intent = new Intent("com.example.wygt.alarm");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);
     }
@@ -232,6 +247,13 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                         "Sorry! unable to create maps", Toast.LENGTH_SHORT)
                         .show();
             }
+            MarkerOptions marker = new MarkerOptions();
+            LatLng currentLoc =  new LatLng(current.getLatitude(), current.getLongitude());
+            marker.position(currentLoc).title("Current Location");
+            _marker = googleMap.addMarker(marker);
+            CameraPosition cameraPosition = new CameraPosition.Builder().target(
+                    currentLoc).zoom(14).build();
+            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }
     }
 
@@ -250,6 +272,10 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         }
         if (id == R.id.list) {
             Intent intent = new Intent(this, TaskListActivity.class);
+            startActivity(intent);
+        }
+        if(id== R.id.listLocations){
+            Intent intent = new Intent(this, MyLocationsActivity.class);
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);

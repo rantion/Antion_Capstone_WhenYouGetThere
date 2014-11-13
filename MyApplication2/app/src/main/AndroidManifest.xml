@@ -56,6 +56,18 @@
 
         </activity>
 
+        <activity android:name=".MyLocationsActivity"
+            android:label="@string/full_app_name"
+            android:screenOrientation="portrait">
+
+        </activity>
+
+        <activity android:name=".AddLocationActivity"
+            android:label="@string/full_app_name"
+            android:screenOrientation="portrait">
+
+        </activity>
+
         <activity
             android:name=".TaskListActivity"
             android:label="@string/full_app_name"

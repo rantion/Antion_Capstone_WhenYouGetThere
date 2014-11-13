@@ -188,7 +188,7 @@ public class EditSoundTaskActivity extends Activity {
                 radiusType = "meters";
             }
         }
-        task.setOriginalRadius(0);
+        task.setOriginalRadius(Integer.parseInt(distanceM.getText().toString()));
         task.setRadius_type(radiusType);
         task.setRadius(metersAway);
         int media = mediaVlmSeekBar.getProgress();
@@ -200,6 +200,8 @@ public class EditSoundTaskActivity extends Activity {
             taskDataSource.updateTask(task);
         }
         Toast.makeText(this, "Task Updated", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, TaskListActivity.class);
+        startActivity(intent);
     }
 
     private Drawable getVolumeIcon(int max, int current, int type) {

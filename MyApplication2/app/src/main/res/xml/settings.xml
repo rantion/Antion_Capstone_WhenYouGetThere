@@ -2,20 +2,20 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="Settings" >
+    <PreferenceCategory android:name="Settings" >
         <EditTextPreference
-            android:title="Username"
+            android:name="Username"
             android:summary="set your username"
             android:key="prefUsername"/>
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Location" >
+    <PreferenceCategory android:name="Location" >
         <ListPreference
             android:key="prefSyncFrequency"
             android:entries="@array/updateFrequency"
             android:summary="update location every..."
             android:entryValues="@array/updateFrequencyValues"
-            android:title="Location Update Frequency" />
+            android:name="Location Update Frequency" />
     </PreferenceCategory>
 
 </PreferenceScreen>

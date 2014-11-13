@@ -180,7 +180,7 @@ public class EditSMSTaskActivity extends Activity {
                 radiusType = "meters";
             }
         }
-        task.setOriginalRadius(0);
+        task.setOriginalRadius(Integer.parseInt(distanceM.getText().toString()));
         task.setRadius_type(radiusType);
         task.setRadius(metersAway);
         if (message != null) {
@@ -205,6 +205,8 @@ public class EditSMSTaskActivity extends Activity {
             taskDataSource.updateTask(task);
         }
         Toast.makeText(this, "Task Updated", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, TaskListActivity.class);
+        startActivity(intent);
     }
 
     private class PopulateContacts extends AsyncTask<Void, Void, ArrayList<Map<String, String>>> {

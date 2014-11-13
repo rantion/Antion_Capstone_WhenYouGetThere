@@ -3,10 +3,17 @@
     tools:context=".MyActivity" >
     <item android:id="@+id/menu_settings"
         android:title="Settings"
+        android:name="Settings"
         android:orderInCategory="100"
         />
     <item android:id="@+id/list"
-        android:title="ListViewTest"
+        android:title="View/Edit Tasks"
+        android:name="View/Edit Tasks"
+        android:orderInCategory="100"
+        />
+    <item android:id="@+id/listLocations"
+        android:title="View/Edit Locations"
+        android:name="View/Edit Locations"
         android:orderInCategory="100"
         />
 
