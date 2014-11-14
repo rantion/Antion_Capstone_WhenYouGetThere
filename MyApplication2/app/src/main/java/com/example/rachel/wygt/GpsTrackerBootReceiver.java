@@ -22,7 +22,7 @@ public class GpsTrackerBootReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
 
-        Intent gpsTrackerIntent = new Intent(context,GpsTrackerAlarmReceiver.class);
+        Intent gpsTrackerIntent = new Intent("com.example.wygt.alarm");
         gpsTrackerIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context,MyApplication.REQUESTCODE, gpsTrackerIntent, 0);
         SharedPreferences sharedPreferences = PreferenceManager

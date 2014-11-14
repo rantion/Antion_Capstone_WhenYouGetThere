@@ -231,7 +231,7 @@ public class GPSTracker extends Service implements LocationListener {
             locationManager.removeUpdates(this);
             Log.d(LOGTAG, "locationManager removing updates");
         }
-        boolean alarmUp = (PendingIntent.getBroadcast(MyApplication.getAppContext(), 0,
+        boolean alarmUp = (PendingIntent.getBroadcast(MyApplication.getAppContext(), MyApplication.REQUESTCODE,
                 new Intent("com.example.wygt.alarm"),
                 PendingIntent.FLAG_NO_CREATE) != null);
         if (alarmUp = false) {
@@ -259,9 +259,9 @@ public class GPSTracker extends Service implements LocationListener {
     }
 
     private void checkSoundSettings() {
-        Log.d(LOGTAG,"checking sound settings");
+   //     Log.d(LOGTAG,"checking sound settings");
         List<Task> _tasks = taskDataSource.getSoundTasks();
-        Log.d(LOGTAG+"/Sound",_tasks.size() +" tasks");
+  //      Log.d(LOGTAG+"/Sound",_tasks.size() +" tasks");
         for (Task task : _tasks) {
             float[] results = new float[4];
             long radius = task.getRadius();
@@ -278,14 +278,14 @@ public class GPSTracker extends Service implements LocationListener {
                 }
                 taskDataSource.deleteTask(task);
             }
-            Log.d(LOGTAG+"/Sound","task out of radius " + task.getLatitude() + "," + task.getLongitude() + "Radius: " + task.getRadius() + " distance: " + results[0]);
+    //        Log.d(LOGTAG+"/Sound","task out of radius " + task.getLatitude() + "," + task.getLongitude() + "Radius: " + task.getRadius() + " distance: " + results[0]);
         }
     }
 
     private void checkCallReminders() {
-        Log.d(LOGTAG,"checking call reminders");
+  //      Log.d(LOGTAG,"checking call reminders");
         List<Task> _tasks = taskDataSource.getCallReminderTasks();
-        Log.d(LOGTAG+"/Call",_tasks.size() +" tasks");
+  //      Log.d(LOGTAG+"/Call",_tasks.size() +" tasks");
         for (Task task : _tasks) {
             float[] results = new float[4];
             long radius = task.getRadius();
@@ -302,7 +302,7 @@ public class GPSTracker extends Service implements LocationListener {
                     taskContactDataSource.deleteTaskContact(con);
                 }
             }
-            Log.d(LOGTAG+"/Call","task out of radius " + task.getLatitude() + "," + task.getLongitude() + "Radius: " + task.getRadius() + " distance: " + results[0]);
+  //          Log.d(LOGTAG+"/Call","task out of radius " + task.getLatitude() + "," + task.getLongitude() + "Radius: " + task.getRadius() + " distance: " + results[0]);
         }
     }
 
@@ -332,9 +332,9 @@ public class GPSTracker extends Service implements LocationListener {
     }
 
     private void checkTextReminders() {
-        Log.d(LOGTAG + "/SMS", "checking Text Reminders");
+   //     Log.d(LOGTAG + "/SMS", "checking Text Reminders");
         List<Task> tasks = taskDataSource.getTextTasks();
-        Log.d(LOGTAG + "/SMS", tasks.size() + " tasks");
+   //     Log.d(LOGTAG + "/SMS", tasks.size() + " tasks");
         for (Task task : tasks) {
             float[] results = new float[4];
             long radius = task.getRadius();
@@ -348,7 +348,7 @@ public class GPSTracker extends Service implements LocationListener {
                 }
                 taskDataSource.deleteTask(task);
             } else {
-                Log.d("GPS TRACKER", "task out of radius " + task.getLatitude() + "," + task.getLongitude() + "Radius: " + task.getRadius() + " distance: " + results[0]);
+  //              Log.d("GPS TRACKER", "task out of radius " + task.getLatitude() + "," + task.getLongitude() + "Radius: " + task.getRadius() + " distance: " + results[0]);
             }
         }
     }
@@ -374,9 +374,9 @@ public class GPSTracker extends Service implements LocationListener {
     }
 
     private void checkMessageReminders() {
-        Log.d(LOGTAG,"Checking message reminders");
+   //     Log.d(LOGTAG,"Checking message reminders");
         List<Task> values = taskDataSource.getReminderMessageTasks();
-        Log.d(LOGTAG+"/Message",values.size()+ " tasks" );
+   //     Log.d(LOGTAG+"/Message",values.size()+ " tasks" );
         for (Task task : values) {
             float[] results = new float[4];
             long radius = task.getRadius();
@@ -395,9 +395,9 @@ public class GPSTracker extends Service implements LocationListener {
                         "wygt reminder", null, pendingIntent);
                 mNotificationManager.notify(REMINDER_NOTIFICATION_ID, notification);
                 taskDataSource.deleteTask(task);
-                Log.d("reminder", "you should see that shit");
+    //            Log.d("reminder", "you should see that shit");
             }
-            Log.d(LOGTAG+"/Message","task out of radius " + task.getLatitude() + "," + task.getLongitude() + "Radius: " + task.getRadius() + " distance: " + results[0]);
+   //         Log.d(LOGTAG+"/Message","task out of radius " + task.getLatitude() + "," + task.getLongitude() + "Radius: " + task.getRadius() + " distance: " + results[0]);
         }
     }
 

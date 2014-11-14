@@ -98,7 +98,7 @@
             android:layout_margin="0dp"
             android:background="@color/lighter_purple"
             android:onClick="textSelected"
-            android:text="Send text(s)"
+            android:text="send text(s)"
             android:textColor="#ffffffff" />
 
         <LinearLayout
@@ -205,6 +205,12 @@
                 android:id="@+id/enter_reminder_field"
                 android:layout_width="fill_parent"
                 android:layout_height="@dimen/abc_action_bar_default_height"
+                android:lines="9"
+                android:minLines="1"
+                android:gravity="top|left"
+                android:maxLines="30"
+                android:scrollbars="vertical"
+                android:inputType="textMultiLine|textCapSentences"
                 android:hint="enter your text message here" />
 
             <Button
@@ -228,7 +234,7 @@
             android:background="@color/greenish"
             android:onClick="phoneSelected"
             android:padding="0dp"
-            android:text="Call Someone"
+            android:text="call someone"
             android:textColor="#ffffffff" />
 
         <LinearLayout
@@ -322,7 +328,7 @@
                 android:layout_height="wrap_content"
                 android:text="remind me to call.....\n(this does not work for facebook contacts)" />
 
-            <AutoCompleteTextView
+            <com.example.rachel.wygt.AutoWithSpaces
                 android:id="@+id/auto_contacts"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -350,7 +356,7 @@
             android:background="@color/lighter_purple"
             android:onClick="reminderSelected"
             android:padding="0dp"
-            android:text="Set Reminder"
+            android:text="set reminder"
             android:textColor="#ffffffff" />
 
         <LinearLayout
@@ -443,6 +449,12 @@
                 android:id="@+id/reminder_edit_text"
                 android:layout_width="fill_parent"
                 android:layout_height="@dimen/abc_action_bar_default_height"
+                android:lines="9"
+                android:minLines="1"
+                android:gravity="top|left"
+                android:maxLines="30"
+                android:scrollbars="vertical"
+                android:inputType="textMultiLine|textCapSentences"
                 android:hint="enter your reminder/ message here" />
 
             <Button
@@ -467,7 +479,7 @@
             android:background="@color/greenish"
             android:onClick="soundSelected"
             android:padding="0dp"
-            android:text="Sound Setting"
+            android:text="sound setting"
             android:textColor="#ffffffff" />
 
         <LinearLayout
@@ -713,6 +725,19 @@
                 </LinearLayout>
 
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:gravity="bottom"
+            android:orientation="horizontal">
+            <ImageButton
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="fill_parent" />
+
+            </LinearLayout>
 
 
     </LinearLayout>

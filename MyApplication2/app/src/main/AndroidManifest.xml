@@ -23,9 +23,14 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name="com.example.rachel.wygt.GpsTrackerAlarmReceiver">
+        <receiver android:name="com.example.rachel.wygt.GpsTrackerAlarmReceiver"
+            android:enabled="true">
             <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="com.example.wygt.alarm" />
+                <category android:name = "android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.HOME" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
             </intent-filter>
         </receiver>
         <receiver android:name="com.example.rachel.wygt.CallNotificationReceiver">

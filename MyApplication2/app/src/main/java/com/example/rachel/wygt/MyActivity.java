@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -34,10 +35,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.view.View.OnKeyListener;
@@ -68,8 +74,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
@@ -94,23 +102,30 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
     double longitude; // longitude
     private GPSTracker gpsTracker = MyApplication.getGpsTracker();
     private int intervalInMinutes = 1;
-    private boolean currentlyTracking;
+    private boolean currentlyTracking, usingCustLocation;
     boolean isGPSEnabled = false;
     boolean isNetworkEnabled = false;
     boolean canGetLocation = false;
     private LocationManager lm;
     Location location; // location
+    private SimpleAdapter adapter;
     private CallNotificationReceiver callReciever = new CallNotificationReceiver();
     private String destinationDuration, destinationDistance, destDistMeters, destDistSeconds;
-    private String destinationAddress;
+    private String destinationAddress, destinationName;
     private LatLng destinationLocation;
     private PreferenceChangeListener preferenceListener = new PreferenceChangeListener();
     private MyLocationDataSource locationDataSouce = MyApplication.getMyLocationDataSource();
+    private List<MyLocation> myLocations = locationDataSouce.getAllMyLocations();
+    private ArrayList<Map<String, String>> _myLocations;
+    private ImageView star;
+    MyLocation custLoc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
+        usingCustLocation = false;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
+        star = (ImageView)findViewById(R.id.save_location_star);
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
         lm = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -140,9 +155,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                 0, MyApplication.getGpsTracker());
         mActivityIndicator =
                 (ProgressBar) findViewById(R.id.address_progress);
-        cancelAlarmManager();
-        startAlarmManager();
-        boolean alarmUp = (PendingIntent.getBroadcast(MyApplication.getAppContext(), 0,
+        boolean alarmUp = (PendingIntent.getBroadcast(MyApplication.getAppContext(), MyApplication.REQUESTCODE,
                 new Intent("com.example.wygt.alarm"),
                 PendingIntent.FLAG_NO_CREATE) != null);
         Log.d(LOGTAG, "wtf man");
@@ -151,24 +164,122 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         } else {
             Log.d(LOGTAG, "Alarm is running");
         }
+        populateLocations();
+         adapter = new SimpleAdapter(MyApplication.getAppContext(), _myLocations, R.layout.custlocview,
+                new String[]{"Name", "Address"}, new int[]{
+                R.id.clocName, R.id.cLocAddress}
+        );
+        final AutoCompleteTextView enter = (AutoCompleteTextView)findViewById(R.id.enter_location_field);
+        enter.setThreshold(1);
+        enter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Map<String, String> _loc = (Map<String, String>) parent
+                        .getItemAtPosition(position);
+                String index = _loc.get("Index");
+                MyLocation loc = myLocations.get(Integer.parseInt(index));
+                String current = loc.getName();
+                enter.setText(current);
+                enter.setSelection(current.length());
+                usingCustLocation = true;
+                custLoc = loc;
+                destinationName = loc.getName();
+                destinationLocation = new LatLng(loc.getLatitude(), loc.getLongitude());
+                destinationAddress = loc.getAddress();
+                getAddress(enter);
+                adapter.notifyDataSetChanged();
+                getAdapter();
+                enter.setAdapter(adapter);
+            }
+        });
+        enter.setAdapter(adapter);
+    }
+
+    public void getAdapter(){
+        populateLocations();
+        adapter = new SimpleAdapter(MyApplication.getAppContext(), _myLocations, R.layout.custlocview,
+                new String[]{"Name", "Address"}, new int[]{
+                R.id.clocName, R.id.cLocAddress}
+        );
+    }
+
+    public void populateLocations(){
+        _myLocations = new ArrayList<Map<String, String>>();
+        myLocations = locationDataSouce.getAllMyLocations();
+        for(int i = 0; i<myLocations.size();i++){
+            Map<String, String> LocationAddress = new HashMap<String, String>();
+            LocationAddress.put("Name", myLocations.get(i).getName());
+            LocationAddress.put("Address", myLocations.get(i).getAddress());
+            LocationAddress.put("Index",String.valueOf(i));
+            _myLocations.add(LocationAddress);
+        }
     }
 
     public void starSaveLocation(View view){
+        if(usingCustLocation){
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("are you sure you want to delete location?")
+                    .setCancelable(true)
+                    .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                           //
+                        }
+                    })
+                    .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            locationDataSouce.deleteMyLocation(custLoc);
+                            Toast.makeText(MyApplication.getAppContext(), "Location Deleted", Toast.LENGTH_SHORT).show();
+                            star.setImageDrawable(getResources().getDrawable(R.drawable.starout));
+                            TextView destName = (TextView) findViewById(R.id.cust_name);
+                            destName.setVisibility(View.GONE);
+                            myLocations.remove(custLoc);
+                            adapter.notifyDataSetChanged();
+                            usingCustLocation = false;
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        final EditText input = new EditText(this);
-        builder.setView(input);
-        builder.setMessage("Please Enter A Location Name")
-                .setCancelable(false)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                          String name = input.getText().toString();
-                          locationDataSouce.createMyLocation(name, destinationAddress, destinationLocation.latitude, destinationLocation.longitude);
-                          Toast.makeText(MyApplication.getAppContext(), "location saved!", Toast.LENGTH_SHORT).show();
-                    }
-                });
-        AlertDialog alert = builder.create();
-        alert.show();
+                        }
+                    });
+            final AlertDialog alert = builder.create();
+            alert.show();
+
+        }
+        else {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            final EditText input = new EditText(this);
+            builder.setView(input);
+            builder.setMessage("please enter a location name")
+                    .setCancelable(true)
+                    .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //        alert.dismiss();
+                        }
+                    })
+                    .setPositiveButton("save", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            String name = input.getText().toString();
+                            MyLocation loc = locationDataSouce.createMyLocation(name, destinationAddress, destinationLocation.latitude, destinationLocation.longitude);
+                            Toast.makeText(MyApplication.getAppContext(), "location saved!", Toast.LENGTH_SHORT).show();
+                            star.setImageDrawable(getResources().getDrawable(R.drawable.star));
+                            usingCustLocation = true;
+                            destinationName = name;
+                            TextView destName = (TextView) findViewById(R.id.cust_name);
+                            destName.setVisibility(View.VISIBLE);
+                            destName.setText(name);
+                            myLocations.add(loc);
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+            final AlertDialog alert = builder.create();
+            alert.show();
+        }
+    }
+
+
+    @Override
+    protected void onResume() {
+        myLocations = locationDataSouce.getAllMyLocations();
+        super.onResume();
     }
 
     @Override
@@ -213,11 +324,64 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                 Build.VERSION_CODES.JELLY_BEAN
                 &&
                 Geocoder.isPresent()) {
-            mActivityIndicator.setVisibility(View.VISIBLE);
-            EditText _location = (EditText) findViewById(R.id.enter_location_field);
+//            mActivityIndicator.setVisibility(View.VISIBLE);
+            AutoCompleteTextView _location = (AutoCompleteTextView)findViewById(R.id.enter_location_field);
             String locationName = _location.getText().toString();
             if (locationName.length() > 0) {
-                (new GetAddressesFromName()).execute(locationName);
+                if(usingCustLocation){
+                    mLocation = gpsTracker.getLocation();
+                    final LatLng currentLocation = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
+                    if (_marker != null) {
+                        _marker.remove();
+                    }
+                    try {
+                        (new GetDrivingDistance()).execute(destinationLocation, currentLocation).get();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                    MarkerOptions marker = new MarkerOptions();
+                    marker.position(destinationLocation).title(destinationName);
+                    _marker = googleMap.addMarker(marker);
+                    CameraPosition cameraPosition = new CameraPosition.Builder().target(
+                            destinationLocation).zoom(14).build();
+                    _marker.setSnippet(destinationAddress);
+                    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    LinearLayout navBar = (LinearLayout) findViewById(R.id.destination_bar);
+                    if (navBar != null) {
+                        navBar.setVisibility(View.VISIBLE);
+                        TextView destName = (TextView)findViewById(R.id.cust_name);
+                        destName.setVisibility(View.VISIBLE);
+                        destName.setText(destinationName);
+                        TextView destAddress = (TextView) findViewById(R.id.activity_my_destination);
+                        if (destAddress != null) {
+                            destAddress.setText(destinationAddress);
+                        }
+                    }
+                    star.setImageDrawable(getResources().getDrawable(R.drawable.star));
+                    Button doSomethingButton = (Button) findViewById(R.id.do_something_button);
+
+                    doSomethingButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(MyActivity.this, DoSomethingActivity.class);
+                            intent.putExtra("Destination", destinationName);
+                            intent.putExtra("Destination_location", destinationLocation);
+                            intent.putExtra("Current_Location", currentLocation);
+                            intent.putExtra("Button", "Do Something");
+                            intent.putExtra("Distance", destinationDistance);
+                            intent.putExtra("Duration", destinationDuration);
+                            intent.putExtra("DistanceMeters", destDistMeters);
+                            intent.putExtra("DurationSeconds", destDistSeconds);
+                            startActivity(intent);
+                        }
+                    });
+
+                }
+                else {
+                    (new GetAddressesFromName()).execute(locationName);
+                }
             } else {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage("Please Enter A Destination")
@@ -427,6 +591,9 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
     public void setDestinationDuration(String destinationDuration) {
         this.destinationDuration = destinationDuration;
     }
+
+
+
 
     @Override
     public void onConnected(Bundle bundle) {
@@ -660,23 +827,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                                     destAddress.setText(_addresses[which]);
                                 }
                             }
-                            //  Button rememberButton = (Button) findViewById(R.id.remember_button);
                             Button doSomethingButton = (Button) findViewById(R.id.do_something_button);
-//                            rememberButton.setOnClickListener(new View.OnClickListener() {
-//                                @Override
-//                                public void onClick(View v) {
-//                                    Intent intent = new Intent(MyActivity.this, RememberSomethingActivity.class);
-//                                    intent.putExtra("Destination", _addresses[which]);
-//                                    intent.putExtra("Destination_location", destinationLocation);
-//                                    intent.putExtra("Current_Location", currentLocation);
-//                                    intent.putExtra("Button", "Remember");
-//                                    intent.putExtra("Distance",destinationDistance);
-//                                    intent.putExtra("Duration", destinationDuration);
-//                                    intent.putExtra("DistanceMeters", destDistMeters);
-//                                    intent.putExtra("DurationSeconds", destDistSeconds);
-//                                    startActivity(intent);
-//                                }
-//                            });
 
                             doSomethingButton.setOnClickListener(new View.OnClickListener() {
                                 @Override

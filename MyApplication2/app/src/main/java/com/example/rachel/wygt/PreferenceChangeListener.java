@@ -20,6 +20,7 @@ public class PreferenceChangeListener implements SharedPreferences.OnSharedPrefe
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Log.d("PrefChange", "prefChanged");
+        Log.d("PrefChange", key);
         if (key.equals(locationUpdate)) {
             cancelAlarmManager();
             startAlarmManager();
@@ -30,8 +31,9 @@ public class PreferenceChangeListener implements SharedPreferences.OnSharedPrefe
         Log.d("PrefChange", "cancelAlarmManager");
         Context context = MyApplication.getAppContext();
         Intent gpsTrackerIntent = new Intent("com.example.wygt.alarm");
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, gpsTrackerIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, MyApplication.REQUESTCODE, gpsTrackerIntent, 0);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        pendingIntent.cancel();
         alarmManager.cancel(pendingIntent);
     }
 
@@ -40,10 +42,12 @@ public class PreferenceChangeListener implements SharedPreferences.OnSharedPrefe
         Context context = MyApplication.getAppContext();
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent gpsTrackerIntent = new Intent("com.example.wygt.alarm");
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, gpsTrackerIntent, 0);
+        gpsTrackerIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, MyApplication.REQUESTCODE, gpsTrackerIntent, 0);
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(context);
         String interval = sharedPreferences.getString("prefSyncFrequency", "5");
+
         int intervalInMinutes = Integer.parseInt(interval);
         Log.d("PrefChange", "Shared Preferences interval: " + intervalInMinutes);
         alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,

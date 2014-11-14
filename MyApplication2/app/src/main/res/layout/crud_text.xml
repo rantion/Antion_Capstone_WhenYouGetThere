@@ -156,6 +156,12 @@
             android:layout_marginRight="@dimen/activity_vertical_margin"
             android:id="@+id/edit_text_message"
             android:layout_width="fill_parent"
+            android:lines="9"
+            android:minLines="1"
+            android:gravity="top|left"
+            android:maxLines="30"
+            android:scrollbars="vertical"
+            android:inputType="textMultiLine|textCapSentences"
             android:layout_height="@dimen/abc_action_bar_default_height"
             android:hint="enter your text message here" />
         <LinearLayout

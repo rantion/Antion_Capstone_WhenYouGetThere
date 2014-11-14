@@ -138,7 +138,7 @@
             android:textColor="@color/white"
             android:text="Contacts" />
 
-        <AutoCompleteTextView
+        <com.example.rachel.wygt.AutoWithSpaces
             android:textColor="@color/white"
             android:textColorHint="@color/light_grey"
             android:layout_marginLeft="@dimen/activity_vertical_margin"
