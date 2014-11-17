@@ -48,7 +48,12 @@ public class TaskAdapter extends ArrayAdapter<Task> {
         final Task task = tasks.get(position);
         String[] addressL = task.getAddress().split("\n");
         String address = "";
-        address = addressL[0] + "\n" + addressL[1];
+        if(addressL.length>1) {
+            address = addressL[0] + "\n" + addressL[1];
+        }
+        else{
+            address = addressL[0];
+        }
         location.setText(address);
         String radiusString = "there";
         Calendar cl = Calendar.getInstance();

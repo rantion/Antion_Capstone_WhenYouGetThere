@@ -100,7 +100,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
     private Marker _marker;
     double latitude; // latitude
     double longitude; // longitude
-    private GPSTracker gpsTracker = MyApplication.getGpsTracker();
+    private GPSTracker gpsTracker;
     private int intervalInMinutes = 1;
     private boolean currentlyTracking, usingCustLocation;
     boolean isGPSEnabled = false;
@@ -125,6 +125,10 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         usingCustLocation = false;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
+        MyApplication.setActivityContext(this);
+        gpsTracker = new GPSTracker();
+        gpsTracker.registerReceivers();
+        MyApplication.setGpsTracker(gpsTracker);
         star = (ImageView)findViewById(R.id.save_location_star);
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
@@ -148,11 +152,16 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         Log.d("GPS/APP IS OPEN", "appIsOpenSetToTrue - MyActivity");
         editor.putBoolean("appIsOpen", true);
         editor.apply();
+        lm.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                0,
+                0, MyApplication.getGpsTracker());
         initializeMap();
         lm.requestLocationUpdates(
                 LocationManager.NETWORK_PROVIDER,
                 0,
                 0, MyApplication.getGpsTracker());
+        lm.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER,0,0,MyApplication.getGpsTracker());
         mActivityIndicator =
                 (ProgressBar) findViewById(R.id.address_progress);
         boolean alarmUp = (PendingIntent.getBroadcast(MyApplication.getAppContext(), MyApplication.REQUESTCODE,
@@ -194,6 +203,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         });
         enter.setAdapter(adapter);
     }
+
 
     public void getAdapter(){
         populateLocations();
@@ -278,7 +288,12 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
 
     @Override
     protected void onResume() {
+     //   Toast.makeText(this,"OnResumeCalled",Toast.LENGTH_SHORT).show();
         myLocations = locationDataSouce.getAllMyLocations();
+        mLocation = gpsTracker.getLocation();
+        if(mLocation == null){
+            Log.d("Marker-RESUME", "mLocation == null");
+        }
         super.onResume();
     }
 
@@ -325,6 +340,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                 &&
                 Geocoder.isPresent()) {
 //            mActivityIndicator.setVisibility(View.VISIBLE);
+            confirmWifiAvailable();
             AutoCompleteTextView _location = (AutoCompleteTextView)findViewById(R.id.enter_location_field);
             String locationName = _location.getText().toString();
             if (locationName.length() > 0) {
@@ -400,7 +416,9 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
     }
 
     private void initializeMap() {
+        Log.d("Marker", "Initialize Map Called");
         if (googleMap == null) {
+            Log.d("Marker", "Map is Null");
             googleMap = ((MapFragment) getFragmentManager().findFragmentById(
                     R.id.map)).getMap();
             googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
@@ -408,23 +426,31 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
             googleMap.getUiSettings().setMyLocationButtonEnabled(true);
             googleMap.getUiSettings().setCompassEnabled(true);
             Location current = gpsTracker.getLocation();
+            if(current == null){
+                Log.d("Marker", "CurrentIsNull");
+                confirmNetworkProviderEnabled(lm);
+                confirmWifiAvailable();
+
+            }
             if (current != null) {
+                Log.d("Marker", "current is not null");
                 LatLng currentPos = new LatLng(current.getLatitude(), current.getLongitude());
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPos, 12.0f));
+                MarkerOptions marker = new MarkerOptions();
+                LatLng currentLoc =  new LatLng(current.getLatitude(), current.getLongitude());
+                marker.position(currentLoc).title("Current Location");
+                _marker = googleMap.addMarker(marker);
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(
+                        currentLoc).zoom(14).build();
+                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                Toast.makeText(this,"Current Not Null", Toast.LENGTH_SHORT).show();
             }
             // check if map is created successfully or not
             if (googleMap == null) {
-                Toast.makeText(getApplicationContext(),
+                Toast.makeText(this,
                         "Sorry! unable to create maps", Toast.LENGTH_SHORT)
                         .show();
             }
-            MarkerOptions marker = new MarkerOptions();
-            LatLng currentLoc =  new LatLng(current.getLatitude(), current.getLongitude());
-            marker.position(currentLoc).title("Current Location");
-            _marker = googleMap.addMarker(marker);
-            CameraPosition cameraPosition = new CameraPosition.Builder().target(
-                    currentLoc).zoom(14).build();
-            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }
     }
 
@@ -497,20 +523,42 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
 
     boolean confirmNetworkProviderAvailable(LocationManager lm) {
         boolean networkAvailable = confirmAirplaneModeIsOff() &&
-                confirmNetworkProviderEnabled(lm) &&
-                confirmWifiAvailable();
+                confirmNetworkProviderEnabled(lm);
         return networkAvailable;
     }
 
     public boolean confirmNetworkProviderEnabled(LocationManager lm) {
         boolean isAvailable = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        isAvailable = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
         if (!isAvailable) {
-            AlertUserDialog dialog = new AlertUserDialog("Please Enable Location Services", Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            dialog.show(getFragmentManager(), null);
+
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("please enable location services");
+            builder.setMessage("wygt only works if it knows where you are!")
+                    .setCancelable(true)
+                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Intent viewIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                            startActivity(viewIntent);
+                        }
+                    });
+            final AlertDialog alert = builder.create();
+            alert.show();
+//
+//            AlertUserDialog dialog = new AlertUserDialog("please enable location services jkjh", Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+//            dialog.show(getFragmentManager(), null);
+
+            isAvailable = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            isAvailable = lm
+                    .isProviderEnabled(LocationManager.GPS_PROVIDER);
         }
+
         return isAvailable;
+
     }
+
+
 
     public boolean confirmAirplaneModeIsOff() {
 
@@ -529,9 +577,12 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo wifiInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         boolean isAvailable = wifiInfo.isAvailable();
+        isAvailable = wifiInfo.isConnectedOrConnecting();
         if (!isAvailable) {
             AlertUserDialog dialog = new AlertUserDialog("Please Enable Your WiFi", Settings.ACTION_WIFI_SETTINGS);
             dialog.show(getFragmentManager(), null);
+            isAvailable = wifiInfo.isAvailable();
+            isAvailable = wifiInfo.isConnectedOrConnecting();
         }
         return isAvailable;
     }

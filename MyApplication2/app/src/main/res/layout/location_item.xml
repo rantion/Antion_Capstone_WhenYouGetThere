@@ -4,7 +4,7 @@
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/dark_purple"
-    android:weightSum="10">
+    android:weightSum="11">
         <ImageView
             android:layout_width="0dp"
             android:layout_weight="2"
@@ -14,10 +14,10 @@
             android:adjustViewBounds="true"
             android:src="@drawable/world"
             android:clickable="true"
-            android:layout_height="54dip " />
+            android:layout_height="50dip " />
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight="7"
+            android:layout_weight="8"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:layout_marginBottom="@dimen/activity_horizontal_margin"
             android:layout_height="fill_parent"
@@ -31,7 +31,7 @@
                 android:text="Location Name"
                 android:textStyle="bold"
                 android:textColor="@color/white"
-                android:textSize="9pt"
+                android:textSize="8pt"
                 android:gravity="center_horizontal"/>
             <TextView
                 android:id="@+id/location_address"

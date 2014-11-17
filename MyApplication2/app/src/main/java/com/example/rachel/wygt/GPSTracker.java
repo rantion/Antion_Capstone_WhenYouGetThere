@@ -2,12 +2,14 @@ package com.example.rachel.wygt;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -24,8 +26,11 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.telephony.SmsManager;
 import android.util.Log;
+import android.widget.EditText;
 import android.widget.RemoteViews;
 import android.widget.Toast;
+
+import com.google.android.gms.location.LocationClient;
 
 import java.util.List;
 
@@ -37,8 +42,8 @@ public class GPSTracker extends Service implements LocationListener {
     boolean isGPSEnabled = false;
     boolean isNetworkEnabled = false;
     boolean canGetLocation = false;
-    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
-    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1; // 1 minute
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 0; // 10 meters
+    private static final long MIN_TIME_BW_UPDATES = 0; // 1 minute
     private static final int REMINDER_NOTIFICATION_ID = 1000;
     private final String LOGTAG = "GPS TRACKER";
     private static final String SENT = "SMS_SENT";
@@ -144,23 +149,41 @@ public class GPSTracker extends Service implements LocationListener {
             isNetworkEnabled = locationManager
                     .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
             if (!isGPSEnabled && !isNetworkEnabled) {
-                AlertUserDialog dialog = new AlertUserDialog("Please Enable Location Services", Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                Activity activity = (Activity) MyApplication.getAppContext();
-                dialog.show(activity.getFragmentManager(), null);
+
+
+//                AlertDialog.Builder alert = new AlertDialog.Builder(MyApplication.getAppContext());
+//
+//                alert.setTitle("please enable location services");
+//
+//
+//                alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int whichButton) {
+//                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+//                        startActivity(intent);
+//                    }
+//                });
+//                alert.show();
+//
+//
+////                AlertUserDialog dialog = new AlertUserDialog("Please Enable Location Services", Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+////                Activity activity = (Activity) MyApplication.getActivityContext();
+////                dialog.show(activity.getFragmentManager(), null);
             } else {
+                Log.d("MARKER+GPS","canGetLocation");
                 this.canGetLocation = true;
                 if (isNetworkEnabled) {
                     locationManager.requestLocationUpdates(
                             LocationManager.NETWORK_PROVIDER,
                             MIN_TIME_BW_UPDATES,
                             MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-                    //         Log.d("GPS Tracker", "Network");
+                            Log.d("Marker+ GPS Tracker", "Network");
                     if (locationManager != null) {
                         location = locationManager
                                 .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                         if (location != null) {
                             latitude = location.getLatitude();
                             longitude = location.getLongitude();
+                            Log.d("MARKER+GPS","gotNetworkLocation");
                         }
                     }
                 }
@@ -170,13 +193,14 @@ public class GPSTracker extends Service implements LocationListener {
                                 LocationManager.GPS_PROVIDER,
                                 MIN_TIME_BW_UPDATES,
                                 MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-                        // Log.d(LOGTAG, "GPS Enabled");
+                         Log.d(LOGTAG, "GPS Enabled");
                         if (locationManager != null) {
                             location = locationManager
                                     .getLastKnownLocation(LocationManager.GPS_PROVIDER);
                             if (location != null) {
                                 latitude = location.getLatitude();
                                 longitude = location.getLongitude();
+                                Log.d("MARKER+GPS","gotGPSLocation");
                             }
                         }
                     }
@@ -186,7 +210,31 @@ public class GPSTracker extends Service implements LocationListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        boolean isNull = location==null;
+        if(isNull){
+           location = getLastKnownLocation();
+        }
+        if(location == null){
+            Log.d("MArker_GPS","location still null");
+        }
+
         return location;
+    }
+
+    private Location getLastKnownLocation() {
+        List<String> providers = locationManager.getProviders(true);
+        Location bestLocation = null;
+        for (String provider : providers) {
+            Location l = locationManager.getLastKnownLocation(provider);
+            if (l == null) {
+                continue;
+            }
+            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                // Found best last known location: %s", l);
+                bestLocation = l;
+            }
+        }
+        return bestLocation;
     }
 
     public double getLatitude() {
@@ -216,10 +264,14 @@ public class GPSTracker extends Service implements LocationListener {
         float accuracy = location.getAccuracy();
         long time = location.getTime();
 
-        checkTextReminders();
-        checkMessageReminders();
-        checkCallReminders();
-        checkSoundSettings();
+        if(location != null){
+            this.location = location;
+            checkTextReminders();
+            checkMessageReminders();
+            checkCallReminders();
+            checkSoundSettings();
+        }
+
 
         String logMessage = LogHelper.FormatLocationInfo(provider, latitude, longitude, accuracy, time);
         Log.d(LOGTAG, "Monitor Location: " + logMessage);
@@ -237,7 +289,7 @@ public class GPSTracker extends Service implements LocationListener {
         if (alarmUp = false) {
             startAlarmManager();
         } else {
-            Log.d(LOGTAG, "Alarm is running");
+     //       Log.d(LOGTAG, "Alarm is running");
         }
     }
 

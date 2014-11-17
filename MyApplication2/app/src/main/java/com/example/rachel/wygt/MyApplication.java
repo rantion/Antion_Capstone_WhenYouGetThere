@@ -32,6 +32,7 @@ public class MyApplication extends Application {
     protected static TaskSoundDataSource taskSoundDataSource;
     protected static MyLocationDataSource myLocationDataSource;
     private static Context context;
+    private static Context activityContext;
     private static ArrayList<Map<String, String>> mPeopleList;
     public static final int REQUESTCODE = 123456789;
 
@@ -50,8 +51,6 @@ public class MyApplication extends Application {
         catch(Exception e) {
             e.printStackTrace();
         }
-        gpsTracker = new GPSTracker();
-        gpsTracker.registerReceivers();
         (new PopulateContacts()).execute();
 //        SharedPreferences sharedPreferences = PreferenceManager
 //                .getDefaultSharedPreferences(this);
@@ -61,12 +60,24 @@ public class MyApplication extends Application {
         super.onCreate();
     }
 
+    public static void setGpsTracker(GPSTracker gpsTracker) {
+        MyApplication.gpsTracker = gpsTracker;
+    }
+
     public static GPSTracker getGpsTracker() {
         return gpsTracker;
     }
 
     public static TaskSoundDataSource getTaskSoundDataSource() {
         return taskSoundDataSource;
+    }
+
+    public static Context getActivityContext() {
+        return activityContext;
+    }
+
+    public static void setActivityContext(Context activityContext) {
+        MyApplication.activityContext = activityContext;
     }
 
     public static void setTaskSoundDataSource(TaskSoundDataSource taskSoundDataSource) {

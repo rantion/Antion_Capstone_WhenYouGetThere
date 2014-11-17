@@ -5,8 +5,14 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -80,10 +86,10 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
         super.onCreate(savedInstanceState);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_do_something);
-        textLayout = (LinearLayout)findViewById(R.id.enter_contacts_text);
-        callLayout = (LinearLayout)findViewById(R.id.enter_contacts_call_reminder);
-        reminderLayout = (LinearLayout)findViewById(R.id.reminder_layout);
-        soundLayout = (LinearLayout)findViewById(R.id.sound_layout);
+        textLayout = (LinearLayout) findViewById(R.id.enter_contacts_text);
+        callLayout = (LinearLayout) findViewById(R.id.enter_contacts_call_reminder);
+        reminderLayout = (LinearLayout) findViewById(R.id.reminder_layout);
+        soundLayout = (LinearLayout) findViewById(R.id.sound_layout);
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         this.setVolumeControlStream(AudioManager.STREAM_RING);
         this.setVolumeControlStream(AudioManager.STREAM_ALARM);
@@ -301,8 +307,8 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
 
     public void thereCheckerText(View view) {
         CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_text);
-        LinearLayout distanceL = (LinearLayout)findViewById(R.id.distance_chooser_layout);
-        LinearLayout thereL = (LinearLayout)findViewById(R.id.there_layout);
+        LinearLayout distanceL = (LinearLayout) findViewById(R.id.distance_chooser_layout);
+        LinearLayout thereL = (LinearLayout) findViewById(R.id.there_layout);
         thereL.setBackgroundColor(getResources().getColor(R.color.baby_blue_lavender));
         distanceL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
         distance.setChecked(false);
@@ -314,8 +320,8 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     }
 
     public void thereCheckerCall(View view) {
-        LinearLayout distanceL = (LinearLayout)findViewById(R.id.distance_chooser_layout_call);
-        LinearLayout thereL = (LinearLayout)findViewById(R.id.there_layout_call);
+        LinearLayout distanceL = (LinearLayout) findViewById(R.id.distance_chooser_layout_call);
+        LinearLayout thereL = (LinearLayout) findViewById(R.id.there_layout_call);
         thereL.setBackgroundColor(getResources().getColor(R.color.baby_blue_teal));
         distanceL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
         CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_call);
@@ -329,8 +335,8 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
 
     public void distanceCheckedText(View view) {
         CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_text);
-        LinearLayout distanceL = (LinearLayout)findViewById(R.id.distance_chooser_layout);
-        LinearLayout thereL = (LinearLayout)findViewById(R.id.there_layout);
+        LinearLayout distanceL = (LinearLayout) findViewById(R.id.distance_chooser_layout);
+        LinearLayout thereL = (LinearLayout) findViewById(R.id.there_layout);
         thereL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
         distanceL.setBackgroundColor(getResources().getColor(R.color.baby_blue_lavender));
         there.setChecked(false);
@@ -343,8 +349,8 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     }
 
     public void distanceCheckedCall(View view) {
-        LinearLayout distanceL = (LinearLayout)findViewById(R.id.distance_chooser_layout_call);
-        LinearLayout thereL = (LinearLayout)findViewById(R.id.there_layout_call);
+        LinearLayout distanceL = (LinearLayout) findViewById(R.id.distance_chooser_layout_call);
+        LinearLayout thereL = (LinearLayout) findViewById(R.id.there_layout_call);
         thereL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
         distanceL.setBackgroundColor(getResources().getColor(R.color.baby_blue_teal));
         CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_call);
@@ -359,8 +365,8 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
 
     public void thereCheckerReminder(View view) {
         CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_reminder);
-        LinearLayout distanceL = (LinearLayout)findViewById(R.id.distance_chooser_layout_reminder);
-        LinearLayout thereL = (LinearLayout)findViewById(R.id.there_layout_reminder);
+        LinearLayout distanceL = (LinearLayout) findViewById(R.id.distance_chooser_layout_reminder);
+        LinearLayout thereL = (LinearLayout) findViewById(R.id.there_layout_reminder);
         thereL.setBackgroundColor(getResources().getColor(R.color.baby_blue_lavender));
         distanceL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
         distance.setChecked(false);
@@ -372,8 +378,8 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     }
 
     public void distanceCheckedReminder(View view) {
-        LinearLayout distanceL = (LinearLayout)findViewById(R.id.distance_chooser_layout_reminder);
-        LinearLayout thereL = (LinearLayout)findViewById(R.id.there_layout_reminder);
+        LinearLayout distanceL = (LinearLayout) findViewById(R.id.distance_chooser_layout_reminder);
+        LinearLayout thereL = (LinearLayout) findViewById(R.id.there_layout_reminder);
         thereL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
         distanceL.setBackgroundColor(getResources().getColor(R.color.baby_blue_lavender));
         CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_reminder);
@@ -387,8 +393,8 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     }
 
     public void thereCheckerSound(View view) {
-        LinearLayout distanceL = (LinearLayout)findViewById(R.id.distance_chooser_layout_sound);
-        LinearLayout thereL = (LinearLayout)findViewById(R.id.there_layout_sound);
+        LinearLayout distanceL = (LinearLayout) findViewById(R.id.distance_chooser_layout_sound);
+        LinearLayout thereL = (LinearLayout) findViewById(R.id.there_layout_sound);
         thereL.setBackgroundColor(getResources().getColor(R.color.baby_blue_teal));
         distanceL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
         CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_sound);
@@ -401,8 +407,8 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     }
 
     public void distanceCheckedSound(View view) {
-        LinearLayout distanceL = (LinearLayout)findViewById(R.id.distance_chooser_layout_sound);
-        LinearLayout thereL = (LinearLayout)findViewById(R.id.there_layout_sound);
+        LinearLayout distanceL = (LinearLayout) findViewById(R.id.distance_chooser_layout_sound);
+        LinearLayout thereL = (LinearLayout) findViewById(R.id.there_layout_sound);
         thereL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
         distanceL.setBackgroundColor(getResources().getColor(R.color.baby_blue_teal));
         CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_sound);
@@ -418,7 +424,7 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     public void setSound(View view) {
         long metersAway = 150;
         String radiusType = "there";
-        int original =0;
+        int original = 0;
         CheckBox distanceCheckbox = (CheckBox) findViewById(R.id.distance_checkbox_sound);
         Spinner milesMinutes = (Spinner) findViewById(R.id.spinner_sound_miles_minutes);
         if (distanceCheckbox.isChecked()) {
@@ -435,8 +441,7 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
             } else if (milesMinutes.getSelectedItem().equals("minutes")) {
                 radiusType = "minutes";
                 metersAway = getMinutesAwayRadius(Integer.parseInt(miles));
-            }
-            else if(milesMinutes.getSelectedItem().equals("meters")){
+            } else if (milesMinutes.getSelectedItem().equals("meters")) {
                 radiusType = "meters";
                 metersAway = Long.valueOf(miles);
             }
@@ -480,8 +485,7 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
             } else if (milesMinutes.getSelectedItem().equals("minutes")) {
                 metersAway = getMinutesAwayRadius(Integer.parseInt(miles));
                 radiusType = "minutes";
-            }
-            else if(milesMinutes.getSelectedItem().equals("meters")){
+            } else if (milesMinutes.getSelectedItem().equals("meters")) {
                 metersAway = Long.valueOf(miles);
                 radiusType = "meters";
             }
@@ -547,8 +551,7 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
             } else if (milesMin.getSelectedItem().equals("minutes")) {
                 metersAway = getMinutesAwayRadius(Integer.parseInt(miles));
                 radiusType = "minutes";
-            }
-            else if(milesMin.getSelectedItem().equals("meters")){
+            } else if (milesMin.getSelectedItem().equals("meters")) {
                 metersAway = Long.valueOf(miles);
                 radiusType = "meters";
             }
@@ -634,7 +637,7 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
             mTxtPhoneNo.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    if(s.length() == 0){
+                    if (s.length() == 0) {
                         numbers.clear();
                     }
                 }
@@ -683,14 +686,28 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     public void textSelected(View view) {
         hideKeyboard();
         LinearLayout text = (LinearLayout) findViewById(R.id.enter_contacts_text);
-        if (text.getVisibility() != View.VISIBLE) {
-            text.setVisibility(View.VISIBLE);
-        } else if (text.getVisibility() == View.VISIBLE) {
-            text.setVisibility(View.GONE);
-        }
+        text.setVisibility(View.VISIBLE);
+
         reminderLayout.setVisibility(View.GONE);
         callLayout.setVisibility(View.GONE);
         soundLayout.setVisibility(View.GONE);
+
+        ImageView imageView = (ImageView) findViewById(R.id.set_text_icon);
+//        Bitmap Image=BitmapFactory.decodeResource(mContext.getResources(),mThumbIds[position]);
+//        Image=Image.copy(Bitmap.Config.ARGB_8888,true);
+        Paint paint = new Paint();
+        paint.setDither(true);
+        paint.setFilterBitmap(true);
+        Bitmap glow = BitmapFactory.decodeResource(getResources(), R.drawable.text);
+        Bitmap bitmap = Bitmap.createBitmap(imageView.getWidth(), imageView.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+
+        canvas.drawBitmap(glow, new Rect(0, 0, glow.getWidth(), glow.getHeight()), new Rect(0, 0, imageView.getWidth(), imageView.getHeight()), paint);
+//        canvas.drawBitmap(Image, new Rect(0,0,Image.getWidth(),Image.getHeight()), new Rect(0+5,0+5,Image.getWidth()-5,Image.getHeight()-5),paint);
+
+
+        imageView.setImageBitmap(bitmap);
+
     }
 
     public void reminderSelected(View view) {
@@ -735,8 +752,7 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
             } else if (milesMin.getSelectedItem().equals("minutes")) {
                 metersAway = getMinutesAwayRadius(Integer.parseInt(miles));
                 radiusType = "minutes";
-            }
-            else if(milesMin.getSelectedItem().equals("meters")){
+            } else if (milesMin.getSelectedItem().equals("meters")) {
                 metersAway = Long.valueOf(miles);
                 radiusType = "meters";
             }

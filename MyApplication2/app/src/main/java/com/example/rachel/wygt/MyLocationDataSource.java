@@ -75,6 +75,32 @@ public class MyLocationDataSource {
         return locations;
     }
 
+    public MyLocation getLocationById(long id){
+        MyLocation location = null;
+        Cursor cursor = database.rawQuery("select * from "+MySQLiteHelper.TABLE_MY_LOCATIONS+" where "+
+                MySQLiteHelper.COLUMN_ID+"="+id+"", null);
+        if(cursor!=null) {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                location = cursorToMyLocation(cursor);
+                cursor.moveToNext();
+            }
+            // make sure to close the cursor
+            cursor.close();
+        }
+        return location;
+    }
+
+    public void updateMyLocation(MyLocation location){
+        ContentValues values = new ContentValues();
+        values.put(MySQLiteHelper.COLUMN_MY_LOCATION_NAME, location.getName());
+        values.put(MySQLiteHelper.COLUMN_ADDRESS, location.getAddress());
+        values.put(MySQLiteHelper.COLUMN_LATITUDE, location.getLatitude());
+        values.put(MySQLiteHelper.COLUMN_LONGITUDE, location.getLongitude());
+        database.update(MySQLiteHelper.TABLE_MY_LOCATIONS, values, MySQLiteHelper.COLUMN_ID+"="+location.getId(), null);
+
+    }
+
 
     private MyLocation cursorToMyLocation(Cursor cursor) {
         MyLocation myLocation = new MyLocation();

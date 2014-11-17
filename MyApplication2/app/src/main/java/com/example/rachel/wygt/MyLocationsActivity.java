@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import java.util.List;
@@ -36,6 +37,18 @@ public class MyLocationsActivity extends ListActivity {
         super.onCreate(savedInstanceState);
     }
 
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        final MyLocation location = myLocationList.get(position);
+        Intent intent = new Intent(this,EditMyLocationActivity.class);
+        intent.putExtra("latitude", location.getLatitude());
+        intent.putExtra("longitude", location.getLongitude());
+        intent.putExtra("name", location.getName());
+        intent.putExtra("address", location.getAddress());
+        intent.putExtra("id",location.getId());
+        startActivity(intent);
+        super.onListItemClick(l, v, position, id);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -39,7 +39,7 @@ public class GpsTrackerBootReceiver extends BroadcastReceiver {
                 pendingIntent);
 
 
-        Toast.makeText(context, "Booting Completed", Toast.LENGTH_LONG).show();
+     //   Toast.makeText(context, "Booting Completed", Toast.LENGTH_LONG).show();
 
     }
 }
