@@ -41,9 +41,9 @@
                         <LinearLayout
                             android:id="@+id/destination_layout"
                             android:layout_width="0dp"
-                            android:gravity="center"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
+                            android:gravity="center"
                             android:orientation="horizontal">
 
                             <TextView
@@ -120,24 +120,24 @@
                 android:layout_height="0dp"
                 android:layout_weight="74"
                 android:orientation="vertical"
-                android:weightSum="100"
-                android:visibility="gone">
+                android:visibility="gone"
+                android:weightSum="100">
 
                 <LinearLayout
                     android:id="@+id/proximity_information_text"
                     android:layout_width="fill_parent"
+                    android:layout_height="0dp"
                     android:layout_marginLeft="@dimen/activity_vertical_margin"
                     android:layout_marginRight="@dimen/activity_vertical_margin"
-                    android:layout_height="0dp"
                     android:layout_weight="30"
-                    android:weightSum="100"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:weightSum="100">
 
                     <TextView
-                        android:gravity="center"
                         android:layout_width="fill_parent"
                         android:layout_height="0dp"
                         android:layout_weight="30"
+                        android:gravity="center"
                         android:text="send text(s) when I am...."
                         android:textColor="@color/white" />
 
@@ -168,11 +168,11 @@
                         android:id="@+id/distance_chooser_layout"
                         android:layout_width="fill_parent"
                         android:layout_height="0dp"
-                        android:layout_weight="35"
                         android:layout_marginBottom="@dimen/activity_vertical_margin"
-                        android:gravity="center_vertical"
+                        android:layout_weight="35"
                         android:background="@color/translucent_black"
-                        android:clickable="false">
+                        android:clickable="false"
+                        android:gravity="center_vertical">
 
                         <CheckBox
                             android:id="@+id/distance_checkbox_text"
@@ -216,52 +216,52 @@
                 </LinearLayout>
 
                 <TextView
-                    android:layout_marginLeft="@dimen/activity_vertical_margin"
-                    android:layout_marginRight="@dimen/activity_vertical_margin"
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="8"
-                    android:textSize="6pt"
-                    android:gravity="center_horizontal"
                     android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_marginRight="@dimen/activity_vertical_margin"
+                    android:layout_weight="8"
+                    android:gravity="center_horizontal"
+                    android:text="start typing your contact names, separated by a comma \n(this does not work for facebook contacts)"
                     android:textColor="@color/white"
-                    android:text="start typing your contact names, separated by a comma \n(this does not work for facebook contacts)" />
+                    android:textSize="6pt" />
 
                 <MultiAutoCompleteTextView
-                    android:layout_marginRight="@dimen/activity_vertical_margin"
-                    android:layout_marginLeft="@dimen/activity_vertical_margin"
                     android:id="@+id/multiAuto_contacts"
                     android:layout_width="fill_parent"
-                    android:gravity="center"
                     android:layout_height="0dp"
-                    android:textColor="@color/white"
+                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_marginRight="@dimen/activity_vertical_margin"
                     android:layout_weight="25"
-                    android:hint="sent to contact(s)..." />
+                    android:gravity="center"
+                    android:hint="sent to contact(s)..."
+                    android:textColor="@color/white" />
 
                 <com.example.rachel.wygt.EditTextClear
                     android:id="@+id/enter_reminder_field"
                     android:layout_width="fill_parent"
-                    android:layout_marginRight="@dimen/activity_vertical_margin"
-                    android:layout_marginLeft="@dimen/activity_vertical_margin"
                     android:layout_height="0dp"
+                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_marginRight="@dimen/activity_vertical_margin"
                     android:layout_weight="25"
                     android:gravity="center"
-                    android:textColor="@color/white"
                     android:hint="enter your text message here"
                     android:inputType="textMultiLine|textCapSentences"
                     android:lines="9"
                     android:maxLines="30"
                     android:minLines="1"
-                    android:scrollbars="vertical" />
+                    android:scrollbars="vertical"
+                    android:textColor="@color/white" />
 
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="12"
                     android:layout_marginBottom="@dimen/activity_horizontal_margin"
                     android:layout_marginLeft="80dip"
                     android:layout_marginRight="80dip"
                     android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+                    android:layout_weight="12"
                     android:background="@color/greenish"
                     android:onClick="sendTextMessage"
                     android:text="Done"
@@ -274,17 +274,17 @@
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
                 android:layout_weight="74"
-                android:weightSum="100"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="gone"
+                android:weightSum="100">
 
                 <LinearLayout
                     android:id="@+id/proximity_information_call"
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
                     android:layout_weight="40"
-                    android:weightSum="100"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:weightSum="100">
 
                     <TextView
                         android:layout_width="fill_parent"
@@ -298,8 +298,8 @@
                         android:id="@+id/there_layout_call"
                         android:layout_width="fill_parent"
                         android:layout_height="0dp"
-                        android:layout_weight="35"
                         android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_weight="35"
                         android:orientation="horizontal">
 
                         <CheckBox
@@ -366,9 +366,9 @@
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
+                    android:layout_marginTop="@dimen/activity_horizontal_margin"
                     android:layout_weight="20"
                     android:gravity="center"
-                    android:layout_marginTop="@dimen/activity_horizontal_margin"
                     android:text="remind me to call.....\n(this does not work for facebook contacts)"
                     android:textColor="@color/white" />
 
@@ -376,9 +376,9 @@
                     android:id="@+id/auto_contacts"
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
-                    android:gravity="center"
-                    android:layout_weight="20"
                     android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+                    android:layout_weight="20"
+                    android:gravity="center"
                     android:hint="enter contact.." />
 
                 <LinearLayout
@@ -409,17 +409,17 @@
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
                 android:layout_weight="74"
-                android:weightSum="100"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="gone"
+                android:weightSum="100">
 
                 <LinearLayout
                     android:id="@+id/proximity_information_reminder"
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
                     android:layout_weight="30"
-                    android:weightSum="100"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:weightSum="100">
 
                     <TextView
                         android:layout_width="fill_parent"
@@ -543,22 +543,22 @@
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
                 android:layout_weight="74"
-                android:weightSum="100"
                 android:orientation="vertical"
-                android:visibility="visible">
+                android:visibility="visible"
+                android:weightSum="100">
 
                 <LinearLayout
                     android:id="@+id/proximity_information_sound"
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="25"
-                    android:weightSum="100"
-                    android:orientation="vertical">
+                    android:layout_weight="27"
+                    android:orientation="vertical"
+                    android:weightSum="100">
 
                     <TextView
                         android:layout_width="fill_parent"
                         android:layout_height="0dp"
-                        android:layout_weight="30"
+                        android:layout_weight="25"
                         android:gravity="center"
                         android:text="Change Sound Settings When I am..."
                         android:textColor="@color/white" />
@@ -567,7 +567,7 @@
                         android:id="@+id/there_layout_sound"
                         android:layout_width="fill_parent"
                         android:layout_height="0dp"
-                        android:layout_weight="35"
+                        android:layout_weight="30"
                         android:orientation="horizontal">
 
                         <CheckBox
@@ -590,10 +590,10 @@
                         android:id="@+id/distance_chooser_layout_sound"
                         android:layout_width="fill_parent"
                         android:layout_height="0dp"
-                        android:layout_weight="35"
-                        android:gravity="center_vertical"
+                        android:layout_weight="45"
                         android:background="@color/translucent_black"
-                        android:clickable="false">
+                        android:clickable="false"
+                        android:gravity="center_vertical">
 
                         <CheckBox
                             android:id="@+id/distance_checkbox_sound"
@@ -638,10 +638,10 @@
                     android:id="@+id/sound_settings"
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="60"
-                    android:weightSum="100"
                     android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                    android:orientation="vertical">
+                    android:layout_weight="60"
+                    android:orientation="vertical"
+                    android:weightSum="100">
 
                     <LinearLayout
                         android:id="@+id/ringer_adjust"
@@ -653,6 +653,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:gravity="center"
                             android:padding="10px"
                             android:text="Adjust Ringer volume"
                             android:textColor="@color/white" />
@@ -680,13 +681,15 @@
                     <LinearLayout
                         android:id="@+id/media_adjust"
                         android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="25"
                         android:orientation="vertical">
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:padding="10px"
+                            android:gravity="center"
                             android:text="Adjust Media player volume"
                             android:textColor="@color/white" />
 
@@ -713,13 +716,15 @@
                     <LinearLayout
                         android:id="@+id/notification_adjust"
                         android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="25"
                         android:orientation="vertical">
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:padding="10px"
+                            android:gravity="center"
                             android:text="Adjust Notification volume"
                             android:textColor="@color/white" />
 
@@ -746,13 +751,15 @@
                     <LinearLayout
                         android:id="@+id/alarm_adjust"
                         android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="25"
                         android:orientation="vertical">
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:padding="10px"
+                            android:gravity="center"
                             android:text="Adjust System volume"
                             android:textColor="@color/white" />
 
@@ -777,18 +784,16 @@
                     </LinearLayout>
 
 
-
-
                 </LinearLayout>
+
                 <Button
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="15"
                     android:layout_marginBottom="@dimen/activity_vertical_margin"
-
                     android:layout_marginLeft="80dip"
                     android:layout_marginRight="80dip"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:layout_weight="12"
                     android:background="@color/greenish"
                     android:onClick="setSound"
                     android:text="Done"
@@ -859,6 +864,7 @@
                     android:adjustViewBounds="true"
                     android:background="@android:color/transparent"
                     android:scaleType="fitCenter"
+                    android:onClick="goToGoogleMaps"
                     android:src="@drawable/googlemaps" />
 
             </LinearLayout>

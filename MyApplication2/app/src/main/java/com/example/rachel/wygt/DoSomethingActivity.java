@@ -3,6 +3,7 @@ package com.example.rachel.wygt;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -11,8 +12,10 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.media.AudioManager;
 import android.media.Image;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -80,6 +83,7 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     private SeekBar notifyVlmSeekBar = null;
     private int mediaMax, ringerMax, notifyMax, alarmMax, ringCurrent;
     private LinearLayout textLayout, callLayout, reminderLayout, soundLayout;
+    private GPSTracker gpsTracker = MyApplication.gpsTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -660,11 +664,9 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     public void phoneSelected(View view) {
         hideKeyboard();
         LinearLayout phone = (LinearLayout) findViewById(R.id.enter_contacts_call_reminder);
-        if (phone.getVisibility() != View.VISIBLE) {
+
             phone.setVisibility(View.VISIBLE);
-        } else if (phone.getVisibility() == View.VISIBLE) {
-            phone.setVisibility(View.GONE);
-        }
+
         textLayout.setVisibility(View.GONE);
         reminderLayout.setVisibility(View.GONE);
         soundLayout.setVisibility(View.GONE);
@@ -673,11 +675,9 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     public void soundSelected(View view) {
         hideKeyboard();
         LinearLayout sound = (LinearLayout) findViewById(R.id.sound_layout);
-        if (sound.getVisibility() != View.VISIBLE) {
+
             sound.setVisibility(View.VISIBLE);
-        } else if (sound.getVisibility() == View.VISIBLE) {
-            sound.setVisibility(View.GONE);
-        }
+
         textLayout.setVisibility(View.GONE);
         reminderLayout.setVisibility(View.GONE);
         callLayout.setVisibility(View.GONE);
@@ -713,14 +713,25 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     public void reminderSelected(View view) {
         hideKeyboard();
         LinearLayout reminder = (LinearLayout) findViewById(R.id.reminder_layout);
-        if (reminder.getVisibility() != View.VISIBLE) {
             reminder.setVisibility(View.VISIBLE);
-        } else if (reminder.getVisibility() == View.VISIBLE) {
-            reminder.setVisibility(View.GONE);
-        }
+
         textLayout.setVisibility(View.GONE);
         callLayout.setVisibility(View.GONE);
         soundLayout.setVisibility(View.GONE);
+    }
+
+    public void goToGoogleMaps(View v){
+        double lat = destinationLocation.latitude;
+        double longitude = destinationLocation.longitude;
+        Location myLocation = gpsTracker.getLocation();
+//        String url = "http://maps.google.com/maps?saddr="+myLocation.getLatitude()+","+myLocation.getLongitude()+
+//                "&daddr="+lat+","+longitude;
+        String url = "http://maps.google.com/maps?"+
+                "daddr="+lat+","+longitude;
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url));
+        intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+        startActivity(intent);
+        Log.d("GOOGLE", "maps activity sent hopefully");
     }
 
 
