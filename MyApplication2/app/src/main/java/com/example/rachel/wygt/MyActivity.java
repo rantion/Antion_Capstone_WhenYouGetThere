@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.Fragment;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -28,11 +29,14 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -40,6 +44,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -94,7 +99,6 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
     private AlarmManager alarmManager;
     private Intent gpsTrackerIntent;
     private PendingIntent pendingIntent;
-    private ProgressBar mActivityIndicator;
     private Location mLocation;
     private GoogleMap googleMap;
     private Marker _marker;
@@ -119,17 +123,57 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
     private ArrayList<Map<String, String>> _myLocations;
     private ImageView star;
     MyLocation custLoc;
+    private AutoWithSpaces enterLocation;
+    private ProgressDialog progress, dialog;
+    private LatLng destinationLoc;
+
+    private TextWatcher textWatch = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (enterLocation.getText().toString().length() == 0) {
+                LinearLayout mapLayout = (LinearLayout) findViewById(R.id.map_layout);
+                LinearLayout mapFrag = (LinearLayout) findViewById(R.id.map_fragment);
+                LinearLayout navBar = (LinearLayout) findViewById(R.id.destination_bar);
+                if (navBar != null) {
+                    navBar.setVisibility(View.VISIBLE);
+                    LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mapFrag.getLayoutParams();
+                    params.weight = 100;
+                    mapLayout.updateViewLayout(mapFrag, params);
+                }
+                usingCustLocation = false;
+                progress.dismiss();
+            }
+        }
+
+    };
 
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         usingCustLocation = false;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
         MyApplication.setActivityContext(this);
+        enterLocation = (AutoWithSpaces) findViewById(R.id.enter_location_field);
+        enterLocation.addTextChangedListener(textWatch);
         gpsTracker = new GPSTracker();
         gpsTracker.registerReceivers();
+        progress = new ProgressDialog(MyActivity.this);
+        progress.setMessage("Calculating...");
+        progress.setIndeterminate(false);
+        progress.setCancelable(true);
+
         MyApplication.setGpsTracker(gpsTracker);
-        star = (ImageView)findViewById(R.id.save_location_star);
+        star = (ImageView) findViewById(R.id.save_location_star);
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
         lm = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -161,9 +205,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                 LocationManager.NETWORK_PROVIDER,
                 0,
                 0, MyApplication.getGpsTracker());
-        lm.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER,0,0,MyApplication.getGpsTracker());
-        mActivityIndicator =
-                (ProgressBar) findViewById(R.id.address_progress);
+        lm.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 0, 0, MyApplication.getGpsTracker());
         boolean alarmUp = (PendingIntent.getBroadcast(MyApplication.getAppContext(), MyApplication.REQUESTCODE,
                 new Intent("com.example.wygt.alarm"),
                 PendingIntent.FLAG_NO_CREATE) != null);
@@ -174,11 +216,11 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
             Log.d(LOGTAG, "Alarm is running");
         }
         populateLocations();
-         adapter = new SimpleAdapter(MyApplication.getAppContext(), _myLocations, R.layout.custlocview,
+        adapter = new SimpleAdapter(MyApplication.getAppContext(), _myLocations, R.layout.custlocview,
                 new String[]{"Name", "Address"}, new int[]{
                 R.id.clocName, R.id.cLocAddress}
         );
-        final AutoCompleteTextView enter = (AutoCompleteTextView)findViewById(R.id.enter_location_field);
+        final AutoCompleteTextView enter = (AutoCompleteTextView) findViewById(R.id.enter_location_field);
         enter.setThreshold(1);
         enter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -204,8 +246,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         enter.setAdapter(adapter);
     }
 
-
-    public void getAdapter(){
+    public void getAdapter() {
         populateLocations();
         adapter = new SimpleAdapter(MyApplication.getAppContext(), _myLocations, R.layout.custlocview,
                 new String[]{"Name", "Address"}, new int[]{
@@ -213,27 +254,27 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         );
     }
 
-    public void populateLocations(){
+    public void populateLocations() {
         _myLocations = new ArrayList<Map<String, String>>();
         myLocations = locationDataSouce.getAllMyLocations();
-        for(int i = 0; i<myLocations.size();i++){
+        for (int i = 0; i < myLocations.size(); i++) {
             Map<String, String> LocationAddress = new HashMap<String, String>();
             LocationAddress.put("Name", myLocations.get(i).getName());
             LocationAddress.put("Address", myLocations.get(i).getAddress());
-            LocationAddress.put("Index",String.valueOf(i));
+            LocationAddress.put("Index", String.valueOf(i));
             _myLocations.add(LocationAddress);
         }
     }
 
-    public void starSaveLocation(View view){
-        if(usingCustLocation){
+    public void starSaveLocation(View view) {
+        if (usingCustLocation) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("are you sure you want to delete location?")
                     .setCancelable(true)
                     .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                           //
+                            //
                         }
                     })
                     .setPositiveButton("yes", new DialogInterface.OnClickListener() {
@@ -252,8 +293,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
             final AlertDialog alert = builder.create();
             alert.show();
 
-        }
-        else {
+        } else {
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
             final EditText input = new EditText(this);
             builder.setView(input);
@@ -288,10 +328,10 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
 
     @Override
     protected void onResume() {
-     //   Toast.makeText(this,"OnResumeCalled",Toast.LENGTH_SHORT).show();
+        //   Toast.makeText(this,"OnResumeCalled",Toast.LENGTH_SHORT).show();
         myLocations = locationDataSouce.getAllMyLocations();
         mLocation = gpsTracker.getLocation();
-        if(mLocation == null){
+        if (mLocation == null) {
             Log.d("Marker-RESUME", "mLocation == null");
         }
         super.onResume();
@@ -339,12 +379,12 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                 Build.VERSION_CODES.JELLY_BEAN
                 &&
                 Geocoder.isPresent()) {
-//            mActivityIndicator.setVisibility(View.VISIBLE);
+            progress.show();
             confirmWifiAvailable();
-            AutoCompleteTextView _location = (AutoCompleteTextView)findViewById(R.id.enter_location_field);
+            AutoCompleteTextView _location = (AutoCompleteTextView) findViewById(R.id.enter_location_field);
             String locationName = _location.getText().toString();
             if (locationName.length() > 0) {
-                if(usingCustLocation){
+                if (usingCustLocation) {
                     mLocation = gpsTracker.getLocation();
                     final LatLng currentLocation = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
                     if (_marker != null) {
@@ -364,10 +404,17 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                             destinationLocation).zoom(14).build();
                     _marker.setSnippet(destinationAddress);
                     googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+                    LinearLayout mapLayout = (LinearLayout) findViewById(R.id.map_layout);
+                    float weightSum = mapLayout.getWeightSum();
+                    LinearLayout mapFrag = (LinearLayout) findViewById(R.id.map_fragment);
                     LinearLayout navBar = (LinearLayout) findViewById(R.id.destination_bar);
                     if (navBar != null) {
                         navBar.setVisibility(View.VISIBLE);
-                        TextView destName = (TextView)findViewById(R.id.cust_name);
+                        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mapFrag.getLayoutParams();
+                        params.weight = (float) (weightSum * .73);
+                        mapLayout.updateViewLayout(mapFrag, params);
+                        TextView destName = (TextView) findViewById(R.id.cust_name);
                         destName.setVisibility(View.VISIBLE);
                         destName.setText(destinationName);
                         TextView destAddress = (TextView) findViewById(R.id.activity_my_destination);
@@ -376,7 +423,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                         }
                     }
                     star.setImageDrawable(getResources().getDrawable(R.drawable.star));
-                    Button doSomethingButton = (Button) findViewById(R.id.do_something_button);
+                    ImageButton doSomethingButton = (ImageButton) findViewById(R.id.do_something_button);
 
                     doSomethingButton.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -394,8 +441,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                         }
                     });
 
-                }
-                else {
+                } else {
                     (new GetAddressesFromName()).execute(locationName);
                 }
             } else {
@@ -409,7 +455,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                         });
                 AlertDialog alert = builder.create();
                 alert.show();
-                mActivityIndicator.setVisibility(View.GONE);
+                progress.dismiss();
                 return;
             }
         }
@@ -426,27 +472,101 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
             googleMap.getUiSettings().setMyLocationButtonEnabled(true);
             googleMap.getUiSettings().setCompassEnabled(true);
             Location current = gpsTracker.getLocation();
-            if(current == null){
+            googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+
+                @Override
+                public boolean onMarkerClick(final Marker marker) {
+                    destinationLoc = marker.getPosition();
+                    if (_marker != null) {
+                        _marker.remove();
+                    }
+                    final LatLng currentLocation = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
+                    final LatLng destination = marker.getPosition();
+                    try {
+                        new GetAddressesFromLocation().execute(marker.getPosition()).get();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                    return true;
+                }
+            });
+            googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                @Override
+                public void onMapClick(LatLng latLng) {
+                    if (_marker != null) {
+                        _marker.remove();
+                    }
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                    //         (new GetAddressesFromLocation()).execute(latLng);
+
+                    MarkerOptions marker = new MarkerOptions();
+                    marker.position(latLng);
+                    //    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+                    _marker = googleMap.addMarker(marker);
+                    //       CameraPosition cameraPosition = new CameraPosition.Builder().target(
+                    //                latLng).zoom(14).build();
+                    //    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                }
+
+
+            });
+
+            googleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+                @Override
+                public void onMarkerDragStart(Marker marker) {
+
+                }
+
+                @Override
+                public void onMarkerDrag(Marker marker) {
+
+                }
+
+                @Override
+                public void onMarkerDragEnd(Marker marker) {
+                    if(_marker!=null){
+                        marker.remove();
+
+                    }
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 14));
+                    MarkerOptions Mmarker = new MarkerOptions();
+                    Mmarker.position(marker.getPosition());
+                    _marker = googleMap.addMarker(Mmarker);
+                    _marker.setDraggable(true);
+                    CameraPosition cameraPosition = new CameraPosition.Builder().target(
+                            marker.getPosition()).zoom(14).build();
+                }
+            });
+            if (current == null)
+
+            {
                 Log.d("Marker", "CurrentIsNull");
                 confirmNetworkProviderEnabled(lm);
                 confirmWifiAvailable();
 
             }
-            if (current != null) {
+
+            if (current != null)
+
+            {
                 Log.d("Marker", "current is not null");
                 LatLng currentPos = new LatLng(current.getLatitude(), current.getLongitude());
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPos, 12.0f));
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentPos, 14));
                 MarkerOptions marker = new MarkerOptions();
-                LatLng currentLoc =  new LatLng(current.getLatitude(), current.getLongitude());
+                LatLng currentLoc = new LatLng(current.getLatitude(), current.getLongitude());
                 marker.position(currentLoc).title("Current Location");
                 _marker = googleMap.addMarker(marker);
+                _marker.setDraggable(true);
                 CameraPosition cameraPosition = new CameraPosition.Builder().target(
                         currentLoc).zoom(14).build();
-                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                Toast.makeText(this,"Current Not Null", Toast.LENGTH_SHORT).show();
             }
             // check if map is created successfully or not
-            if (googleMap == null) {
+            if (googleMap == null)
+
+            {
                 Toast.makeText(this,
                         "Sorry! unable to create maps", Toast.LENGTH_SHORT)
                         .show();
@@ -471,21 +591,11 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
             Intent intent = new Intent(this, TaskListActivity.class);
             startActivity(intent);
         }
-        if(id== R.id.listLocations){
+        if (id == R.id.listLocations) {
             Intent intent = new Intent(this, MyLocationsActivity.class);
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public void clearField(View v) {
-        EditText enterLocation = (EditText) findViewById(R.id.enter_location_field);
-        if (enterLocation != null) {
-            enterLocation.setText("");
-            mActivityIndicator.setVisibility(View.GONE);
-            LinearLayout navBar = (LinearLayout) findViewById(R.id.destination_bar);
-            navBar.setVisibility(View.GONE);
-        }
     }
 
     @Override
@@ -557,7 +667,6 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         return isAvailable;
 
     }
-
 
 
     public boolean confirmAirplaneModeIsOff() {
@@ -642,8 +751,6 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
     public void setDestinationDuration(String destinationDuration) {
         this.destinationDuration = destinationDuration;
     }
-
-
 
 
     @Override
@@ -861,24 +968,31 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                             } catch (ExecutionException e) {
                                 e.printStackTrace();
                             }
-                            destinationAddress = (String)_addresses[which];
+                            destinationAddress = (String) _addresses[which];
                             MarkerOptions marker = new MarkerOptions();
                             marker.position(destinationLocation).title(selectedAddress.getAddressLine(0));
                             _marker = googleMap.addMarker(marker);
                             CameraPosition cameraPosition = new CameraPosition.Builder().target(
                                     destinationLocation).zoom(14).build();
                             _marker.setSnippet((String) _addresses[which]);
+                            _marker.setDraggable(true);
                             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                            mActivityIndicator.setVisibility(View.GONE);
+                            LinearLayout mapLayout = (LinearLayout) findViewById(R.id.map_layout);
+                            float weightSum = mapLayout.getWeightSum();
+                            LinearLayout mapFrag = (LinearLayout) findViewById(R.id.map_fragment);
                             LinearLayout navBar = (LinearLayout) findViewById(R.id.destination_bar);
                             if (navBar != null) {
                                 navBar.setVisibility(View.VISIBLE);
+                                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mapFrag.getLayoutParams();
+                                params.weight = (float) (weightSum * .73);
+                                mapLayout.updateViewLayout(mapFrag, params);
                                 TextView destAddress = (TextView) findViewById(R.id.activity_my_destination);
                                 if (destAddress != null) {
                                     destAddress.setText(_addresses[which]);
                                 }
                             }
-                            Button doSomethingButton = (Button) findViewById(R.id.do_something_button);
+                            progress.dismiss();
+                            ImageButton doSomethingButton = (ImageButton) findViewById(R.id.do_something_button);
 
                             doSomethingButton.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -918,18 +1032,29 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
     }
 
 
-    class GetAddressesFromLocation extends AsyncTask<Location, Void, List<Address>> {
+    class GetAddressesFromLocation extends AsyncTask<LatLng, Void, List<Address>> {
+    final ProgressDialog dialog = new ProgressDialog(MyActivity.this);
 
         @Override
-        protected List<Address> doInBackground(Location... params) {
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.setMessage("Calculating...");
+            dialog.setIndeterminate(false);
+            dialog.setCancelable(true);
+            dialog.show();
+
+        }
+
+        @Override
+        protected List<Address> doInBackground(LatLng... params) {
+
             long threadId = Thread.currentThread().getId();
             Log.d(LOGTAG, "doInBackground Thread ID: " + threadId);
-            Location location = params[0];
+            LatLng location = params[0];
             List<Address> addressList = null;
-
             Geocoder geocoder = new Geocoder(MyActivity.this); //context of class wrapped in
             try {
-                addressList = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 2);
+                addressList = geocoder.getFromLocation(location.latitude, location.longitude, 2);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -939,9 +1064,81 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
 
         @Override
         protected void onPostExecute(List<Address> addresses) {
-            mActivityIndicator.setVisibility(View.GONE);
+
+            int j = 0;
+            final CharSequence[] _addresses = new CharSequence[addresses.size()];
+            final Address[] addressArray = new Address[addresses.size()];
+            Location location1 = gpsTracker.getLocation();
+            LatLng current = new LatLng(location1.getLatitude(), location1.getLongitude());
+            for (Address address : addresses) {
+                int lastIndex = address.getMaxAddressLineIndex();
+                String addressLine = "";
+                for (int i = 0; i <= lastIndex; i++) {
+                    if (i != lastIndex) {
+                        addressLine = addressLine + address.getAddressLine(i) + "\n";
+                    } else {
+                        addressLine = addressLine + address.getAddressLine(i);
+                    }
+                }
+                addressArray[j] = address;
+                _addresses[j] = addressLine;
+                j++;
+            }
+            String address = (String) _addresses[0];
+            try {
+                new GetDrivingDistance().execute(current, destinationLoc).get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            _marker.setTitle(address);
+            destinationAddress = address;
             long threadId = Thread.currentThread().getId();
             Log.d(LOGTAG, "onPostExecute threadID: " + threadId);
+            MarkerOptions Mmarker = new MarkerOptions();
+            Mmarker.position(destinationLoc).title(destinationAddress);
+            _marker = googleMap.addMarker(Mmarker);
+            _marker.setDraggable(true);
+            CameraPosition cameraPosition = new CameraPosition.Builder().target(
+                    destinationLoc).zoom(16).build();
+            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+            LinearLayout mapLayout = (LinearLayout) findViewById(R.id.map_layout);
+            float weightSum = mapLayout.getWeightSum();
+            LinearLayout mapFrag = (LinearLayout) findViewById(R.id.map_fragment);
+            LinearLayout navBar = (LinearLayout) findViewById(R.id.destination_bar);
+            if (navBar != null) {
+                navBar.setVisibility(View.VISIBLE);
+                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mapFrag.getLayoutParams();
+                params.weight = (float) (weightSum * .73);
+                mapLayout.updateViewLayout(mapFrag, params);
+                TextView destAddress = (TextView) findViewById(R.id.activity_my_destination);
+                if (destAddress != null) {
+                    destAddress.setText(destinationAddress);
+                }
+            }
+
+            star.setImageDrawable(getResources().getDrawable(R.drawable.starout));
+            ImageButton doSomethingButton = (ImageButton) findViewById(R.id.do_something_button);
+            dialog.dismiss();
+            doSomethingButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Location current = gpsTracker.getLocation();
+                    LatLng currentLocation = new LatLng(current.getLatitude(), current.getLongitude());
+                    Intent intent = new Intent(MyActivity.this, DoSomethingActivity.class);
+                    intent.putExtra("Destination", destinationAddress);
+                    intent.putExtra("Destination_location", destinationLoc);
+                    intent.putExtra("Current_Location", currentLocation);
+                    intent.putExtra("Button", "Do Something");
+                    intent.putExtra("Distance", destinationDistance);
+                    intent.putExtra("Duration", destinationDuration);
+                    intent.putExtra("DistanceMeters", destDistMeters);
+                    intent.putExtra("DurationSeconds", destDistSeconds);
+                    startActivity(intent);
+                }
+            });
         }
     }
 
@@ -952,12 +1149,12 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(MyActivity.this);
-            pDialog.setMessage("Calculating Distance ...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
-            pDialog.show();
-        }
+//            pDialog = new ProgressDialog(MyActivity.this);
+//        pDialog.setMessage("Calculating Distance ...");
+//        pDialog.setIndeterminate(false);
+//        pDialog.setCancelable(true);
+//        pDialog.show();
+    }
 
         @Override
         protected JSONObject doInBackground(LatLng... params) {
@@ -995,7 +1192,8 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
 
         @Override
         protected void onPostExecute(JSONObject jsonObject) {
-            pDialog.dismiss();
+         //   pDialog.dismiss();
+            progress.dismiss();
             String duration = "";
             JSONArray rows = null;
             List<String> distances = new ArrayList<String>();

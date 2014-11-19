@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -90,10 +91,12 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
         super.onCreate(savedInstanceState);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_do_something);
+
         textLayout = (LinearLayout) findViewById(R.id.enter_contacts_text);
         callLayout = (LinearLayout) findViewById(R.id.enter_contacts_call_reminder);
         reminderLayout = (LinearLayout) findViewById(R.id.reminder_layout);
         soundLayout = (LinearLayout) findViewById(R.id.sound_layout);
+
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         this.setVolumeControlStream(AudioManager.STREAM_RING);
         this.setVolumeControlStream(AudioManager.STREAM_ALARM);
@@ -104,6 +107,7 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
         Log.d("GPS/APP IS OPEN", "appIsOpenSetTrue - DoSomethingActivity");
         editor.putBoolean("appIsOpen", true);
         editor.apply();
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             destinationLocation = (LatLng) extras.get("Destination_location");
@@ -126,6 +130,24 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
         }
         hideKeyboard();
         initControls();
+        initViews();
+    }
+
+    private void initViews(){
+        thereCheckerCall(callLayout);
+        thereCheckerReminder(reminderLayout);
+        thereCheckerSound(soundLayout);
+        thereCheckerText(textLayout);
+        Spinner call = (Spinner)findViewById(R.id.spinner_call_miles_minutes);
+        Spinner remind = (Spinner)findViewById(R.id.spinner_reminder_miles_minutes);
+        Spinner sound = (Spinner)findViewById(R.id.spinner_sound_miles_minutes);
+        Spinner text = (Spinner)findViewById(R.id.spinner_text_miles_minute);
+        ArrayAdapter adapter = ArrayAdapter.createFromResource(this, R.array.miles_minutes, R.layout.spinner_item);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown);
+        call.setAdapter(adapter);
+        remind.setAdapter(adapter);
+        sound.setAdapter(adapter);
+        text.setAdapter(adapter);
     }
 
     private Drawable getVolumeIcon(int max, int current, int type) {
@@ -309,12 +331,18 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
         }
     }
 
+
     public void thereCheckerText(View view) {
         CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_text);
+        CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_text);
+
         LinearLayout distanceL = (LinearLayout) findViewById(R.id.distance_chooser_layout);
         LinearLayout thereL = (LinearLayout) findViewById(R.id.there_layout);
-        thereL.setBackgroundColor(getResources().getColor(R.color.baby_blue_lavender));
+
+        thereL.setBackgroundColor(getResources().getColor(R.color.dark_purple));
         distanceL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
+
+        there.setChecked(true);
         distance.setChecked(false);
         EditText number = (EditText) findViewById(R.id.miles_away_text);
         number.setEnabled(false);
@@ -324,11 +352,15 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     }
 
     public void thereCheckerCall(View view) {
+        CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_call);
+        CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_call);
         LinearLayout distanceL = (LinearLayout) findViewById(R.id.distance_chooser_layout_call);
         LinearLayout thereL = (LinearLayout) findViewById(R.id.there_layout_call);
-        thereL.setBackgroundColor(getResources().getColor(R.color.baby_blue_teal));
+
+        thereL.setBackgroundColor(getResources().getColor(R.color.dark_purple));
         distanceL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
-        CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_call);
+
+        there.setChecked(true);
         distance.setChecked(false);
         EditText number = (EditText) findViewById(R.id.miles_away_call);
         number.setEnabled(false);
@@ -338,11 +370,15 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     }
 
     public void distanceCheckedText(View view) {
+        CheckBox distance = (CheckBox)findViewById(R.id.distance_checkbox_text);
         CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_text);
         LinearLayout distanceL = (LinearLayout) findViewById(R.id.distance_chooser_layout);
         LinearLayout thereL = (LinearLayout) findViewById(R.id.there_layout);
+
         thereL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
-        distanceL.setBackgroundColor(getResources().getColor(R.color.baby_blue_lavender));
+        distanceL.setBackgroundColor(getResources().getColor(R.color.dark_purple));
+
+        distance.setChecked(true);
         there.setChecked(false);
         EditText number = (EditText) findViewById(R.id.miles_away_text);
         number.setEnabled(true);
@@ -353,11 +389,15 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     }
 
     public void distanceCheckedCall(View view) {
+        CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_call);
+        CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_call);
         LinearLayout distanceL = (LinearLayout) findViewById(R.id.distance_chooser_layout_call);
         LinearLayout thereL = (LinearLayout) findViewById(R.id.there_layout_call);
+
         thereL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
-        distanceL.setBackgroundColor(getResources().getColor(R.color.baby_blue_teal));
-        CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_call);
+        distanceL.setBackgroundColor(getResources().getColor(R.color.dark_purple));
+
+        distance.setChecked(true);
         there.setChecked(false);
         EditText number = (EditText) findViewById(R.id.miles_away_call);
         number.setEnabled(true);
@@ -368,11 +408,15 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     }
 
     public void thereCheckerReminder(View view) {
+        CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_reminder);
         CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_reminder);
         LinearLayout distanceL = (LinearLayout) findViewById(R.id.distance_chooser_layout_reminder);
         LinearLayout thereL = (LinearLayout) findViewById(R.id.there_layout_reminder);
-        thereL.setBackgroundColor(getResources().getColor(R.color.baby_blue_lavender));
+
+        thereL.setBackgroundColor(getResources().getColor(R.color.dark_purple));
         distanceL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
+
+        there.setChecked(true);
         distance.setChecked(false);
         EditText number = (EditText) findViewById(R.id.miles_away_reminder);
         number.setEnabled(false);
@@ -382,11 +426,15 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     }
 
     public void distanceCheckedReminder(View view) {
+        CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_reminder);
+        CheckBox distance = (CheckBox)findViewById(R.id.distance_checkbox_reminder);
         LinearLayout distanceL = (LinearLayout) findViewById(R.id.distance_chooser_layout_reminder);
         LinearLayout thereL = (LinearLayout) findViewById(R.id.there_layout_reminder);
+
         thereL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
-        distanceL.setBackgroundColor(getResources().getColor(R.color.baby_blue_lavender));
-        CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_reminder);
+        distanceL.setBackgroundColor(getResources().getColor(R.color.dark_purple));
+
+        distance.setChecked(true);
         there.setChecked(false);
         EditText number = (EditText) findViewById(R.id.miles_away_reminder);
         number.setEnabled(true);
@@ -397,11 +445,15 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     }
 
     public void thereCheckerSound(View view) {
+        CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_sound);
+        CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_sound);
         LinearLayout distanceL = (LinearLayout) findViewById(R.id.distance_chooser_layout_sound);
         LinearLayout thereL = (LinearLayout) findViewById(R.id.there_layout_sound);
-        thereL.setBackgroundColor(getResources().getColor(R.color.baby_blue_teal));
+
+        thereL.setBackgroundColor(getResources().getColor(R.color.dark_purple));
         distanceL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
-        CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_sound);
+
+        there.setChecked(true);
         distance.setChecked(false);
         EditText number = (EditText) findViewById(R.id.miles_away_sound);
         number.setEnabled(false);
@@ -411,11 +463,15 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     }
 
     public void distanceCheckedSound(View view) {
+        CheckBox distance = (CheckBox)findViewById(R.id.distance_checkbox_sound);
+        CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_sound);
         LinearLayout distanceL = (LinearLayout) findViewById(R.id.distance_chooser_layout_sound);
         LinearLayout thereL = (LinearLayout) findViewById(R.id.there_layout_sound);
+
         thereL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
-        distanceL.setBackgroundColor(getResources().getColor(R.color.baby_blue_teal));
-        CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_sound);
+        distanceL.setBackgroundColor(getResources().getColor(R.color.dark_purple));
+
+        distance.setChecked(true);
         there.setChecked(false);
         EditText number = (EditText) findViewById(R.id.miles_away_sound);
         number.setEnabled(true);
@@ -430,9 +486,10 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
         String radiusType = "there";
         int original = 0;
         CheckBox distanceCheckbox = (CheckBox) findViewById(R.id.distance_checkbox_sound);
+        CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_sound);
         Spinner milesMinutes = (Spinner) findViewById(R.id.spinner_sound_miles_minutes);
+        EditText _miles = (EditText) findViewById(R.id.miles_away_sound);
         if (distanceCheckbox.isChecked()) {
-            EditText _miles = (EditText) findViewById(R.id.miles_away_sound);
             String miles = _miles.getText().toString();
             if (miles.length() == 0) {
                 Toast.makeText(this, "Please Enter a Distance", Toast.LENGTH_SHORT).show();
@@ -460,10 +517,11 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
         Toast.makeText(getApplicationContext(),
                 "Sound Setting Created!", Toast.LENGTH_SHORT)
                 .show();
-        textLayout.setVisibility(View.GONE);
-        reminderLayout.setVisibility(View.GONE);
-        callLayout.setVisibility(View.GONE);
-        soundLayout.setVisibility(View.GONE);
+        there.setChecked(true);
+        distanceCheckbox.setChecked(false);
+        _miles.setText("5");
+        milesMinutes.setSelection(0);
+        initControls();
     }
 
     public void sendTextMessage(View view) {
@@ -474,9 +532,10 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
         EditText _reminder = (EditText) findViewById(R.id.enter_reminder_field);
         String reminder = "filler";
         CheckBox distanceCheckbox = (CheckBox) findViewById(R.id.distance_checkbox_text);
+        CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_text);
         Spinner milesMinutes = (Spinner) findViewById(R.id.spinner_text_miles_minute);
+        EditText _miles = (EditText) findViewById(R.id.miles_away_text);
         if (distanceCheckbox.isChecked()) {
-            EditText _miles = (EditText) findViewById(R.id.miles_away_text);
             String miles = _miles.getText().toString();
             if (miles.length() == 0) {
                 Toast.makeText(this, "Please Enter a Distance", Toast.LENGTH_SHORT).show();
@@ -518,10 +577,13 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
         Toast.makeText(getApplicationContext(),
                 "TextMessageTask Created!", Toast.LENGTH_SHORT)
                 .show();
-        textLayout.setVisibility(View.GONE);
-        reminderLayout.setVisibility(View.GONE);
-        callLayout.setVisibility(View.GONE);
-        soundLayout.setVisibility(View.GONE);
+
+        _contacts.setText("");
+        _reminder.setText("");
+        distanceCheckbox.setChecked(false);
+        milesMinutes.setSelection(0);
+        there.setChecked(true);
+        _miles.setText("5");
     }
 
     public long getMinutesAwayRadius(int minutes) {
@@ -540,9 +602,10 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
         String radiusType = "there";
         Log.d("DoSomethingActivity", "setCallReminderCalled");
         CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_call);
+        CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_call);
         Spinner milesMin = (Spinner) findViewById(R.id.spinner_call_miles_minutes);
+        EditText _miles = (EditText) findViewById(R.id.miles_away_call);
         if (distance.isChecked()) {
-            EditText _miles = (EditText) findViewById(R.id.miles_away_call);
             String miles = _miles.getText().toString();
             if (miles.length() == 0) {
                 Toast.makeText(this, "Please Enter a Distance", Toast.LENGTH_SHORT).show();
@@ -581,10 +644,13 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
                     .show();
             Log.d("DOSOMETHINGACTIVITY", contact.toString());
         }
-        textLayout.setVisibility(View.GONE);
-        reminderLayout.setVisibility(View.GONE);
-        callLayout.setVisibility(View.GONE);
-        soundLayout.setVisibility(View.GONE);
+        distance.setChecked(false);
+        there.setChecked(true);
+
+        _miles.setText("5");
+        _contacts.setText("");
+        milesMin.setSelection(0);
+
 
     }
 
@@ -663,10 +729,7 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
 
     public void phoneSelected(View view) {
         hideKeyboard();
-        LinearLayout phone = (LinearLayout) findViewById(R.id.enter_contacts_call_reminder);
-
-            phone.setVisibility(View.VISIBLE);
-
+        callLayout.setVisibility(View.VISIBLE);
         textLayout.setVisibility(View.GONE);
         reminderLayout.setVisibility(View.GONE);
         soundLayout.setVisibility(View.GONE);
@@ -674,10 +737,7 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
 
     public void soundSelected(View view) {
         hideKeyboard();
-        LinearLayout sound = (LinearLayout) findViewById(R.id.sound_layout);
-
-            sound.setVisibility(View.VISIBLE);
-
+        soundLayout.setVisibility(View.VISIBLE);
         textLayout.setVisibility(View.GONE);
         reminderLayout.setVisibility(View.GONE);
         callLayout.setVisibility(View.GONE);
@@ -685,55 +745,32 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
 
     public void textSelected(View view) {
         hideKeyboard();
-        LinearLayout text = (LinearLayout) findViewById(R.id.enter_contacts_text);
-        text.setVisibility(View.VISIBLE);
-
+        textLayout.setVisibility(View.VISIBLE);
         reminderLayout.setVisibility(View.GONE);
         callLayout.setVisibility(View.GONE);
         soundLayout.setVisibility(View.GONE);
-
-        ImageView imageView = (ImageView) findViewById(R.id.set_text_icon);
-//        Bitmap Image=BitmapFactory.decodeResource(mContext.getResources(),mThumbIds[position]);
-//        Image=Image.copy(Bitmap.Config.ARGB_8888,true);
-        Paint paint = new Paint();
-        paint.setDither(true);
-        paint.setFilterBitmap(true);
-        Bitmap glow = BitmapFactory.decodeResource(getResources(), R.drawable.text);
-        Bitmap bitmap = Bitmap.createBitmap(imageView.getWidth(), imageView.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-
-        canvas.drawBitmap(glow, new Rect(0, 0, glow.getWidth(), glow.getHeight()), new Rect(0, 0, imageView.getWidth(), imageView.getHeight()), paint);
-//        canvas.drawBitmap(Image, new Rect(0,0,Image.getWidth(),Image.getHeight()), new Rect(0+5,0+5,Image.getWidth()-5,Image.getHeight()-5),paint);
-
-
-        imageView.setImageBitmap(bitmap);
 
     }
 
     public void reminderSelected(View view) {
         hideKeyboard();
-        LinearLayout reminder = (LinearLayout) findViewById(R.id.reminder_layout);
-            reminder.setVisibility(View.VISIBLE);
-
+        reminderLayout.setVisibility(View.VISIBLE);
         textLayout.setVisibility(View.GONE);
         callLayout.setVisibility(View.GONE);
         soundLayout.setVisibility(View.GONE);
     }
 
-    public void goToGoogleMaps(View v){
+    public void goToGoogleMaps(View v) {
         double lat = destinationLocation.latitude;
         double longitude = destinationLocation.longitude;
         Location myLocation = gpsTracker.getLocation();
-//        String url = "http://maps.google.com/maps?saddr="+myLocation.getLatitude()+","+myLocation.getLongitude()+
-//                "&daddr="+lat+","+longitude;
-        String url = "http://maps.google.com/maps?"+
-                "daddr="+lat+","+longitude;
+        String url = "http://maps.google.com/maps?" +
+                "daddr=" + lat + "," + longitude;
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url));
         intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
         startActivity(intent);
         Log.d("GOOGLE", "maps activity sent hopefully");
     }
-
 
     public long convertToMeters(double miles) {
         long meters = (long) (miles * 1609.34);
@@ -745,6 +782,7 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
         int original = 0;
         String radiusType = "there";
         Log.d("DoSomethingActivity", "setReminderCalled");
+        CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_reminder);
         CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_reminder);
         Spinner milesMin = (Spinner) findViewById(R.id.spinner_reminder_miles_minutes);
         EditText _reminder = (EditText) findViewById(R.id.reminder_edit_text);
@@ -780,10 +818,11 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
                 .show();
         taskDataSource.createTask(destinationLocation, reminder, metersAway, Task.REMINDER_MESSAGE_TASK_TYPE, destination, radiusType, original);
         Log.d("CreateTaskActivity", "Saved Destination");
-        textLayout.setVisibility(View.GONE);
-        reminderLayout.setVisibility(View.GONE);
-        callLayout.setVisibility(View.GONE);
-        soundLayout.setVisibility(View.GONE);
+        distance.setText("5");
+        there.setChecked(true);
+        distance.setChecked(false);
+        _reminder.setText("");
+        milesMin.setSelection(0);
 
     }
 
@@ -797,14 +836,15 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
 
             if (!event.isShiftPressed()) {
                 Log.v("AndroidEnterKeyActivity", "Enter Key Pressed!");
-                switch (view.getId()) {
-                    case R.id.enter_reminder_field:
-                        EditText enter = (EditText) findViewById(R.id.enter_reminder_field);
-                        Toast.makeText(getApplicationContext(),
-                                enter.getText().toString(), Toast.LENGTH_SHORT)
-                                .show();
-                        break;
-                }
+//                switch (view.getId()) {
+//                    case R.id.enter_reminder_field:
+//                        EditText enter = (EditText) findViewById(R.id.enter_reminder_field);
+//                        Toast.makeText(getApplicationContext(),
+//                                enter.getText().toString(), Toast.LENGTH_SHORT)
+//                                .show();
+//                        break;
+//                }
+                hideKeyboard();
                 return true;
             }
 
@@ -839,5 +879,5 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
         editor.apply();
         super.onDestroy();
     }
-
 }
+

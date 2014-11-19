@@ -1,373 +1,447 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="fill_parent"
-    android:fillViewport="true">
 
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
 
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+
+    <LinearLayout
+        android:id="@+id/do_something_layout"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/dark_purple"
+        android:divider="@drawable/divider_horizontal"
+        android:orientation="vertical"
+        android:showDividers="middle"
+        android:weightSum="100">
 
         <LinearLayout
-            android:id="@+id/do_something_layout"
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:background="@color/dark_purple"
-            android:orientation="vertical"
-            android:weightSum="100">
+            android:id="@+id/do_something_destination"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="15"
+            android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/do_something_destination"
                 android:layout_width="fill_parent"
-                android:layout_height="0dp"
+                android:layout_height="fill_parent"
+                android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
                 android:layout_marginLeft="@dimen/activity_vertical_margin"
                 android:layout_marginRight="@dimen/activity_vertical_margin"
-                android:layout_marginTop="@dimen/activity_horizontal_margin"
-                android:layout_weight="15"
-                android:gravity="top"
+                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    android:orientation="vertical">
+                    android:divider="@drawable/divider_vertical"
+                    android:orientation="horizontal"
+                    android:layout_weight="5"
+                    android:showDividers="middle">
 
                     <LinearLayout
-                        android:layout_width="fill_parent"
+                        android:id="@+id/destination_layout"
+                        android:layout_width="0dp"
                         android:layout_height="fill_parent"
+                        android:layout_weight="3"
+                        android:gravity="center"
                         android:orientation="horizontal">
 
-                        <LinearLayout
-                            android:id="@+id/destination_layout"
-                            android:layout_width="0dp"
-                            android:layout_height="fill_parent"
-                            android:layout_weight="1"
+                        <TextView
+                            android:id="@+id/destination_address"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:gravity="center"
+                            android:text=""
+                            android:textColor="#ffffffff"
+                            android:textSize="7pt" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="fill_parent"
+                        android:layout_marginLeft="@dimen/activity_vertical_margin"
+                        android:layout_weight="2"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical"
                             android:orientation="horizontal">
 
                             <TextView
-                                android:id="@+id/destination_address"
+                                android:id="@+id/distance_display"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="distance: "
+                                android:textColor="#ffffffff"
+                                android:textSize="6pt" />
+
+                            <TextView
+                                android:id="@+id/distance"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text=""
-                                android:textColor="#ffffffff" />
+                                android:textColor="#ffffffff"
+                                android:textSize="6pt" />
 
                         </LinearLayout>
 
                         <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="fill_parent"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp"
                             android:layout_weight="1"
-                            android:orientation="vertical">
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
 
-                            <LinearLayout
-                                android:layout_width="fill_parent"
-                                android:layout_height="0dp"
-                                android:layout_weight="1"
-                                android:gravity="center_vertical"
-                                android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="duration: "
+                                android:textColor="#ffffffff"
+                                android:textSize="6pt" />
 
-                                <TextView
-                                    android:id="@+id/distance_display"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="distance: "
-                                    android:textColor="#ffffffff" />
+                            <TextView
+                                android:id="@+id/duration"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text=""
+                                android:textColor="#ffffffff"
+                                android:textSize="6pt" />
 
-                                <TextView
-                                    android:id="@+id/distance"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text=""
-                                    android:textColor="#ffffffff" />
-
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:layout_width="fill_parent"
-                                android:layout_height="0dp"
-                                android:layout_weight="1"
-                                android:gravity="center_vertical"
-                                android:orientation="horizontal">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="duration: "
-                                    android:textColor="#ffffffff" />
-
-                                <TextView
-                                    android:id="@+id/duration"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text=""
-                                    android:textColor="#ffffffff" />
-
-                            </LinearLayout>
                         </LinearLayout>
-
-
                     </LinearLayout>
 
 
                 </LinearLayout>
+
+
             </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/enter_contacts_text"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="74"
+            android:divider="@drawable/divider_horizontal"
+            android:orientation="vertical"
+            android:showDividers="beginning|middle"
+            android:visibility="visible"
+            android:weightSum="100">
 
             <LinearLayout
-                android:id="@+id/enter_contacts_text"
+                android:id="@+id/proximity_information_text"
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
-                android:layout_weight="74"
+                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+                android:layout_weight="30"
+                android:divider="@color/white"
                 android:orientation="vertical"
-                android:visibility="gone"
+                android:showDividers="end"
                 android:weightSum="100">
-
-                <LinearLayout
-                    android:id="@+id/proximity_information_text"
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginLeft="@dimen/activity_vertical_margin"
-                    android:layout_marginRight="@dimen/activity_vertical_margin"
-                    android:layout_weight="30"
-                    android:orientation="vertical"
-                    android:weightSum="100">
-
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="30"
-                        android:gravity="center"
-                        android:text="send text(s) when I am...."
-                        android:textColor="@color/white" />
-
-                    <LinearLayout
-                        android:id="@+id/there_layout"
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="35"
-                        android:orientation="horizontal">
-
-                        <CheckBox
-                            android:id="@+id/there_checkbox_text"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                            android:checked="true"
-                            android:onClick="thereCheckerText" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="there"
-                            android:textColor="@color/white" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/distance_chooser_layout"
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dp"
-                        android:layout_marginBottom="@dimen/activity_vertical_margin"
-                        android:layout_weight="35"
-                        android:background="@color/translucent_black"
-                        android:clickable="false"
-                        android:gravity="center_vertical">
-
-                        <CheckBox
-                            android:id="@+id/distance_checkbox_text"
-                            android:layout_width="wrap_content"
-                            android:layout_height="fill_parent"
-                            android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                            android:onClick="distanceCheckedText" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="fill_parent"
-                            android:gravity="center_vertical"
-                            android:text="about..."
-                            android:textColor="@color/white" />
-
-                        <com.example.rachel.wygt.EditTextClear
-                            android:id="@+id/miles_away_text"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:clickable="false"
-                            android:text="5"
-                            android:textColor="@color/white" />
-
-                        <Spinner
-                            android:id="@+id/spinner_text_miles_minute"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:clickable="false"
-                            android:entries="@array/miles_minutes"
-                            android:prompt="@string/choose_type" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="away" />
-
-
-                    </LinearLayout>
-
-
-                </LinearLayout>
 
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
-                    android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
-                    android:layout_marginLeft="@dimen/activity_vertical_margin"
-                    android:layout_marginRight="@dimen/activity_vertical_margin"
-                    android:layout_weight="8"
-                    android:gravity="center_horizontal"
-                    android:text="start typing your contact names, separated by a comma \n(this does not work for facebook contacts)"
-                    android:textColor="@color/white"
-                    android:textSize="6pt" />
-
-                <MultiAutoCompleteTextView
-                    android:id="@+id/multiAuto_contacts"
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginLeft="@dimen/activity_vertical_margin"
-                    android:layout_marginRight="@dimen/activity_vertical_margin"
                     android:layout_weight="25"
                     android:gravity="center"
-                    android:hint="sent to contact(s)..."
+                    android:text="send text(s) when I am...."
                     android:textColor="@color/white" />
+
+                <LinearLayout
+                    android:id="@+id/there_layout"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="35"
+                    android:gravity="center_vertical"
+                    android:onClick="thereCheckerText"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        android:id="@+id/there_checkbox_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:layout_marginLeft="@dimen/activity_vertical_margin"
+                        android:checked="true"
+                        android:onClick="thereCheckerText" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:gravity="center_vertical"
+                        android:text="there"
+                        android:textColor="@color/white" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/distance_chooser_layout"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="40"
+                    android:background="@color/translucent_black"
+                    android:clickable="false"
+                    android:gravity="center_vertical"
+                    android:onClick="distanceCheckedText">
+
+                    <CheckBox
+                        android:id="@+id/distance_checkbox_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:layout_marginLeft="@dimen/activity_vertical_margin"
+                        android:gravity="center_vertical"
+                        android:onClick="distanceCheckedText" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:gravity="center_vertical"
+                        android:text="about..."
+                        android:textColor="@color/white" />
+
+                    <com.example.rachel.wygt.EditTextClear
+                        android:id="@+id/miles_away_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:clickable="false"
+                        android:gravity="center_vertical"
+                        android:text="5"
+                        android:textColor="@color/white" />
+
+                    <Spinner
+                        android:id="@+id/spinner_text_miles_minute"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:clickable="false"
+                        android:entries="@array/miles_minutes"
+                        android:gravity="center_vertical"
+                        android:prompt="@string/choose_type" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="away"
+                        android:textColor="@color/white" />
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+                android:layout_weight="55"
+                android:divider="@drawable/divider_horizontal"
+                android:orientation="vertical"
+                android:showDividers="middle"
+                android:weightSum="100">
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="50"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_marginLeft="@dimen/activity_vertical_margin"
+                        android:layout_marginRight="@dimen/activity_vertical_margin"
+                        android:gravity="center_vertical"
+                        android:text="contacts"
+                        android:textColor="@color/white"
+                        android:textSize="8pt"
+                        android:textStyle="bold"/>
+
+                    <MultiAutoCompleteTextView
+                        android:id="@+id/multiAuto_contacts"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginLeft="@dimen/activity_vertical_margin"
+                        android:layout_marginRight="@dimen/activity_vertical_margin"
+                        android:layout_weight="40"
+                        android:gravity="top|start"
+                        android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:hint="sent to contact(s)..."
+                        android:textColor="@color/white" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="50"
+                    android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+                    android:layout_marginRight="@dimen/activity_vertical_margin"
+                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:textSize="8pt"
+                        android:textStyle="bold"
+                        android:text="message"/>
 
                 <com.example.rachel.wygt.EditTextClear
                     android:id="@+id/enter_reminder_field"
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
-                    android:layout_marginLeft="@dimen/activity_vertical_margin"
-                    android:layout_marginRight="@dimen/activity_vertical_margin"
-                    android:layout_weight="25"
-                    android:gravity="center"
+                    android:layout_weight="40"
+                    android:gravity="top|start"
                     android:hint="enter your text message here"
+                    android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
                     android:inputType="textMultiLine|textCapSentences"
                     android:lines="9"
                     android:maxLines="30"
                     android:minLines="1"
                     android:scrollbars="vertical"
                     android:textColor="@color/white" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="15"
+                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+                android:gravity="center_vertical">
 
                 <Button
                     android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginBottom="@dimen/activity_horizontal_margin"
+                    android:layout_height="@dimen/abc_action_bar_default_height"
+                    android:layout_marginBottom="8dip"
                     android:layout_marginLeft="80dip"
                     android:layout_marginRight="80dip"
-                    android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
-                    android:layout_weight="12"
                     android:background="@color/greenish"
                     android:onClick="sendTextMessage"
                     android:text="Done"
                     android:textColor="#ffffffff" />
             </LinearLayout>
 
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/enter_contacts_call_reminder"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:layout_marginRight="@dimen/activity_vertical_margin"
+            android:layout_weight="74"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:weightSum="100">
 
             <LinearLayout
-                android:id="@+id/enter_contacts_call_reminder"
+                android:id="@+id/proximity_information_call"
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
-                android:layout_weight="74"
+                android:layout_weight="40"
                 android:orientation="vertical"
-                android:visibility="gone"
                 android:weightSum="100">
 
-                <LinearLayout
-                    android:id="@+id/proximity_information_call"
+                <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="40"
-                    android:orientation="vertical"
-                    android:weightSum="100">
+                    android:layout_weight="30"
+                    android:gravity="center"
+                    android:text="send reminder when I am..."
+                    android:textColor="@color/white" />
+
+                <LinearLayout
+                    android:id="@+id/there_layout_call"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                    android:layout_weight="35"
+                    android:onClick="thereCheckerCall"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        android:id="@+id/there_checkbox_call"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:onClick="thereCheckerCall" />
 
                     <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="30"
-                        android:gravity="center"
-                        android:text="send reminder when I am..."
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="there"
                         android:textColor="@color/white" />
 
-                    <LinearLayout
-                        android:id="@+id/there_layout_call"
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dp"
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/distance_chooser_layout_call"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="35"
+                    android:background="@color/translucent_black"
+                    android:clickable="false"
+                    android:onClick="distanceCheckedCall">
+
+                    <CheckBox
+                        android:id="@+id/distance_checkbox_call"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:layout_weight="35"
-                        android:orientation="horizontal">
+                        android:onClick="distanceCheckedCall" />
 
-                        <CheckBox
-                            android:id="@+id/there_checkbox_call"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:checked="true"
-                            android:onClick="thereCheckerCall" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="about..."
+                        android:textColor="@color/white" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="there"
-                            android:textColor="@color/white" />
+                    <com.example.rachel.wygt.EditTextClear
+                        android:id="@+id/miles_away_call"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:hint="5" />
 
-                    </LinearLayout>
+                    <Spinner
+                        android:id="@+id/spinner_call_miles_minutes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:entries="@array/miles_minutes"
+                        android:prompt="@string/choose_type" />
 
-                    <LinearLayout
-                        android:id="@+id/distance_chooser_layout_call"
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="35"
-                        android:background="@color/translucent_black"
-                        android:clickable="false">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="away"
+                        android:textColor="@color/white" />
 
-                        <CheckBox
-                            android:id="@+id/distance_checkbox_call"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                            android:onClick="distanceCheckedCall" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="about..."
-                            android:textColor="@color/white" />
-
-                        <com.example.rachel.wygt.EditTextClear
-                            android:id="@+id/miles_away_call"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:clickable="false"
-                            android:hint="5" />
-
-                        <Spinner
-                            android:id="@+id/spinner_call_miles_minutes"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:clickable="false"
-                            android:entries="@array/miles_minutes"
-                            android:prompt="@string/choose_type" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="away" />
-
-
-                    </LinearLayout>
 
                 </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="45"
+                android:orientation="vertical"
+                android:weightSum="100">
 
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
                     android:layout_marginTop="@dimen/activity_horizontal_margin"
-                    android:layout_weight="20"
+                    android:layout_weight="40"
                     android:gravity="center"
                     android:text="remind me to call.....\n(this does not work for facebook contacts)"
                     android:textColor="@color/white" />
@@ -376,504 +450,538 @@
                     android:id="@+id/auto_contacts"
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
-                    android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
-                    android:layout_weight="20"
-                    android:gravity="center"
-                    android:hint="enter contact.." />
-
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="20"
-                    android:gravity="bottom"
-                    android:orientation="vertical">
-
-                    <Button
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:layout_marginBottom="@dimen/activity_vertical_margin"
-                        android:layout_marginLeft="80dip"
-                        android:layout_marginRight="80dip"
-                        android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:background="@color/greenish"
-                        android:onClick="setCallReminder"
-                        android:text="Done"
-                        android:textColor="#ffffffff" />
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/reminder_layout"
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_weight="74"
-                android:orientation="vertical"
-                android:visibility="gone"
-                android:weightSum="100">
-
-                <LinearLayout
-                    android:id="@+id/proximity_information_reminder"
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="30"
-                    android:orientation="vertical"
-                    android:weightSum="100">
-
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="30"
-                        android:gravity="center"
-                        android:text="send notification when I am..."
-                        android:textColor="@color/white" />
-
-                    <LinearLayout
-                        android:id="@+id/there_layout_reminder"
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="35"
-                        android:orientation="horizontal">
-
-                        <CheckBox
-                            android:id="@+id/there_checkbox_reminder"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                            android:checked="true"
-                            android:onClick="thereCheckerReminder" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="there"
-                            android:textColor="@color/white" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/distance_chooser_layout_reminder"
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="35"
-                        android:background="@color/translucent_black"
-                        android:clickable="false">
-
-                        <CheckBox
-                            android:id="@+id/distance_checkbox_reminder"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                            android:onClick="distanceCheckedReminder" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="about..."
-                            android:textColor="@color/white" />
-
-                        <com.example.rachel.wygt.EditTextClear
-                            android:id="@+id/miles_away_reminder"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:clickable="false"
-                            android:text="5"
-                            android:textColor="@color/white" />
-
-                        <Spinner
-                            android:id="@+id/spinner_reminder_miles_minutes"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:clickable="false"
-                            android:entries="@array/miles_minutes"
-                            android:prompt="@string/choose_type" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="away" />
-
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-
-                <com.example.rachel.wygt.EditTextClear
-                    android:id="@+id/reminder_edit_text"
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="50"
-                    android:gravity="center"
-                    android:hint="enter your reminder/ message here"
-                    android:inputType="textMultiLine|textCapSentences"
-                    android:lines="9"
-                    android:maxLines="30"
-                    android:minLines="1"
-                    android:scrollbars="vertical" />
-
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="20"
-                    android:gravity="bottom"
-                    android:orientation="vertical">
-
-                    <Button
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:layout_marginBottom="@dimen/activity_vertical_margin"
-                        android:layout_marginLeft="80dip"
-                        android:layout_marginRight="80dip"
-                        android:layout_marginTop="@dimen/activity_vertical_margin"
-                        android:background="@color/greenish"
-                        android:onClick="setReminder"
-                        android:text="Done"
-                        android:textColor="@color/white" />
-
-                </LinearLayout>
-
-
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:id="@+id/sound_layout"
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_weight="74"
-                android:orientation="vertical"
-                android:visibility="visible"
-                android:weightSum="100">
-
-                <LinearLayout
-                    android:id="@+id/proximity_information_sound"
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="27"
-                    android:orientation="vertical"
-                    android:weightSum="100">
-
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="25"
-                        android:gravity="center"
-                        android:text="Change Sound Settings When I am..."
-                        android:textColor="@color/white" />
-
-                    <LinearLayout
-                        android:id="@+id/there_layout_sound"
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="30"
-                        android:orientation="horizontal">
-
-                        <CheckBox
-                            android:id="@+id/there_checkbox_sound"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                            android:checked="true"
-                            android:onClick="thereCheckerSound" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="there"
-                            android:textColor="@color/white" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/distance_chooser_layout_sound"
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="45"
-                        android:background="@color/translucent_black"
-                        android:clickable="false"
-                        android:gravity="center_vertical">
-
-                        <CheckBox
-                            android:id="@+id/distance_checkbox_sound"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                            android:onClick="distanceCheckedSound" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="about..."
-                            android:textColor="@color/white" />
-
-                        <com.example.rachel.wygt.EditTextClear
-                            android:id="@+id/miles_away_sound"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:clickable="false"
-                            android:text="5"
-                            android:textColor="@color/white" />
-
-                        <Spinner
-                            android:id="@+id/spinner_sound_miles_minutes"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:clickable="false"
-                            android:entries="@array/miles_minutes"
-                            android:prompt="@string/choose_type" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="away" />
-
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/sound_settings"
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                    android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_marginRight="@dimen/activity_vertical_margin"
                     android:layout_weight="60"
-                    android:orientation="vertical"
-                    android:weightSum="100">
+                    android:gravity="top|start"
+                    android:hint="enter contact.."
+                    android:textColor="@color/white" />
+            </LinearLayout>
 
-                    <LinearLayout
-                        android:id="@+id/ringer_adjust"
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="25"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:padding="10px"
-                            android:text="Adjust Ringer volume"
-                            android:textColor="@color/white" />
-
-                        <LinearLayout
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:id="@+id/ringerIcon"
-                                android:layout_width="@dimen/abc_dropdownitem_icon_width"
-                                android:layout_height="@dimen/abc_dropdownitem_icon_width" />
-
-                            <SeekBar
-                                android:id="@+id/ringerSeek"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content" />
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/media_adjust"
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="25"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:padding="10px"
-                            android:gravity="center"
-                            android:text="Adjust Media player volume"
-                            android:textColor="@color/white" />
-
-                        <LinearLayout
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:id="@+id/mediaIcon"
-                                android:layout_width="@dimen/abc_dropdownitem_icon_width"
-                                android:layout_height="@dimen/abc_dropdownitem_icon_width" />
-
-                            <SeekBar
-                                android:id="@+id/mediaSeek"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content" />
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/notification_adjust"
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="25"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:padding="10px"
-                            android:gravity="center"
-                            android:text="Adjust Notification volume"
-                            android:textColor="@color/white" />
-
-                        <LinearLayout
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:id="@+id/notificationIcon"
-                                android:layout_width="@dimen/abc_dropdownitem_icon_width"
-                                android:layout_height="@dimen/abc_dropdownitem_icon_width" />
-
-                            <SeekBar
-                                android:id="@+id/notificationSeek"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content" />
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/alarm_adjust"
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="25"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:padding="10px"
-                            android:gravity="center"
-                            android:text="Adjust System volume"
-                            android:textColor="@color/white" />
-
-                        <LinearLayout
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:id="@+id/systemIcon"
-                                android:layout_width="@dimen/abc_dropdownitem_icon_width"
-                                android:layout_height="@dimen/abc_dropdownitem_icon_width" />
-
-                            <SeekBar
-                                android:id="@+id/systemSeek"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content" />
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-
-                </LinearLayout>
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="15"
+                android:gravity="center_vertical">
 
                 <Button
                     android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginBottom="@dimen/activity_vertical_margin"
+                    android:layout_height="@dimen/abc_action_bar_default_height"
+                    android:layout_marginBottom="8dip"
                     android:layout_marginLeft="80dip"
                     android:layout_marginRight="80dip"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:layout_weight="12"
                     android:background="@color/greenish"
-                    android:onClick="setSound"
+                    android:onClick="sendTextMessage"
                     android:text="Done"
+                    android:textColor="#ffffffff" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/reminder_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:layout_marginRight="@dimen/activity_vertical_margin"
+            android:layout_weight="74"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:weightSum="100">
+
+            <LinearLayout
+                android:id="@+id/proximity_information_reminder"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="30"
+                android:orientation="vertical"
+                android:weightSum="100">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="30"
+                    android:gravity="center"
+                    android:text="send notification when I am..."
                     android:textColor="@color/white" />
+
+                <LinearLayout
+                    android:id="@+id/there_layout_reminder"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="35"
+                    android:onClick="thereCheckerReminder"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        android:id="@+id/there_checkbox_reminder"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:checked="true"
+                        android:onClick="thereCheckerReminder" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="there"
+                        android:textColor="@color/white" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/distance_chooser_layout_reminder"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="35"
+                    android:background="@color/translucent_black"
+                    android:clickable="false"
+                    android:onClick="distanceCheckedReminder">
+
+                    <CheckBox
+                        android:id="@+id/distance_checkbox_reminder"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:onClick="distanceCheckedReminder" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="about..."
+                        android:textColor="@color/white" />
+
+                    <com.example.rachel.wygt.EditTextClear
+                        android:id="@+id/miles_away_reminder"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:text="5"
+                        android:textColor="@color/white" />
+
+                    <Spinner
+                        android:id="@+id/spinner_reminder_miles_minutes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:entries="@array/miles_minutes"
+                        android:prompt="@string/choose_type" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="away"
+                        android:textColor="@color/white" />
+
+
+                </LinearLayout>
 
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/task_drawer"
+
+            <com.example.rachel.wygt.EditTextClear
+                android:id="@+id/reminder_edit_text"
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
-                android:layout_alignParentBottom="true"
-                android:layout_below="@+id/do_something_layout"
-                android:layout_weight="11"
-                android:background="@color/lighter_purple"
-                android:gravity="bottom"
-                android:orientation="horizontal"
-                android:padding="@dimen/abc_action_bar_icon_vertical_padding">
+                android:layout_weight="55"
+                android:gravity="top|start"
+                android:hint="enter your reminder/ message here"
+                android:inputType="textMultiLine|textCapSentences"
+                android:lines="9"
+                android:maxLines="30"
+                android:minLines="1"
+                android:scrollbars="vertical"
+                android:textColor="@color/white" />
 
-                <ImageView
-                    android:id="@+id/set_text_icon"
-                    android:layout_width="0dp"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="1"
-                    android:adjustViewBounds="true"
-                    android:background="@android:color/transparent"
-                    android:onClick="textSelected"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/text" />
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="15"
+                android:gravity="center_vertical">
 
-                <ImageButton
-                    android:layout_width="0dp"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="1"
-                    android:adjustViewBounds="true"
-                    android:background="@android:color/transparent"
-                    android:onClick="phoneSelected"
-                    android:padding="@dimen/abc_action_bar_icon_vertical_padding"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/phone" />
-
-                <ImageButton
-                    android:layout_width="0dp"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="1"
-                    android:adjustViewBounds="true"
-                    android:background="@android:color/transparent"
-                    android:onClick="reminderSelected"
-                    android:padding="@dimen/abc_action_bar_icon_vertical_padding"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/reminder" />
-
-                <ImageButton
-                    android:layout_width="0dp"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="1"
-                    android:adjustViewBounds="true"
-                    android:background="@android:color/transparent"
-                    android:onClick="soundSelected"
-                    android:padding="@dimen/abc_action_bar_icon_vertical_padding"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/audio" />
-
-                <ImageButton
-                    android:layout_width="0dp"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="1"
-                    android:adjustViewBounds="true"
-                    android:background="@android:color/transparent"
-                    android:scaleType="fitCenter"
-                    android:onClick="goToGoogleMaps"
-                    android:src="@drawable/googlemaps" />
-
+                <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="@dimen/abc_action_bar_default_height"
+                    android:layout_marginBottom="8dip"
+                    android:layout_marginLeft="80dip"
+                    android:layout_marginRight="80dip"
+                    android:background="@color/greenish"
+                    android:onClick="sendTextMessage"
+                    android:text="Done"
+                    android:textColor="#ffffffff" />
             </LinearLayout>
 
 
         </LinearLayout>
 
 
-    </RelativeLayout>
+        <LinearLayout
+            android:id="@+id/sound_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:layout_marginRight="@dimen/activity_vertical_margin"
+            android:layout_weight="74"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:weightSum="100">
 
-</ScrollView>
+            <LinearLayout
+                android:id="@+id/proximity_information_sound"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="25"
+                android:orientation="vertical"
+                android:weightSum="100">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="25"
+                    android:gravity="center"
+                    android:text="Change Sound Settings When I am..."
+                    android:textColor="@color/white" />
+
+                <LinearLayout
+                    android:id="@+id/there_layout_sound"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="30"
+                    android:onClick="thereCheckerSound"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        android:id="@+id/there_checkbox_sound"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:checked="true"
+                        android:gravity="center_vertical"
+                        android:onClick="thereCheckerSound" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:gravity="center_vertical"
+                        android:text="there"
+                        android:textColor="@color/white" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/distance_chooser_layout_sound"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="45"
+                    android:background="@color/translucent_black"
+                    android:clickable="false"
+                    android:gravity="center_vertical"
+                    android:onClick="distanceCheckedSound">
+
+                    <CheckBox
+                        android:id="@+id/distance_checkbox_sound"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:gravity="center_vertical"
+                        android:onClick="distanceCheckedSound" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:gravity="center_vertical"
+                        android:text="about..."
+                        android:textColor="@color/white" />
+
+                    <com.example.rachel.wygt.EditTextClear
+                        android:id="@+id/miles_away_sound"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:clickable="false"
+                        android:gravity="center_vertical"
+                        android:text="5"
+                        android:textColor="@color/white" />
+
+                    <Spinner
+                        android:id="@+id/spinner_sound_miles_minutes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:clickable="false"
+                        android:entries="@array/miles_minutes"
+                        android:gravity="center_vertical"
+                        android:prompt="@string/choose_type" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:gravity="center_vertical"
+                        android:text="away"
+                        android:textColor="@color/white" />
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/sound_settings"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                android:layout_weight="60"
+                android:orientation="vertical"
+                android:weightSum="100">
+
+                <LinearLayout
+                    android:id="@+id/ringer_adjust"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="25"
+                    android:orientation="vertical"
+                    android:weightSum="100">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="40"
+                        android:gravity="center"
+                        android:padding="10px"
+                        android:text="Adjust Ringer volume"
+                        android:textColor="@color/white" />
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_weight="60"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/ringerIcon"
+                            android:layout_width="@dimen/abc_dropdownitem_icon_width"
+                            android:layout_height="@dimen/abc_dropdownitem_icon_width" />
+
+                        <SeekBar
+                            android:id="@+id/ringerSeek"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/media_adjust"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="25"
+                    android:orientation="vertical"
+                    android:weightSum="100">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="40"
+                        android:gravity="center"
+                        android:padding="10px"
+                        android:text="Adjust Media player volume"
+                        android:textColor="@color/white" />
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_weight="60"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/mediaIcon"
+                            android:layout_width="@dimen/abc_dropdownitem_icon_width"
+                            android:layout_height="@dimen/abc_dropdownitem_icon_width" />
+
+                        <SeekBar
+                            android:id="@+id/mediaSeek"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/notification_adjust"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="25"
+                    android:orientation="vertical"
+                    android:weightSum="100">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="40"
+                        android:gravity="center"
+                        android:padding="10px"
+                        android:text="Adjust Notification volume"
+                        android:textColor="@color/white" />
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_weight="60"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/notificationIcon"
+                            android:layout_width="@dimen/abc_dropdownitem_icon_width"
+                            android:layout_height="@dimen/abc_dropdownitem_icon_width" />
+
+                        <SeekBar
+                            android:id="@+id/notificationSeek"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/alarm_adjust"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="25"
+                    android:orientation="vertical"
+                    android:weightSum="100">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="40"
+                        android:gravity="center"
+                        android:padding="10px"
+                        android:text="Adjust System volume"
+                        android:textColor="@color/white" />
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_weight="60"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/systemIcon"
+                            android:layout_width="@dimen/abc_dropdownitem_icon_width"
+                            android:layout_height="@dimen/abc_dropdownitem_icon_width" />
+
+                        <SeekBar
+                            android:id="@+id/systemSeek"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="15"
+                android:gravity="center_vertical">
+
+                <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="@dimen/abc_action_bar_default_height"
+                    android:layout_marginBottom="8dip"
+                    android:layout_marginLeft="80dip"
+                    android:layout_marginRight="80dip"
+                    android:background="@color/greenish"
+                    android:onClick="sendTextMessage"
+                    android:text="Done"
+                    android:textColor="#ffffffff" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/task_drawer"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="bottom"
+            android:layout_weight="11"
+            android:background="@color/lighter_purple"
+            android:gravity="bottom"
+            android:orientation="horizontal"
+            android:padding="@dimen/abc_action_bar_icon_vertical_padding">
+
+            <ImageView
+                android:id="@+id/set_text_icon"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:onClick="textSelected"
+                android:scaleType="fitCenter"
+                android:src="@drawable/text" />
+
+            <ImageButton
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:onClick="phoneSelected"
+                android:padding="@dimen/abc_action_bar_icon_vertical_padding"
+                android:scaleType="fitCenter"
+                android:src="@drawable/phone" />
+
+            <ImageButton
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:onClick="reminderSelected"
+                android:padding="@dimen/abc_action_bar_icon_vertical_padding"
+                android:scaleType="fitCenter"
+                android:src="@drawable/reminder" />
+
+            <ImageButton
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:onClick="soundSelected"
+                android:padding="@dimen/abc_action_bar_icon_vertical_padding"
+                android:scaleType="fitCenter"
+                android:src="@drawable/audio" />
+
+            <ImageButton
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:onClick="goToGoogleMaps"
+                android:scaleType="fitCenter"
+                android:src="@drawable/googlemaps" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>
+
+
 

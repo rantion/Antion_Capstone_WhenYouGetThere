@@ -1,4 +1,4 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -9,45 +9,44 @@
     <LinearLayout
         android:id="@+id/EnterLocationLayout"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <!--<TextView-->
-        <!--android:layout_width="fill_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="Enter Your Destination: "-->
-        <!--android:gravity="center_horizontal"-->
-        <!--android:textColor="@android:color/white"-->
-        <!--android:textSize="10pt"-->
-        <!--android:focusableInTouchMode="true"-->
-        <!--android:enabled="true" />-->
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:weightSum="100">
+
         <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_alignParentTop="true"
+            android:layout_weight="16"
+            android:gravity="center_vertical"
             android:orientation="horizontal"
             android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin">
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:weightSum="100">
+
 
             <com.example.rachel.wygt.AutoWithSpaces
                 android:id="@+id/enter_location_field"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/abc_action_bar_default_height"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical"
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:layout_weight="1.03"
+                android:layout_weight="85"
                 android:clickable="true"
-                android:textColorHint="@color/light_grey"
                 android:hint="enter destination"
-                android:textColor="@android:color/white" />
+                android:textColor="@android:color/white"
+                android:textColorHint="@color/light_grey" />
 
             <ImageButton
                 android:id="@+id/enter_location"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="@dimen/abc_action_bar_default_height"
                 android:layout_alignParentLeft="true"
                 android:layout_gravity="center"
                 android:layout_margin="@dimen/abc_action_bar_icon_vertical_padding"
                 android:layout_toRightOf="@+id/enter_location_field"
+                android:layout_weight="15"
                 android:adjustViewBounds="true"
                 android:background="@android:color/transparent"
                 android:onClick="getAddress"
@@ -57,187 +56,193 @@
                 android:textColor="@android:color/white" />
         </LinearLayout>
 
-    </LinearLayout>
-
-
-    <ProgressBar
-        android:id="@+id/address_progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:indeterminate="true"
-        android:visibility="gone" />
-
-    <LinearLayout
-        android:id="@+id/map_layout"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/EnterLocationLayout"
-        android:orientation="vertical"
-        android:weightSum="100"
-        android:visibility="visible">
-
-        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/map"
-            class="com.google.android.gms.maps.MapFragment"
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="99"
-            tools:context=".MyActivity" />
-
         <LinearLayout
-            android:id="@+id/destination_bar"
+            android:id="@+id/map_layout"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@color/dark_purple"
-            android:divider="@drawable/divider_vertical"
-            android:orientation="horizontal"
-            android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
-            android:paddingTop="@dimen/abc_action_bar_icon_vertical_padding"
-            android:showDividers="middle"
-            android:visibility="gone"
-            android:weightSum="10">
+            android:layout_weight="84"
+            android:orientation="vertical"
+            android:visibility="visible"
+            android:weightSum="100">
 
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="7"
+                android:id="@+id/map_fragment"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="100">
+
+                <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/map"
+                    class="com.google.android.gms.maps.MapFragment"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    tools:context=".MyActivity" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/destination_bar"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="27"
+                android:background="@color/dark_purple"
+                android:divider="@drawable/divider_vertical"
                 android:orientation="horizontal"
+                android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                android:paddingTop="@dimen/abc_action_bar_icon_vertical_padding"
+                android:showDividers="middle"
+                android:visibility="gone"
                 android:weightSum="10">
 
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="8"
-                    android:gravity="center_vertical|center_horizontal"
-                    android:orientation="vertical">
+                    android:layout_height="fill_parent"
+                    android:layout_weight="7"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_gravity="center_vertical"
+                    android:weightSum="10">
 
                     <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:orientation="vertical"
-                        android:gravity="center_horizontal">
-
-                        <TextView
-                            android:id="@+id/cust_name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
-                            android:gravity="center_horizontal"
-                            android:text="Name"
-                            android:textColor="@color/white"
-                            android:textSize="7pt"
-                            android:textStyle="bold"
-                            android:visibility="gone" />
-
-                        <TextView
-                            android:id="@+id/activity_my_destination"
-                            android:layout_width="wrap_content"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:textColor="@color/white"
-                            android:gravity="center_horizontal"
-                            android:text="Destination"
-                            android:textSize="6pt" />
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="8"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:layout_gravity="center_vertical"
+                        android:orientation="vertical">
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="0dp"
-                            android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
-                            android:layout_weight="1"
-                            android:clipChildren="false"
-                            android:orientation="horizontal">
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:gravity="center_horizontal|center_vertical"
+                            android:orientation="vertical">
 
                             <TextView
-                                android:id="@+id/distance_approximation"
-                                android:layout_width="0dp"
-                                android:textColor="@color/white"
-                                android:layout_height="wrap_content"
-                                android:layout_marginRight="@dimen/abc_action_bar_icon_vertical_padding"
+                                android:id="@+id/cust_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="0dp"
+                                android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
                                 android:layout_weight="1"
-                                android:gravity="bottom|left"
-                                android:text="distance"
-                                android:textSize="6pt" />
+                                android:gravity="center_horizontal|center_vertical"
+                                android:text="Name"
+                                android:textColor="@color/white"
+                                android:textSize="7pt"
+                                android:textStyle="bold"
+                                android:visibility="gone" />
 
                             <TextView
-                                android:textColor="@color/white"
-                                android:id="@+id/duration_approximation"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                                android:id="@+id/activity_my_destination"
+                                android:layout_width="wrap_content"
+                                android:layout_height="0dp"
                                 android:layout_weight="1"
-                                android:gravity="bottom|right"
-                                android:text="duration"
+                                android:gravity="center_horizontal|center_vertical"
+                                android:text="Destination"
+                                android:textColor="@color/white"
                                 android:textSize="6pt" />
 
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="0dp"
+                                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+                                android:layout_weight="1"
+                                android:clipChildren="false"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/distance_approximation"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginRight="@dimen/abc_action_bar_icon_vertical_padding"
+                                    android:layout_weight="1"
+                                    android:gravity="bottom|left"
+                                    android:text="distance"
+                                    android:textColor="@color/white"
+                                    android:textSize="6pt" />
+
+                                <TextView
+                                    android:id="@+id/duration_approximation"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                                    android:layout_weight="1"
+                                    android:gravity="bottom|right"
+                                    android:text="duration"
+                                    android:textColor="@color/white"
+                                    android:textSize="6pt" />
+
+
+                            </LinearLayout>
 
                         </LinearLayout>
 
                     </LinearLayout>
 
+                    <ImageView
+                        android:id="@+id/save_location_star"
+                        android:layout_width="0dp"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="2"
+                        android:adjustViewBounds="true"
+                        android:clickable="true"
+                        android:onClick="starSaveLocation"
+                        android:layout_marginRight="@dimen/activity_vertical_margin"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/starout" />
+
+
                 </LinearLayout>
-
-                <ImageView
-                    android:id="@+id/save_location_star"
-                    android:layout_width="0dp"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="2"
-                    android:adjustViewBounds="true"
-                    android:clickable="true"
-                    android:onClick="starSaveLocation"
-                    android:paddingRight="@dimen/abc_action_bar_icon_vertical_padding"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/starout" />
-
-
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_gravity="bottom"
-                android:layout_weight="3"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:padding="4dp"
-                    android:textColor="@color/white"
-                    android:text="upon arriving..." />
 
 
                 <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-                    android:gravity="center_horizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_gravity="bottom"
+                    android:layout_weight="3"
                     android:orientation="vertical">
 
-                    <Button
-                        android:textColor="@color/white"
-                        android:id="@+id/do_something_button"
+                    <TextView
                         android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:layout_marginRight="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:background="@drawable/button"
-                        android:onClick="startDoSomethingActivity"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="4dp"
                         android:text="set tasks"
-                        android:textSize="7pt" />
+                        android:textColor="@color/white" />
+
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:layout_marginBottom="@dimen/activity_horizontal_margin"
+                        android:layout_marginLeft="@dimen/activity_vertical_margin"
+                        android:layout_marginRight="@dimen/activity_vertical_margin"
+                        android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                        <ImageButton
+                            android:id="@+id/do_something_button"
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:adjustViewBounds="true"
+                            android:background="@drawable/button"
+                            android:onClick="startDoSomethingActivity"
+                            android:padding="3dip"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/set"
+                            android:text="set tasks"
+                            android:textColor="@color/white"
+                            android:textSize="7pt" />
+                    </LinearLayout>
+
                 </LinearLayout>
 
-            </LinearLayout>
 
+            </LinearLayout>
 
         </LinearLayout>
 
     </LinearLayout>
 
 
-</RelativeLayout>
+</LinearLayout>

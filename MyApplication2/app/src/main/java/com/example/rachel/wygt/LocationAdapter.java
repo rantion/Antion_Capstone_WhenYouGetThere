@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -33,6 +34,12 @@ public class LocationAdapter extends ArrayAdapter<MyLocation> {
         TextView name = (TextView)rowView.findViewById(R.id.location_name);
         TextView address = (TextView) rowView.findViewById(R.id.location_address);
         final MyLocation location = locations.get(position);
+        LinearLayout crud = (LinearLayout) rowView.findViewById(R.id.location_item_layout);
+        if (position % 2 == 0) {
+            crud.setBackgroundColor(context.getResources().getColor(R.color.dark_purple));
+        } else {
+            crud.setBackgroundColor(context.getResources().getColor(R.color.lighter_purple));
+        }
 
         name.setText(location.getName());
         String _address = location.getAddress();
