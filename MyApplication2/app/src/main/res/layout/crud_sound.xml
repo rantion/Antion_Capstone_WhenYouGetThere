@@ -17,7 +17,7 @@
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
             android:gravity="center_horizontal"
-            android:text="Edit Sound Settings"
+            android:text="edit sound settings"
             android:textColor="@color/white"
             android:textSize="10pt" />
 
@@ -47,7 +47,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Destination: "
+                    android:text="destination: "
                     android:textColor="@color/white" />
 
                 <TextView
@@ -78,7 +78,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:text="Change Sound Settings When I am..."
+                    android:text="change sound settings when I am..."
                     android:textColor="@color/white" />
 
                 <LinearLayout
@@ -168,7 +168,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="10px"
-                        android:text="Adjust Ringer volume"
+                        android:text="adjust ringer volume"
                         android:textColor="@color/white" />
 
                     <LinearLayout
@@ -202,7 +202,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="10px"
-                        android:text="Adjust Media player volume"
+                        android:text="adjust media player volume"
                         android:textColor="@color/white" />
 
                     <LinearLayout
@@ -236,7 +236,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="10px"
-                        android:text="Adjust Notification volume"
+                        android:text="adjust notification volume"
                         android:textColor="@color/white" />
 
                     <LinearLayout
@@ -270,7 +270,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="10px"
-                        android:text="Adjust System volume"
+                        android:text="adjust system volume"
                         android:textColor="@color/white" />
 
                     <LinearLayout
@@ -309,7 +309,7 @@
                         android:layout_weight="1"
                         android:background="@color/greenish"
                         android:onClick="deleteSound"
-                        android:text="Delete"
+                        android:text="delete"
                         android:textColor="#ffffffff" />
 
                     <Button
@@ -320,7 +320,7 @@
                         android:layout_weight="1"
                         android:background="@color/greenish"
                         android:onClick="updateSound"
-                        android:text="Done"
+                        android:text="done"
                         android:textColor="@color/white" />
 
                 </LinearLayout>

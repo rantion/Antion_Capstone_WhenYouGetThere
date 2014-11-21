@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -43,16 +44,6 @@ public class TaskListActivity extends ListActivity {
         addContentView(empty, new RelativeLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT));
         getListView().setEmptyView(empty);
         super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
-                return true;
-        }
-        return true;
     }
 
     @Override
@@ -136,5 +127,38 @@ public class TaskListActivity extends ListActivity {
                 R.layout.task_reminder_item,tasks);
         setListAdapter(adapter);
         super.onResume();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.my_location_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.add_location:
+                Intent intent = new Intent(this, MyActivity.class);
+                startActivity(intent);
+                return true;
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+            case R.id.menu_settings:
+                Intent intent1 = new Intent(this, UserSettingsActivity.class);
+                startActivity(intent1);
+                return true;
+            case R.id.list:
+                Intent intent2 = new Intent(this, TaskListActivity.class);
+                startActivity(intent2);
+                return true;
+            case R.id.listLocations:
+                Intent intent3 = new Intent(this, MyLocationsActivity.class);
+                startActivity(intent3);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

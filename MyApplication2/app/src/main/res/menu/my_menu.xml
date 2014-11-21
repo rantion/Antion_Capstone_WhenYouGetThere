@@ -2,17 +2,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MyActivity" >
     <item android:id="@+id/menu_settings"
-        android:title="Settings"
+        android:title="settings"
         android:name="Settings"
         android:orderInCategory="100"
         />
     <item android:id="@+id/list"
-        android:title="View/Edit Tasks"
+        android:title="view/edit tasks"
         android:name="View/Edit Tasks"
         android:orderInCategory="100"
         />
     <item android:id="@+id/listLocations"
-        android:title="View/Edit Locations"
+        android:title="view/edit locations"
         android:name="View/Edit Locations"
         android:orderInCategory="100"
         />

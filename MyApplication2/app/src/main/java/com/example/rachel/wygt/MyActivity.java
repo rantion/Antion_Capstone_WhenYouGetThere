@@ -284,6 +284,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                             star.setImageDrawable(getResources().getDrawable(R.drawable.starout));
                             TextView destName = (TextView) findViewById(R.id.cust_name);
                             destName.setVisibility(View.GONE);
+                            destinationName = destinationAddress;
                             myLocations.remove(custLoc);
                             adapter.notifyDataSetChanged();
                             usingCustLocation = false;
@@ -380,7 +381,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                 &&
                 Geocoder.isPresent()) {
             progress.show();
-            confirmWifiAvailable();
+        //    confirmWifiAvailable();
             AutoCompleteTextView _location = (AutoCompleteTextView) findViewById(R.id.enter_location_field);
             String locationName = _location.getText().toString();
             if (locationName.length() > 0) {
@@ -480,15 +481,12 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                     if (_marker != null) {
                         _marker.remove();
                     }
+                    destinationLocation = destinationLoc;
                     final LatLng currentLocation = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
                     final LatLng destination = marker.getPosition();
-                    try {
-                        new GetAddressesFromLocation().execute(marker.getPosition()).get();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    }
+
+                    new GetAddressesFromLocation().execute(marker.getPosition());
+
                     return true;
                 }
             });
@@ -504,11 +502,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
 
                     MarkerOptions marker = new MarkerOptions();
                     marker.position(latLng);
-                    //    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
                     _marker = googleMap.addMarker(marker);
-                    //       CameraPosition cameraPosition = new CameraPosition.Builder().target(
-                    //                latLng).zoom(14).build();
-                    //    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                 }
 
 
@@ -527,7 +521,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
 
                 @Override
                 public void onMarkerDragEnd(Marker marker) {
-                    if(_marker!=null){
+                    if (_marker != null) {
                         marker.remove();
 
                     }
@@ -545,7 +539,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
             {
                 Log.d("Marker", "CurrentIsNull");
                 confirmNetworkProviderEnabled(lm);
-                confirmWifiAvailable();
+               // confirmWifiAvailable();
 
             }
 
@@ -691,7 +685,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
             AlertUserDialog dialog = new AlertUserDialog("Please Enable Your WiFi", Settings.ACTION_WIFI_SETTINGS);
             dialog.show(getFragmentManager(), null);
             isAvailable = wifiInfo.isAvailable();
-            isAvailable = wifiInfo.isConnectedOrConnecting();
+          //  isAvailable = wifiInfo.isConnectedOrConnecting();
         }
         return isAvailable;
     }
@@ -1033,11 +1027,12 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
 
 
     class GetAddressesFromLocation extends AsyncTask<LatLng, Void, List<Address>> {
-    final ProgressDialog dialog = new ProgressDialog(MyActivity.this);
+        private ProgressDialog dialog;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            dialog = new ProgressDialog(MyActivity.this);
             dialog.setMessage("Calculating...");
             dialog.setIndeterminate(false);
             dialog.setCancelable(true);
@@ -1154,7 +1149,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
 //        pDialog.setIndeterminate(false);
 //        pDialog.setCancelable(true);
 //        pDialog.show();
-    }
+        }
 
         @Override
         protected JSONObject doInBackground(LatLng... params) {
@@ -1192,7 +1187,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
 
         @Override
         protected void onPostExecute(JSONObject jsonObject) {
-         //   pDialog.dismiss();
+            //   pDialog.dismiss();
             progress.dismiss();
             String duration = "";
             JSONArray rows = null;

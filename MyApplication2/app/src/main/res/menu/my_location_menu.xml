@@ -3,8 +3,27 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:yourapp="http://schemas.android.com/apk/res-auto">
 
+
     <item android:id="@+id/add_location"
         android:icon="@drawable/ic_action_new"
         android:title="Add Location"
         android:showAsAction="always"/>
+
+    <item android:id="@+id/menu_settings"
+        android:title="settings"
+        android:name="Settings"
+        android:orderInCategory="100"
+        />
+    <item android:id="@+id/list"
+        android:title="view/edit tasks"
+        android:name="View/Edit Tasks"
+        android:orderInCategory="100"
+        />
+    <item android:id="@+id/listLocations"
+        android:title="view/edit locations"
+        android:name="View/Edit Locations"
+        android:orderInCategory="100"
+        />
+
+
 </menu>

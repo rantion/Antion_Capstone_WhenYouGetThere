@@ -4,6 +4,7 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -58,11 +59,25 @@ public class MyLocationsActivity extends ListActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.add_location:
                 Intent intent = new Intent(this, AddLocationActivity.class);
                 startActivity(intent);
+                return true;
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+            case R.id.menu_settings:
+                Intent intent1 = new Intent(this, UserSettingsActivity.class);
+                startActivity(intent1);
+                return true;
+            case R.id.list:
+                Intent intent2 = new Intent(this, TaskListActivity.class);
+                startActivity(intent2);
+                return true;
+            case R.id.listLocations:
+                Intent intent3 = new Intent(this, MyLocationsActivity.class);
+                startActivity(intent3);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

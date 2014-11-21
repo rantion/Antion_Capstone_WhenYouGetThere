@@ -19,7 +19,7 @@ public class ReminderActivity extends Activity {
             long idNum = (Long)extras.get("id");
             TextView textView = (TextView)findViewById(R.id.display_reminder);
             if(textView!=null){
-                textView.setText(idNum+":  "+reminder);
+                textView.setText(reminder);
             }
         }
     }

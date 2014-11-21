@@ -85,13 +85,16 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     private int mediaMax, ringerMax, notifyMax, alarmMax, ringCurrent;
     private LinearLayout textLayout, callLayout, reminderLayout, soundLayout;
     private GPSTracker gpsTracker = MyApplication.gpsTracker;
+    private ImageView soundIcon, reminderIcon, textIcon, phoneIcon;
+//    private Bitmap soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, phoneI, phoneGlow;
+private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, phoneI, phoneGlow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_do_something);
-
+        (new loadImages()).execute();
         textLayout = (LinearLayout) findViewById(R.id.enter_contacts_text);
         callLayout = (LinearLayout) findViewById(R.id.enter_contacts_call_reminder);
         reminderLayout = (LinearLayout) findViewById(R.id.reminder_layout);
@@ -133,21 +136,26 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
         initViews();
     }
 
-    private void initViews(){
+    private void initViews() {
         thereCheckerCall(callLayout);
         thereCheckerReminder(reminderLayout);
         thereCheckerSound(soundLayout);
         thereCheckerText(textLayout);
-        Spinner call = (Spinner)findViewById(R.id.spinner_call_miles_minutes);
-        Spinner remind = (Spinner)findViewById(R.id.spinner_reminder_miles_minutes);
-        Spinner sound = (Spinner)findViewById(R.id.spinner_sound_miles_minutes);
-        Spinner text = (Spinner)findViewById(R.id.spinner_text_miles_minute);
+        Spinner call = (Spinner) findViewById(R.id.spinner_call_miles_minutes);
+        Spinner remind = (Spinner) findViewById(R.id.spinner_reminder_miles_minutes);
+        Spinner sound = (Spinner) findViewById(R.id.spinner_sound_miles_minutes);
+        Spinner text = (Spinner) findViewById(R.id.spinner_text_miles_minute);
         ArrayAdapter adapter = ArrayAdapter.createFromResource(this, R.array.miles_minutes, R.layout.spinner_item);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown);
         call.setAdapter(adapter);
         remind.setAdapter(adapter);
         sound.setAdapter(adapter);
         text.setAdapter(adapter);
+
+        textIcon = (ImageView) findViewById(R.id.set_text_icon);
+        reminderIcon = (ImageView) findViewById(R.id.set_reminder_icon);
+        soundIcon = (ImageView) findViewById(R.id.set_sound_icon);
+        phoneIcon = (ImageView) findViewById(R.id.set_phone_icon);
     }
 
     private Drawable getVolumeIcon(int max, int current, int type) {
@@ -370,7 +378,7 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     }
 
     public void distanceCheckedText(View view) {
-        CheckBox distance = (CheckBox)findViewById(R.id.distance_checkbox_text);
+        CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_text);
         CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_text);
         LinearLayout distanceL = (LinearLayout) findViewById(R.id.distance_chooser_layout);
         LinearLayout thereL = (LinearLayout) findViewById(R.id.there_layout);
@@ -427,7 +435,7 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
 
     public void distanceCheckedReminder(View view) {
         CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_reminder);
-        CheckBox distance = (CheckBox)findViewById(R.id.distance_checkbox_reminder);
+        CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_reminder);
         LinearLayout distanceL = (LinearLayout) findViewById(R.id.distance_chooser_layout_reminder);
         LinearLayout thereL = (LinearLayout) findViewById(R.id.there_layout_reminder);
 
@@ -463,7 +471,7 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     }
 
     public void distanceCheckedSound(View view) {
-        CheckBox distance = (CheckBox)findViewById(R.id.distance_checkbox_sound);
+        CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_sound);
         CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_sound);
         LinearLayout distanceL = (LinearLayout) findViewById(R.id.distance_chooser_layout_sound);
         LinearLayout thereL = (LinearLayout) findViewById(R.id.there_layout_sound);
@@ -729,35 +737,77 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
 
     public void phoneSelected(View view) {
         hideKeyboard();
+//        Drawable textI = getResources().getDrawable(R.drawable.text);
+//        Drawable soundI = getResources().getDrawable(R.drawable.audio);
+//        Drawable phoneGlow = getResources().getDrawable(R.drawable.phoneglow);
+//        Drawable reminderI = getResources().getDrawable(R.drawable.reminder);
+
         callLayout.setVisibility(View.VISIBLE);
         textLayout.setVisibility(View.GONE);
         reminderLayout.setVisibility(View.GONE);
         soundLayout.setVisibility(View.GONE);
+
+        phoneIcon.setImageDrawable(phoneGlow);
+        textIcon.setImageDrawable(textI);
+        reminderIcon.setImageDrawable(reminderI);
+        soundIcon.setImageDrawable(soundI);
     }
 
     public void soundSelected(View view) {
         hideKeyboard();
+//        Drawable textI = getResources().getDrawable(R.drawable.text);
+//        Drawable soundGlow = getResources().getDrawable(R.drawable.audioglow);
+//        Drawable phoneI = getResources().getDrawable(R.drawable.phone);
+//        Drawable reminderI = getResources().getDrawable(R.drawable.reminder);
+
         soundLayout.setVisibility(View.VISIBLE);
         textLayout.setVisibility(View.GONE);
         reminderLayout.setVisibility(View.GONE);
         callLayout.setVisibility(View.GONE);
+
+        phoneIcon.setImageDrawable(phoneI);
+        textIcon.setImageDrawable(textI);
+        reminderIcon.setImageDrawable(reminderI);
+        soundIcon.setImageDrawable(soundGlow);
     }
 
     public void textSelected(View view) {
         hideKeyboard();
+
+//        Drawable textGlow = getResources().getDrawable(R.drawable.textglow);
+//        Drawable soundI = getResources().getDrawable(R.drawable.audio);
+//        Drawable phoneI = getResources().getDrawable(R.drawable.phone);
+//        Drawable reminderI = getResources().getDrawable(R.drawable.reminder);
+
         textLayout.setVisibility(View.VISIBLE);
         reminderLayout.setVisibility(View.GONE);
         callLayout.setVisibility(View.GONE);
         soundLayout.setVisibility(View.GONE);
 
+        phoneIcon.setImageDrawable(phoneI);
+        textIcon.setImageDrawable(textGlow);
+        reminderIcon.setImageDrawable(reminderI);
+        soundIcon.setImageDrawable(soundI);
+
     }
 
     public void reminderSelected(View view) {
         hideKeyboard();
+
+//        Drawable textI = getResources().getDrawable(R.drawable.text);
+//        Drawable soundI = getResources().getDrawable(R.drawable.audio);
+//        Drawable phoneI = getResources().getDrawable(R.drawable.phone);
+//        Drawable reminderGlow = getResources().getDrawable(R.drawable.reminderglow);
+
         reminderLayout.setVisibility(View.VISIBLE);
         textLayout.setVisibility(View.GONE);
         callLayout.setVisibility(View.GONE);
         soundLayout.setVisibility(View.GONE);
+
+        phoneIcon.setImageDrawable(phoneI);
+        textIcon.setImageDrawable(textI);
+        reminderIcon.setImageDrawable(reminderGlow);
+        soundIcon.setImageDrawable(soundI);
     }
 
     public void goToGoogleMaps(View v) {
@@ -878,6 +928,28 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
         editor.putBoolean("appIsOpen", false);
         editor.apply();
         super.onDestroy();
+    }
+
+    private class loadImages extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            textI = getResources().getDrawable(R.drawable.text);
+            textGlow = getResources().getDrawable(R.drawable.textglow);
+
+            reminderI =getResources().getDrawable(R.drawable.reminder);
+            reminderGlow = getResources().getDrawable(R.drawable.reminderglow);
+
+            soundI = getResources().getDrawable(R.drawable.audio);
+            soundGlow = getResources().getDrawable(R.drawable.audioglow);
+
+            phoneI = getResources().getDrawable(R.drawable.phone);
+            phoneGlow = getResources().getDrawable(R.drawable.phoneglow);
+
+            return null;
+
+        }
     }
 }
 

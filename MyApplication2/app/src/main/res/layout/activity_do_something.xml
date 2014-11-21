@@ -27,17 +27,15 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
-                android:layout_marginLeft="@dimen/activity_vertical_margin"
-                android:layout_marginRight="@dimen/activity_vertical_margin"
                 android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
+                    android:layout_weight="5"
                     android:divider="@drawable/divider_vertical"
                     android:orientation="horizontal"
-                    android:layout_weight="5"
                     android:showDividers="middle">
 
                     <LinearLayout
@@ -140,9 +138,7 @@
                 android:layout_height="0dp"
                 android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
                 android:layout_weight="30"
-                android:divider="@color/white"
                 android:orientation="vertical"
-                android:showDividers="end"
                 android:weightSum="100">
 
                 <TextView
@@ -252,15 +248,16 @@
 
                     <TextView
                         android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_height="0dp"
                         android:layout_marginLeft="@dimen/activity_vertical_margin"
                         android:layout_marginRight="@dimen/activity_vertical_margin"
+                        android:layout_weight="15"
                         android:gravity="center_vertical"
+                        android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
                         android:text="contacts"
                         android:textColor="@color/white"
                         android:textSize="8pt"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
 
                     <MultiAutoCompleteTextView
                         android:id="@+id/multiAuto_contacts"
@@ -268,52 +265,54 @@
                         android:layout_height="0dp"
                         android:layout_marginLeft="@dimen/activity_vertical_margin"
                         android:layout_marginRight="@dimen/activity_vertical_margin"
-                        android:layout_weight="40"
+                        android:layout_weight="35"
                         android:gravity="top|start"
-                        android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
                         android:hint="sent to contact(s)..."
+                        android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
                         android:textColor="@color/white" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="50"
-                    android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
-                    android:layout_marginRight="@dimen/activity_vertical_margin"
                     android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_marginRight="@dimen/activity_vertical_margin"
+                    android:layout_weight="50"
                     android:orientation="vertical">
 
                     <TextView
                         android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/white"
+                        android:layout_height="0dp"
                         android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_weight="15"
+                        android:paddingTop="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:text="message"
+                        android:textColor="@color/white"
                         android:textSize="8pt"
-                        android:textStyle="bold"
-                        android:text="message"/>
+                        android:textStyle="bold" />
 
-                <com.example.rachel.wygt.EditTextClear
-                    android:id="@+id/enter_reminder_field"
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="40"
-                    android:gravity="top|start"
-                    android:hint="enter your text message here"
-                    android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
-                    android:inputType="textMultiLine|textCapSentences"
-                    android:lines="9"
-                    android:maxLines="30"
-                    android:minLines="1"
-                    android:scrollbars="vertical"
-                    android:textColor="@color/white" />
+                    <com.example.rachel.wygt.EditTextClear
+                        android:id="@+id/enter_reminder_field"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="35"
+                        android:gravity="top|start"
+                        android:hint="enter your text message here"
+                        android:inputType="textMultiLine|textCapSentences"
+                        android:lines="9"
+                        android:maxLines="30"
+                        android:minLines="1"
+                        android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:scrollbars="vertical"
+                        android:textColor="@color/white" />
                 </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
-                android:layout_weight="15"
                 android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+                android:layout_weight="15"
                 android:gravity="center_vertical">
 
                 <Button
@@ -335,10 +334,10 @@
             android:id="@+id/enter_contacts_call_reminder"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
-            android:layout_marginLeft="@dimen/activity_vertical_margin"
-            android:layout_marginRight="@dimen/activity_vertical_margin"
             android:layout_weight="74"
+            android:divider="@drawable/divider_horizontal"
             android:orientation="vertical"
+            android:showDividers="beginning|middle"
             android:visibility="gone"
             android:weightSum="100">
 
@@ -346,6 +345,7 @@
                 android:id="@+id/proximity_information_call"
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
+                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
                 android:layout_weight="40"
                 android:orientation="vertical"
                 android:weightSum="100">
@@ -371,6 +371,7 @@
                         android:id="@+id/there_checkbox_call"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/activity_vertical_margin"
                         android:checked="true"
                         android:onClick="thereCheckerCall" />
 
@@ -395,7 +396,7 @@
                         android:id="@+id/distance_checkbox_call"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_marginLeft="@dimen/activity_vertical_margin"
                         android:onClick="distanceCheckedCall" />
 
                     <TextView
@@ -433,6 +434,7 @@
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
+                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
                 android:layout_weight="45"
                 android:orientation="vertical"
                 android:weightSum="100">
@@ -440,28 +442,31 @@
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
-                    android:layout_marginTop="@dimen/activity_horizontal_margin"
+                    android:layout_marginLeft="@dimen/activity_vertical_margin"
                     android:layout_weight="40"
-                    android:gravity="center"
-                    android:text="remind me to call.....\n(this does not work for facebook contacts)"
-                    android:textColor="@color/white" />
+                    android:paddingTop="@dimen/abc_action_bar_icon_vertical_padding"
+                    android:text="contact"
+                    android:textColor="@color/white"
+                    android:textSize="8pt"
+                    android:textStyle="bold" />
 
                 <com.example.rachel.wygt.AutoWithSpaces
                     android:id="@+id/auto_contacts"
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
-                    android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
                     android:layout_marginLeft="@dimen/activity_vertical_margin"
                     android:layout_marginRight="@dimen/activity_vertical_margin"
                     android:layout_weight="60"
                     android:gravity="top|start"
                     android:hint="enter contact.."
+                    android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
                     android:textColor="@color/white" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
+                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
                 android:layout_weight="15"
                 android:gravity="center_vertical">
 
@@ -472,7 +477,7 @@
                     android:layout_marginLeft="80dip"
                     android:layout_marginRight="80dip"
                     android:background="@color/greenish"
-                    android:onClick="sendTextMessage"
+                    android:onClick="setCallReminder"
                     android:text="Done"
                     android:textColor="#ffffffff" />
             </LinearLayout>
@@ -484,10 +489,10 @@
             android:id="@+id/reminder_layout"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
-            android:layout_marginLeft="@dimen/activity_vertical_margin"
-            android:layout_marginRight="@dimen/activity_vertical_margin"
             android:layout_weight="74"
+            android:divider="@drawable/divider_horizontal"
             android:orientation="vertical"
+            android:showDividers="beginning|middle"
             android:visibility="gone"
             android:weightSum="100">
 
@@ -495,6 +500,7 @@
                 android:id="@+id/proximity_information_reminder"
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
+                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
                 android:layout_weight="30"
                 android:orientation="vertical"
                 android:weightSum="100">
@@ -502,7 +508,7 @@
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="30"
+                    android:layout_weight="25"
                     android:gravity="center"
                     android:text="send notification when I am..."
                     android:textColor="@color/white" />
@@ -519,7 +525,7 @@
                         android:id="@+id/there_checkbox_reminder"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_marginLeft="@dimen/activity_vertical_margin"
                         android:checked="true"
                         android:onClick="thereCheckerReminder" />
 
@@ -535,7 +541,7 @@
                     android:id="@+id/distance_chooser_layout_reminder"
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="35"
+                    android:layout_weight="45"
                     android:background="@color/translucent_black"
                     android:clickable="false"
                     android:onClick="distanceCheckedReminder">
@@ -544,7 +550,7 @@
                         android:id="@+id/distance_checkbox_reminder"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_marginLeft="@dimen/activity_vertical_margin"
                         android:onClick="distanceCheckedReminder" />
 
                     <TextView
@@ -580,24 +586,46 @@
 
             </LinearLayout>
 
-
-            <com.example.rachel.wygt.EditTextClear
-                android:id="@+id/reminder_edit_text"
+            <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
+                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
                 android:layout_weight="55"
-                android:gravity="top|start"
-                android:hint="enter your reminder/ message here"
-                android:inputType="textMultiLine|textCapSentences"
-                android:lines="9"
-                android:maxLines="30"
-                android:minLines="1"
-                android:scrollbars="vertical"
-                android:textColor="@color/white" />
+                android:orientation="vertical"
+                android:weightSum="100">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_weight="20"
+                    android:paddingTop="@dimen/abc_action_bar_icon_vertical_padding"
+                    android:text="reminder"
+                    android:textColor="@color/white"
+                    android:textSize="8pt"
+                    android:textStyle="bold" />
+
+
+                <com.example.rachel.wygt.EditTextClear
+                    android:id="@+id/reminder_edit_text"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="80"
+                    android:gravity="top|start"
+                    android:hint="enter your reminder/ message here"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:lines="9"
+                    android:maxLines="30"
+                    android:minLines="1"
+                    android:scrollbars="vertical"
+                    android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                    android:textColor="@color/white" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
+                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
                 android:layout_weight="15"
                 android:gravity="center_vertical">
 
@@ -608,7 +636,7 @@
                     android:layout_marginLeft="80dip"
                     android:layout_marginRight="80dip"
                     android:background="@color/greenish"
-                    android:onClick="sendTextMessage"
+                    android:onClick="setReminder"
                     android:text="Done"
                     android:textColor="#ffffffff" />
             </LinearLayout>
@@ -621,10 +649,10 @@
             android:id="@+id/sound_layout"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
-            android:layout_marginLeft="@dimen/activity_vertical_margin"
-            android:layout_marginRight="@dimen/activity_vertical_margin"
             android:layout_weight="74"
+            android:divider="@drawable/divider_horizontal"
             android:orientation="vertical"
+            android:showDividers="beginning|middle"
             android:visibility="gone"
             android:weightSum="100">
 
@@ -632,7 +660,8 @@
                 android:id="@+id/proximity_information_sound"
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
-                android:layout_weight="25"
+                android:layout_weight="22"
+                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
                 android:orientation="vertical"
                 android:weightSum="100">
 
@@ -641,8 +670,10 @@
                     android:layout_height="0dp"
                     android:layout_weight="25"
                     android:gravity="center"
-                    android:text="Change Sound Settings When I am..."
-                    android:textColor="@color/white" />
+                    android:paddingTop="3dip"
+                    android:text="change sound settings when I am..."
+                    android:textColor="@color/white"
+                    android:textSize="6pt" />
 
                 <LinearLayout
                     android:id="@+id/there_layout_sound"
@@ -731,7 +762,9 @@
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
                 android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                android:layout_weight="60"
+                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+                android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                android:layout_weight="63"
                 android:orientation="vertical"
                 android:weightSum="100">
 
@@ -746,28 +779,30 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        android:layout_weight="40"
+                        android:layout_weight="35"
                         android:gravity="center"
                         android:padding="10px"
-                        android:text="Adjust Ringer volume"
-                        android:textColor="@color/white" />
+                        android:text="adjust ringer volume"
+                        android:textColor="@color/white"
+                        android:textSize="6pt" />
 
                     <LinearLayout
                         android:layout_width="fill_parent"
                         android:layout_height="0dp"
                         android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:layout_weight="60"
+                        android:layout_weight="65"
                         android:orientation="horizontal">
 
                         <ImageView
                             android:id="@+id/ringerIcon"
                             android:layout_width="@dimen/abc_dropdownitem_icon_width"
-                            android:layout_height="@dimen/abc_dropdownitem_icon_width" />
+                            android:layout_height="@dimen/abc_dropdownitem_icon_width"
+                            android:paddingTop="2dip" />
 
                         <SeekBar
                             android:id="@+id/ringerSeek"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="fill_parent" />
 
                     </LinearLayout>
 
@@ -784,28 +819,30 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        android:layout_weight="40"
+                        android:layout_weight="35"
                         android:gravity="center"
                         android:padding="10px"
-                        android:text="Adjust Media player volume"
-                        android:textColor="@color/white" />
+                        android:text="adjust media player volume"
+                        android:textColor="@color/white"
+                        android:textSize="6pt" />
 
                     <LinearLayout
                         android:layout_width="fill_parent"
                         android:layout_height="0dp"
                         android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:layout_weight="60"
+                        android:layout_weight="65"
                         android:orientation="horizontal">
 
                         <ImageView
                             android:id="@+id/mediaIcon"
                             android:layout_width="@dimen/abc_dropdownitem_icon_width"
-                            android:layout_height="@dimen/abc_dropdownitem_icon_width" />
+                            android:layout_height="@dimen/abc_dropdownitem_icon_width"
+                            android:paddingTop="2dip" />
 
                         <SeekBar
                             android:id="@+id/mediaSeek"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="fill_parent" />
 
                     </LinearLayout>
 
@@ -822,28 +859,30 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        android:layout_weight="40"
+                        android:layout_weight="35"
                         android:gravity="center"
                         android:padding="10px"
-                        android:text="Adjust Notification volume"
-                        android:textColor="@color/white" />
+                        android:text="adjust notification volume"
+                        android:textColor="@color/white"
+                        android:textSize="6pt" />
 
                     <LinearLayout
                         android:layout_width="fill_parent"
                         android:layout_height="0dp"
                         android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:layout_weight="60"
+                        android:layout_weight="65"
                         android:orientation="horizontal">
 
                         <ImageView
                             android:id="@+id/notificationIcon"
                             android:layout_width="@dimen/abc_dropdownitem_icon_width"
-                            android:layout_height="@dimen/abc_dropdownitem_icon_width" />
+                            android:layout_height="@dimen/abc_dropdownitem_icon_width"
+                            android:paddingTop="2dip" />
 
                         <SeekBar
                             android:id="@+id/notificationSeek"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="fill_parent" />
 
                     </LinearLayout>
 
@@ -860,11 +899,12 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        android:layout_weight="40"
+                        android:layout_weight="35"
                         android:gravity="center"
                         android:padding="10px"
-                        android:text="Adjust System volume"
-                        android:textColor="@color/white" />
+                        android:text="adjust system volume"
+                        android:textColor="@color/white"
+                        android:textSize="6pt" />
 
                     <LinearLayout
                         android:layout_width="fill_parent"
@@ -876,12 +916,13 @@
                         <ImageView
                             android:id="@+id/systemIcon"
                             android:layout_width="@dimen/abc_dropdownitem_icon_width"
-                            android:layout_height="@dimen/abc_dropdownitem_icon_width" />
+                            android:layout_height="@dimen/abc_dropdownitem_icon_width"
+                            android:paddingTop="2dip" />
 
                         <SeekBar
                             android:id="@+id/systemSeek"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="fill_parent" />
 
                     </LinearLayout>
 
@@ -893,6 +934,7 @@
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
+                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
                 android:layout_weight="15"
                 android:gravity="center_vertical">
 
@@ -903,7 +945,7 @@
                     android:layout_marginLeft="80dip"
                     android:layout_marginRight="80dip"
                     android:background="@color/greenish"
-                    android:onClick="sendTextMessage"
+                    android:onClick="setSound"
                     android:text="Done"
                     android:textColor="#ffffffff" />
             </LinearLayout>
@@ -922,6 +964,7 @@
             android:padding="@dimen/abc_action_bar_icon_vertical_padding">
 
             <ImageView
+                android:padding="3dip"
                 android:id="@+id/set_text_icon"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
@@ -930,38 +973,38 @@
                 android:background="@android:color/transparent"
                 android:onClick="textSelected"
                 android:scaleType="fitCenter"
-                android:src="@drawable/text" />
+                android:src="@drawable/textglow" />
 
             <ImageButton
+                android:id="@+id/set_phone_icon"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"
                 android:background="@android:color/transparent"
                 android:onClick="phoneSelected"
-                android:padding="@dimen/abc_action_bar_icon_vertical_padding"
                 android:scaleType="fitCenter"
                 android:src="@drawable/phone" />
 
             <ImageButton
+                android:id="@+id/set_reminder_icon"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"
                 android:background="@android:color/transparent"
                 android:onClick="reminderSelected"
-                android:padding="@dimen/abc_action_bar_icon_vertical_padding"
                 android:scaleType="fitCenter"
                 android:src="@drawable/reminder" />
 
             <ImageButton
+                android:id="@+id/set_sound_icon"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"
                 android:background="@android:color/transparent"
                 android:onClick="soundSelected"
-                android:padding="@dimen/abc_action_bar_icon_vertical_padding"
                 android:scaleType="fitCenter"
                 android:src="@drawable/audio" />
 
