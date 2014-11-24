@@ -1,6 +1,7 @@
 package com.example.rachel.wygt;
 
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -13,6 +14,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -31,7 +33,9 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -159,9 +163,27 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         usingCustLocation = false;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
+        int notificationHeight = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        int notHeight = 0;
+        if (notificationHeight > 0) {
+            notHeight = getResources().getDimensionPixelSize(notificationHeight);
+        }
+        Display display = getWindowManager().getDefaultDisplay();
+        DisplayMetrics outMetrics = new DisplayMetrics ();
+        display.getMetrics(outMetrics);
+        final TypedArray styledAttributes = getTheme().obtainStyledAttributes(
+                new int[] { android.R.attr.actionBarSize });
+        int mActionBarSize = (int) styledAttributes.getDimension(0, 0);
+        styledAttributes.recycle();
+        float density  = getResources().getDisplayMetrics().density;
+        float dpHeight = (outMetrics.heightPixels-mActionBarSize-notHeight) / density;
+        float dpWidth  = outMetrics.widthPixels / density;
+        MyApplication.setHeight(dpHeight);
+        MyApplication.setWidth(dpWidth);
         MyApplication.setActivityContext(this);
         enterLocation = (AutoWithSpaces) findViewById(R.id.enter_location_field);
         enterLocation.addTextChangedListener(textWatch);
@@ -433,7 +455,6 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                             intent.putExtra("Destination", destinationName);
                             intent.putExtra("Destination_location", destinationLocation);
                             intent.putExtra("Current_Location", currentLocation);
-                            intent.putExtra("Button", "Do Something");
                             intent.putExtra("Distance", destinationDistance);
                             intent.putExtra("Duration", destinationDuration);
                             intent.putExtra("DistanceMeters", destDistMeters);

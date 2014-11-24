@@ -6,7 +6,6 @@
     android:orientation="vertical"
     android:weightSum="100">
 
-
      <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="0dp"
@@ -36,8 +35,8 @@
         android:id="@+id/edit_reminder_task"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_marginLeft="@dimen/activity_vertical_margin"
-        android:layout_marginRight="16dp"
+        android:paddingLeft="@dimen/activity_vertical_margin"
+        android:paddingRight="16dp"
         android:layout_weight="80"
         android:weightSum="100"
         android:gravity="center_horizontal"
@@ -89,11 +88,10 @@
 
 
         <LinearLayout
+            android:id="@+id/distance_layout_reminder"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
             android:layout_weight="25"
-            android:layout_marginLeft="@dimen/activity_vertical_margin"
-            android:layout_marginRight="@dimen/activity_vertical_margin"
             android:gravity="center_horizontal"
             android:weightSum="100"
             android:orientation="vertical">
@@ -107,10 +105,12 @@
                 android:textColor="@color/white" />
 
             <LinearLayout
+                android:id="@+id/edit_reminder_there_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
                 android:layout_weight="30"
-                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                android:onClick="thereCheckedEditReminder"
+                android:paddingLeft="@dimen/activity_vertical_margin"
                 android:orientation="horizontal">
 
                 <CheckBox
@@ -129,11 +129,13 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/edit_reminder_distance_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
                 android:layout_weight="45"
-                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                android:clickable="false">
+                android:background="@color/translucent_black"
+                android:onClick="distanceCheckedEditReminder"
+                android:paddingLeft="@dimen/activity_vertical_margin">
 
                 <CheckBox
                     android:id="@+id/edit_reminder_distance_checkbox"

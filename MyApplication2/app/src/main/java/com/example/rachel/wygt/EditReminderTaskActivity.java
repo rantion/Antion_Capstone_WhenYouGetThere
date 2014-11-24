@@ -2,15 +2,18 @@ package com.example.rachel.wygt;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
@@ -36,6 +39,7 @@ public class EditReminderTaskActivity extends Activity {
     TextView destination;
     GetDrivingDistances getDistance;
     CheckBox there, distance;
+    LinearLayout thereL, distanceL;
     EditTextClear message, distanceM;
     Spinner spinner;
 
@@ -46,6 +50,20 @@ public class EditReminderTaskActivity extends Activity {
         getActionBar().setDisplayHomeAsUpEnabled(true);
         LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
         LatLng destinationLocation = null;
+        thereL = (LinearLayout)findViewById(R.id.edit_reminder_there_layout);
+        distanceL = (LinearLayout)findViewById(R.id.edit_reminder_distance_layout);
+        LinearLayout all = (LinearLayout)findViewById(R.id.distance_layout_reminder);
+        Resources resources = getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        double width = metrics.widthPixels;
+        thereL.setBackgroundColor(getResources().getColor(R.color.dark_purple));
+        distanceL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
+//        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)thereL.getLayoutParams();
+//        params.width=(int) width;
+//        all.updateViewLayout(thereL, params);
+//        LinearLayout.LayoutParams params1 = (LinearLayout.LayoutParams)distanceL.getLayoutParams();
+//        params1.width =(int) width;
+//        all.updateViewLayout(distanceL, params1);
         destination = (TextView) findViewById(R.id.edit_reminder_destination);
         there = (CheckBox) findViewById(R.id.edit_reminder_there_checkbox);
         distance = (CheckBox) findViewById(R.id.edit_reminder_distance_checkbox);
@@ -96,6 +114,9 @@ public class EditReminderTaskActivity extends Activity {
     }
 
     public void thereCheckedEditReminder(View view) {
+        thereL.setBackgroundColor(getResources().getColor(R.color.dark_purple));
+        distanceL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
+        there.setChecked(true);
         distance.setChecked(false);
         distanceM.setEnabled(false);
         distanceM.setClickable(false);
@@ -103,6 +124,9 @@ public class EditReminderTaskActivity extends Activity {
     }
 
     public void distanceCheckedEditReminder(View view) {
+        thereL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
+        distanceL.setBackgroundColor(getResources().getColor(R.color.dark_purple));
+        distance.setChecked(true);
         there.setChecked(false);
         distanceM.setEnabled(true);
         distanceM.setClickable(true);
@@ -187,5 +211,16 @@ public class EditReminderTaskActivity extends Activity {
         Intent intent = new Intent(this, TaskListActivity.class);
         startActivity(intent);
     }
+
+    public int getPxByPercentage(double percentage) {
+
+        Resources resources = getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float height = MyApplication.getHeight();
+        float px = height * (metrics.densityDpi / 160f);
+
+        return (int) (px * percentage);
+    }
+
 
 }

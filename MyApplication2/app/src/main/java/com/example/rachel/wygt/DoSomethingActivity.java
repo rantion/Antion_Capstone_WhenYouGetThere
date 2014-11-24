@@ -25,6 +25,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -179,13 +180,32 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.my_menu, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
+            case R.id.menu_settings:
+                Intent intent1 = new Intent(this, UserSettingsActivity.class);
+                startActivity(intent1);
+                return true;
+            case R.id.list:
+                Intent intent2 = new Intent(this, TaskListActivity.class);
+                startActivity(intent2);
+                return true;
+            case R.id.listLocations:
+                Intent intent3 = new Intent(this, MyLocationsActivity.class);
+                startActivity(intent3);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return true;
     }
 
     private void initControls() {
@@ -836,9 +856,9 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
         CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_reminder);
         Spinner milesMin = (Spinner) findViewById(R.id.spinner_reminder_miles_minutes);
         EditText _reminder = (EditText) findViewById(R.id.reminder_edit_text);
+        EditText _miles = (EditText) findViewById(R.id.miles_away_reminder);
         String reminder = "";
         if (distance.isChecked()) {
-            EditText _miles = (EditText) findViewById(R.id.miles_away_reminder);
             String miles = _miles.getText().toString();
             if (miles.length() == 0) {
                 Toast.makeText(this, "Please Enter a Distance", Toast.LENGTH_SHORT).show();
@@ -868,10 +888,11 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
                 .show();
         taskDataSource.createTask(destinationLocation, reminder, metersAway, Task.REMINDER_MESSAGE_TASK_TYPE, destination, radiusType, original);
         Log.d("CreateTaskActivity", "Saved Destination");
-        distance.setText("5");
+      //  distance.setText("5");
         there.setChecked(true);
         distance.setChecked(false);
         _reminder.setText("");
+        _miles.setText("5");
         milesMin.setSelection(0);
 
     }

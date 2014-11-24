@@ -8,7 +8,9 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
@@ -35,8 +37,10 @@ public class MyApplication extends Application {
     private static Context activityContext;
     private static ArrayList<Map<String, String>> mPeopleList;
     public static final int REQUESTCODE = 123456789;
+    private static float height, width;
 
     public void onCreate() {
+
         MyApplication.context = getApplicationContext();
         try {
             taskDataSource = new TaskDataSource(context);
@@ -74,6 +78,22 @@ public class MyApplication extends Application {
 
     public static Context getActivityContext() {
         return activityContext;
+    }
+
+    public static float getWidth() {
+        return width;
+    }
+
+    public static void setWidth(float width) {
+        MyApplication.width = width;
+    }
+
+    public static float getHeight() {
+        return height;
+    }
+
+    public static void setHeight(float height) {
+        MyApplication.height = height;
     }
 
     public static void setActivityContext(Context activityContext) {

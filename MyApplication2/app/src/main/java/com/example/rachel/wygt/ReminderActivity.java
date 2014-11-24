@@ -2,6 +2,8 @@ package com.example.rachel.wygt;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 /**
@@ -11,6 +13,7 @@ public class ReminderActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_reminder);
         super.onCreate(savedInstanceState);
         Bundle extras = getIntent().getExtras();
@@ -22,5 +25,15 @@ public class ReminderActivity extends Activity {
                 textView.setText(reminder);
             }
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return true;
     }
 }

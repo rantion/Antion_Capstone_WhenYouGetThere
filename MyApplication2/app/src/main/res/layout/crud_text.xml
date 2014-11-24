@@ -1,252 +1,294 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:background="@color/dark_purple"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
-    android:weightSum="100">
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="20"
-        android:orientation="vertical">
-        <TextView
+    android:layout_width="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:background="@color/dark_purple"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/edit_text_display"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:gravity="center_horizontal"
-            android:layout_marginBottom="2dip"
-            android:text="edit text message task"
-            android:textColor="@color/white"
-            android:textSize="10pt" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_gravity="center_horizontal"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:layout_weight="10"
-            android:src="@drawable/text" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/edit_text_task"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="80"
-        android:showDividers="beginning|middle"
-        android:layout_marginLeft="@dimen/activity_vertical_margin"
-        android:layout_marginRight="@dimen/activity_vertical_margin"
-        android:divider="@drawable/divider_horizontal_white"
-        android:weightSum="100"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="20"
-            android:weightSum="100"
-            android:gravity="center"
-            android:paddingBottom="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_horizontal_margin"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="30"
-                android:gravity="right|center_vertical"
-                android:text="destination: "
-                android:layout_marginRight="@dimen/abc_action_bar_icon_vertical_padding"
-                android:textColor="@color/white" />
-
-            <TextView
-                android:layout_gravity="center_vertical"
-                android:id="@+id/edit_reminder_destination"
-                android:layout_width="0dp"
-                android:layout_marginLeft="@dimen/activity_vertical_margin"
-                android:layout_height="fill_parent"
-                android:layout_weight="55"
-                android:text="Neumont University\nS Main st...\nsdjfhjds"
-                android:textColor="@color/white" />
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_weight="15"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/abc_action_bar_icon_vertical_padding"
-                android:layout_marginRight="@dimen/activity_vertical_margin"
-                android:src="@drawable/edit"
-                android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
-                />
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="30"
-            android:layout_marginLeft="@dimen/activity_vertical_margin"
             android:orientation="vertical">
 
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="send text(s) when I am...."
-                android:textColor="@color/white" />
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:gravity="center_horizontal"
+                android:layout_marginBottom="2dip"
+                android:text="edit text message task"
+                android:textColor="@color/white"
+                android:textSize="10pt" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_gravity="center_horizontal"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:layout_weight="10"
+                android:src="@drawable/text" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/edit_text_task"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:showDividers="beginning|middle"
+            android:paddingLeft="@dimen/activity_vertical_margin"
+            android:paddingRight="@dimen/activity_vertical_margin"
+            android:divider="@drawable/divider_horizontal_white"
+            android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/edit_text_destination_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                android:layout_weight="20"
+                android:gravity="center"
+                android:paddingBottom="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_horizontal_margin"
                 android:orientation="horizontal">
 
-                <CheckBox
-                    android:id="@+id/edit_text_there_checkbox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:onClick="thereCheckedEditText" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="30"
+                    android:gravity="right|center_vertical"
+                    android:text="destination: "
+                    android:layout_marginRight="@dimen/abc_action_bar_icon_vertical_padding"
+                    android:textColor="@color/white" />
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:text="there" />
+                    android:gravity="center_vertical"
+                    android:layout_gravity="center_vertical"
+                    android:id="@+id/edit_text_destination"
+                    android:layout_width="0dp"
+                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="55"
+                    android:text="Neumont University\nS Main st...\nsdjfhjds"
+                    android:textColor="@color/white" />
+
+                <!--<ImageView-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_weight="15"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:padding="@dimen/abc_action_bar_icon_vertical_padding"-->
+                    <!--android:layout_marginRight="@dimen/activity_vertical_margin"-->
+                    <!--android:src="@drawable/edit"-->
+                    <!--android:adjustViewBounds="true"-->
+                    <!--android:scaleType="fitCenter" />-->
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/edit_text_distance_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="100"
+                android:orientation="vertical">
+
+                <TextView
+                    android:paddingTop="@dimen/abc_action_bar_icon_vertical_padding"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="25"
+                    android:gravity="center"
+                    android:text="send text(s) when I am...."
+                    android:textColor="@color/white" />
+
+                <LinearLayout
+                    android:id="@+id/there_layout_text"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="35"
+                    android:onClick="thereCheckedEditText"
+                    android:paddingLeft="@dimen/activity_vertical_margin"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        android:id="@+id/edit_text_there_checkbox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:onClick="thereCheckedEditText" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:text="there" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/distance_layout_text"
+                    android:background="@color/translucent_black"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="40"
+                    android:onClick="distanceCheckedEditText"
+                    android:paddingLeft="@dimen/activity_vertical_margin"
+                    android:clickable="false">
+
+                    <CheckBox
+                        android:id="@+id/edit_text_distance_checkbox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="distanceCheckedEditText" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:text="about..." />
+
+                    <com.example.rachel.wygt.EditTextClear
+                        android:id="@+id/edit_text_distance_away"
+                        android:textColor="@color/white"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="5" />
+
+                    <Spinner
+                        android:id="@+id/edit_text_spinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:entries="@array/miles_minutes"
+                        android:prompt="@string/choose_type" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:text="away" />
+
+
+                </LinearLayout>
+
 
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/edit_text_contact_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                android:clickable="false">
-
-                <CheckBox
-                    android:id="@+id/edit_text_distance_checkbox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="distanceCheckedEditText" />
+                android:layout_weight="100"
+                android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_marginRight="@dimen/activity_vertical_margin"
+                    android:layout_width="fill_parent"
+                    android:paddingTop="@dimen/abc_action_bar_icon_vertical_padding"
                     android:layout_height="wrap_content"
+                    android:textSize="8pt"
+                    android:textStyle="bold"
                     android:textColor="@color/white"
-                    android:text="about..." />
+                    android:text="contacts" />
+
+                <MultiAutoCompleteTextView
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/light_grey"
+                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_marginRight="@dimen/activity_vertical_margin"
+                    android:id="@+id/edit_text_contacts"
+                    android:layout_width="fill_parent"
+                    android:gravity="top|left"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="8"
+                    android:hint="sent to contact(s)..." />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/edit_text_message_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_marginRight="@dimen/activity_vertical_margin"
+                    android:layout_width="fill_parent"
+                    android:paddingTop="@dimen/abc_action_bar_icon_vertical_padding"
+                    android:layout_height="wrap_content"
+                    android:textSize="8pt"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:text="message content" />
+
 
                 <com.example.rachel.wygt.EditTextClear
-                    android:id="@+id/edit_text_distance_away"
                     android:textColor="@color/white"
-                    android:layout_width="wrap_content"
+                    android:textColorHint="@color/light_grey"
+                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_marginRight="@dimen/activity_vertical_margin"
+                    android:id="@+id/edit_text_message"
+                    android:layout_width="fill_parent"
+                    android:lines="9"
+                    android:minLines="1"
+                    android:gravity="top|left"
+                    android:maxLines="30"
+                    android:scrollbars="vertical"
+                    android:inputType="textMultiLine|textCapSentences"
                     android:layout_height="wrap_content"
-                    android:text="5" />
+                    android:layout_weight="8"
+                    android:hint="enter your text message here" />
+            </LinearLayout>
 
-                <Spinner
-                    android:id="@+id/edit_text_spinner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clickable="false"
-                    android:entries="@array/miles_minutes"
-                    android:prompt="@string/choose_type"/>
+            <LinearLayout
+                android:id="@+id/edit_text_button_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="15"
+                android:paddingTop="@dimen/abc_action_bar_icon_vertical_padding"
+                android:paddingBottom="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="40dip"
+                android:layout_marginRight="40dip"
+                android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:text="away" />
+                <ImageButton
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_marginRight="@dimen/abc_action_bar_icon_vertical_padding"
+                    android:layout_weight="1"
+                    android:background="@color/lighter_purple"
+                    android:onClick="deleteText"
+                    android:gravity="center"
+                    android:src="@drawable/trash"
+                    android:scaleType="fitCenter"
+                    android:paddingTop="7dip"
+                    android:paddingBottom="7dip"
+                    android:textColor="#ffffffff" />
 
+                <ImageButton
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                    android:layout_weight="1"
+                    android:background="@color/lighter_purple"
+                    android:onClick="updateText"
+                    android:gravity="center"
+                    android:src="@drawable/save1"
+                    android:scaleType="fitCenter"
+                    android:paddingTop="7dip"
+                    android:paddingBottom="7dip"
+                    android:textColor="#ffffffff" />
 
             </LinearLayout>
 
 
         </LinearLayout>
-        
-        <LinearLayout
-            android:layout_width=""
-            android:layout_height=""></LinearLayout>
-
-        <TextView
-            android:layout_marginLeft="@dimen/activity_vertical_margin"
-            android:layout_marginRight="@dimen/activity_vertical_margin"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:text="contacts" />
-
-        <MultiAutoCompleteTextView
-            android:textColor="@color/white"
-            android:textColorHint="@color/light_grey"
-            android:layout_marginLeft="@dimen/activity_vertical_margin"
-            android:layout_marginRight="@dimen/activity_vertical_margin"
-            android:id="@+id/edit_text_contacts"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="8"
-            android:hint="sent to contact(s)..." />
-
-        <com.example.rachel.wygt.EditTextClear
-            android:textColor="@color/white"
-            android:textColorHint="@color/light_grey"
-            android:layout_marginLeft="@dimen/activity_vertical_margin"
-            android:layout_marginRight="@dimen/activity_vertical_margin"
-            android:id="@+id/edit_text_message"
-            android:layout_width="fill_parent"
-            android:lines="9"
-            android:minLines="1"
-            android:gravity="top|left"
-            android:maxLines="30"
-            android:scrollbars="vertical"
-            android:inputType="textMultiLine|textCapSentences"
-            android:layout_height="@dimen/abc_action_bar_default_height"
-            android:hint="enter your text message here" />
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="15"
-            android:paddingTop="@dimen/abc_action_bar_icon_vertical_padding"
-            android:paddingBottom="@dimen/activity_horizontal_margin"
-            android:layout_marginLeft="40dip"
-            android:layout_marginRight="40dip"
-            android:orientation="horizontal">
-
-            <ImageButton
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_marginRight="@dimen/abc_action_bar_icon_vertical_padding"
-                android:layout_weight="1"
-                android:background="@color/lighter_purple"
-                android:onClick="deleteReminder"
-                android:gravity="center"
-                android:src="@drawable/trash"
-                android:scaleType="fitCenter"
-                android:paddingTop="7dip"
-                android:paddingBottom="7dip"
-                android:textColor="#ffffffff" />
-
-            <ImageButton
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                android:layout_weight="1"
-                android:background="@color/lighter_purple"
-                android:onClick="updateReminder"
-                android:gravity="center"
-                android:src="@drawable/save1"
-                android:scaleType="fitCenter"
-                android:paddingTop="7dip"
-                android:paddingBottom="7dip"
-                android:textColor="#ffffffff" />
-
-        </LinearLayout>
-
-
-
 
 
     </LinearLayout>
-
-
-</LinearLayout>
+</ScrollView>

@@ -1,152 +1,188 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/dark_purple"
-    android:orientation="vertical"
-    android:showDividers="middle"
-    android:divider="@drawable/divider_horizontal"
-    android:weightSum="100">
+    android:fillViewport="true">
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="@dimen/activity_horizontal_margin"
-        android:layout_weight="20"
-        android:orientation="vertical"
-        android:weightSum="9">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:background="@color/dark_purple"
+        android:layout_height="match_parent"
+        android:weightSum="100"
+        android:orientation="vertical">
 
-        <TextView
+        <LinearLayout
+            android:id="@+id/edit_location_display_layout"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
-            android:layout_weight="3"
-            android:gravity="center_horizontal"
-            android:text="edit my location"
-            android:textColor="@color/white"
-            android:textSize="10pt" />
+            android:layout_weight="20"
+            android:orientation="vertical">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="4"
-            android:adjustViewBounds="true"
-            android:src="@drawable/world" />
-    </LinearLayout>
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/abc_action_bar_icon_vertical_padding"
+                android:gravity="center_horizontal"
+                android:text="edit my location"
+                android:textColor="@color/white"
+                android:textSize="10pt" />
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="7"
-        android:orientation="horizontal"
-        android:layout_marginLeft="@dimen/activity_vertical_margin"
-        android:layout_marginRight="@dimen/activity_vertical_margin"
-        android:paddingRight="@dimen/abc_action_bar_icon_vertical_padding"
-        android:weightSum="10">
-
-        <EditText
-            android:id="@+id/edit_location_name"
-            android:layout_width="0dp"
-            android:layout_weight="7"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/abc_action_bar_icon_vertical_padding"
-            android:text="example name"
-            android:textColor="@color/white"
-            android:textSize="7pt" />
-        <ImageView
-            android:id="@+id/edit_location_name_clear"
-            android:onClick="clearName"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="23dip"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:paddingRight="@dimen/abc_action_bar_icon_vertical_padding"
-            android:src="@drawable/clear"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="20"
-        android:layout_marginLeft="@dimen/activity_vertical_margin"
-        android:layout_marginRight="@dimen/activity_vertical_margin"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
-        android:paddingRight="@dimen/abc_action_bar_icon_vertical_padding"
-        android:weightSum="10">
-
-        <EditText
-            android:id="@+id/edit_location_address"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="7"
-            android:paddingLeft="@dimen/abc_action_bar_icon_vertical_padding"
-            android:paddingRight="@dimen/activity_vertical_margin"
-            android:text="example name"
-            android:textColor="@color/white"
-            android:textSize="7pt" />
-        <ImageView
-            android:id="@+id/edit_location_address_clear"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="23dip"
-            android:onClick="clearAddress"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:paddingRight="@dimen/abc_action_bar_icon_vertical_padding"
-            android:src="@drawable/clear"/>
-
-        <Button
-            android:id="@+id/edit_location_find"
-            android:layout_width="0dp"
-            android:layout_weight="2"
-            android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:background="@color/lighter_purple"
-            android:onClick="findAddressOnMap"
-            android:text="find"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_marginRight="@dimen/activity_vertical_margin"
-        android:layout_marginLeft="@dimen/activity_vertical_margin"
-        android:layout_height="0dp"
-        android:layout_weight="42"
-        android:orientation="vertical">
-
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/edit_location_map"
-        class="com.google.android.gms.maps.MapFragment"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="30"
-        tools:context=".EditMyLocationActivity" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="11"
-        android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
-        android:orientation="vertical">
-        <Button
-            android:layout_marginRight="@dimen/activity_vertical_margin"
-            android:layout_marginBottom="@dimen/activity_horizontal_margin"
-            android:layout_gravity="right"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:text="save"
-            android:onClick="saveMyLocation"
-            android:background="@color/greenish"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/abc_action_bar_icon_vertical_padding"
+                android:layout_gravity="center_horizontal"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:layout_weight="15"
+                android:src="@drawable/world" />
         </LinearLayout>
 
-</LinearLayout>
+        <LinearLayout
+            android:id="@+id/edit_location_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/activity_vertical_margin"
+            android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:showDividers="beginning|middle"
+            android:divider="@drawable/divider_horizontal_white"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/edit_location_name_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginLeft="@dimen/activity_vertical_margin"
+                android:layout_marginRight="@dimen/activity_vertical_margin"
+                android:paddingRight="@dimen/abc_action_bar_icon_vertical_padding"
+                android:weightSum="10">
+
+                <EditText
+                    android:id="@+id/edit_location_name"
+                    android:layout_width="0dp"
+                    android:layout_weight="7"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                    android:text="example name"
+                    android:textColor="@color/white"
+                    android:textSize="7pt" />
+
+                <ImageView
+                    android:id="@+id/edit_location_name_clear"
+                    android:onClick="clearName"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="23dip"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:paddingRight="@dimen/abc_action_bar_icon_vertical_padding"
+                    android:src="@drawable/clear" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/edit_location_address_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_vertical_margin"
+                android:layout_marginRight="@dimen/activity_vertical_margin"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingRight="@dimen/abc_action_bar_icon_vertical_padding"
+                android:weightSum="10">
+
+                <EditText
+                    android:id="@+id/edit_location_address"
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="7"
+                    android:paddingLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                    android:paddingRight="@dimen/activity_vertical_margin"
+                    android:text="example name"
+                    android:textColor="@color/white"
+                    android:textSize="7pt" />
+
+                <ImageView
+                    android:id="@+id/edit_location_address_clear"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="23dip"
+                    android:onClick="clearAddress"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:paddingRight="@dimen/abc_action_bar_icon_vertical_padding"
+                    android:src="@drawable/clear" />
+
+                <Button
+                    android:id="@+id/edit_location_find"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:background="@color/lighter_purple"
+                    android:onClick="findAddressOnMap"
+                    android:text="find" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/edit_location_map_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="vertical">
+
+                <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/edit_location_map"
+                    class="com.google.android.gms.maps.MapFragment"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    tools:context=".EditMyLocationActivity" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/edit_location_button_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="15"
+                android:paddingTop="@dimen/abc_action_bar_icon_vertical_padding"
+                android:paddingBottom="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="40dip"
+                android:layout_marginRight="40dip"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_marginRight="@dimen/abc_action_bar_icon_vertical_padding"
+                    android:layout_weight="1"
+                    android:background="@color/lighter_purple"
+                    android:onClick="deleteSound"
+                    android:gravity="center"
+                    android:src="@drawable/trash"
+                    android:scaleType="fitCenter"
+                    android:paddingTop="7dip"
+                    android:paddingBottom="7dip"
+                    android:textColor="#ffffffff" />
+
+                <ImageButton
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                    android:layout_weight="1"
+                    android:background="@color/lighter_purple"
+                    android:onClick="saveMyLocation"
+                    android:gravity="center"
+                    android:src="@drawable/save1"
+                    android:scaleType="fitCenter"
+                    android:paddingTop="7dip"
+                    android:paddingBottom="7dip"
+                    android:textColor="#ffffffff" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

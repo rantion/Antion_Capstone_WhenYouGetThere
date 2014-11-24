@@ -4,22 +4,23 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/crud_layout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="100dip"
     android:background="@color/greenish"
     android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
+    android:paddingRight="@dimen/activity_vertical_margin"
     android:orientation="horizontal"
     android:weightSum="100">
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="fill_parent"
-        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-        android:layout_weight="10">
+        android:layout_marginLeft="@dimen/activity_vertical_margin"
+        android:layout_weight="12">
 
         <ImageView
             android:id="@+id/task_item_icon"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:layout_gravity="center_vertical"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
@@ -29,7 +30,7 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="fill_parent"
-        android:layout_weight="90"
+        android:layout_weight="88"
         android:orientation="vertical">
 
         <LinearLayout
@@ -66,7 +67,7 @@
 
         <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:orientation="horizontal"
             android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
             android:weightSum="10">
@@ -74,7 +75,7 @@
                 android:id="@+id/task_item_message"
                 android:layout_width="0dp"
                 android:layout_weight="9"
-                android:layout_height="wrap_content"
+                android:layout_height="fill_parent"
                 android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
                 android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
                 android:gravity="center_vertical|center_horizontal"
@@ -85,15 +86,14 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
-                android:layout_gravity="right"
-                android:layout_height="30dip"
+                android:layout_gravity="right|center_vertical"
+                android:layout_height="fill_parent"
                 android:src="@drawable/clear"
                 android:scaleType="fitCenter"
                 android:focusable="false"
                 android:clickable="true"
                 android:focusableInTouchMode="false"
-                android:adjustViewBounds="true"
-                android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                android:padding="3dip"
 
                 />
             </LinearLayout>

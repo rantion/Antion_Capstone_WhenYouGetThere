@@ -32,8 +32,8 @@
 
     <LinearLayout
         android:divider="@drawable/divider_horizontal_white"
-        android:layout_marginLeft="@dimen/activity_vertical_margin"
-        android:layout_marginRight="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_vertical_margin"
+        android:paddingRight="@dimen/activity_vertical_margin"
         android:showDividers="middle|beginning"
         android:id="@+id/edit_call_task"
         android:layout_width="fill_parent"
@@ -70,26 +70,26 @@
                 android:text="Neumont University\nS Main st...\nsdjfhjds"
                 android:textColor="@color/white" />
 
-            <ImageView
-            android:layout_width="0dp"
-            android:layout_weight="15"
-            android:layout_height="wrap_content"
-            android:padding="10dip"
-            android:layout_marginRight="@dimen/activity_vertical_margin"
-            android:src="@drawable/edit"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            />
+            <!--<ImageView-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_weight="15"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:padding="10dip"-->
+            <!--android:layout_marginRight="@dimen/activity_vertical_margin"-->
+            <!--android:src="@drawable/edit"-->
+            <!--android:adjustViewBounds="true"-->
+            <!--android:scaleType="fitCenter"-->
+            <!--/>-->
 
         </LinearLayout>
 
 
         <LinearLayout
+            android:id="@+id/call_distance_layout"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
             android:layout_weight="30"
             android:weightSum="100"
-            android:layout_marginLeft="@dimen/activity_vertical_margin"
             android:orientation="vertical">
 
            <TextView
@@ -101,10 +101,12 @@
                 android:textColor="@color/white" />
 
             <LinearLayout
+                android:id="@+id/edit_call_there_checkbox_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
                 android:layout_weight="30"
-                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                android:onClick="editCallThereChecked"
+                android:paddingLeft="@dimen/activity_vertical_margin"
                 android:orientation="horizontal">
 
                 <CheckBox
@@ -123,11 +125,13 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/edit_call_distance_checkbox_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
                 android:layout_weight="45"
-                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                android:clickable="false">
+                android:background="@color/translucent_black"
+                android:onClick="editCallDistanceChecked"
+                android:paddingLeft="@dimen/activity_vertical_margin">
 
                 <CheckBox
                     android:id="@+id/edit_call_distance_checkbox"

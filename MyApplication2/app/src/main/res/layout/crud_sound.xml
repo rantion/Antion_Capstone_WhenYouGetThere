@@ -9,326 +9,347 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/dark_purple"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:weightSum="100">
+
+        <LinearLayout
+            android:id="@+id/edit_sound_display"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            android:weightSum="20"
+            android:layout_weight="20">
 
         <TextView
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
             android:gravity="center_horizontal"
             android:text="edit sound settings"
             android:textColor="@color/white"
             android:textSize="10pt" />
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/abc_action_bar_stacked_max_height"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:scaleType="fitCenter"
+            android:layout_weight="20"
             android:layout_gravity="center_horizontal"
-            android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:src="@drawable/audio" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/edit_sound_task_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="80"
+        android:layout_marginRight="@dimen/activity_vertical_margin"
+        android:layout_marginLeft="@dimen/activity_vertical_margin"
+        android:divider="@drawable/divider_horizontal_white"
+        android:showDividers="beginning|middle"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/edit_call_task"
+            android:id="@+id/edit_sound_destination_layout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:orientation="horizontal">
 
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/activity_vertical_margin"
-                android:layout_marginLeft="@dimen/activity_vertical_margin"
-                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
-                android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="destination: "
+                android:textColor="@color/white" />
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="destination: "
-                    android:textColor="@color/white" />
-
-                <TextView
-                    android:id="@+id/edit_sound_destination"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:text="Neumont University\nS Main st...\nsdjfhjds"
-                    android:textColor="@color/white" />
-            </LinearLayout>
+            <TextView
+                android:id="@+id/edit_sound_destination"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical"
+                android:layout_weight="3"
+                android:text="Neumont University\nS Main st...\nsdjfhjds"
+                android:textColor="@color/white" />
         </LinearLayout>
 
 
         <LinearLayout
+            android:id="@+id/edit_sound_distance_layout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_horizontal_margin"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:weightSum="100"
             android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/proximity_information_sound"
+            <TextView
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="0dp"
+                android:layout_weight="25"
+                android:gravity="center_horizontal"
+                android:text="change sound settings when I am..."
+                android:textColor="@color/white" />
+
+            <LinearLayout
+                android:id="@+id/there_layout_sound"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="35"
+               android:onClick="thereCheckedSound"
+                android:orientation="horizontal"
+                android:paddingLeft="@dimen/activity_vertical_margin">
+
+                <CheckBox
+                    android:id="@+id/edit_sound_there_checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                    android:checked="true"
+                    android:onClick="thereCheckedSound" />
 
                 <TextView
-                    android:layout_width="fill_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:text="change sound settings when I am..."
+                    android:text="there"
                     android:textColor="@color/white" />
-
-                <LinearLayout
-                    android:id="@+id/there_layout_sound"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingLeft="@dimen/activity_vertical_margin">
-
-                    <CheckBox
-                        android:id="@+id/edit_sound_there_checkbox"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:checked="true"
-                        android:onClick="thereCheckedSound" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="there"
-                        android:textColor="@color/white" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/translucent_black"
-                    android:clickable="false"
-                    android:paddingLeft="@dimen/activity_vertical_margin">
-
-                    <CheckBox
-                        android:id="@+id/edit_sound_distance_checkbox"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:onClick="distanceCheckedSound" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="about..."
-                        android:textColor="@color/white" />
-
-                    <com.example.rachel.wygt.EditTextClear
-                        android:id="@+id/edit_sound_distance_away"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/white"
-                        android:text="5" />
-
-                    <Spinner
-                        android:id="@+id/edit_sound_spinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:clickable="false"
-                        android:entries="@array/miles_minutes"
-                        android:prompt="@string/choose_type" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="away" />
-
-
-                </LinearLayout>
 
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/sound_settings"
+                android:id="@+id/distance_layout_sound"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="40"
+                android:background="@color/translucent_black"
+                android:onClick="distanceCheckedSound"
+                android:paddingLeft="@dimen/activity_vertical_margin">
+
+                <CheckBox
+                    android:id="@+id/edit_sound_distance_checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                    android:onClick="distanceCheckedSound" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="about..."
+                    android:textColor="@color/white" />
+
+                <com.example.rachel.wygt.EditTextClear
+                    android:id="@+id/edit_sound_distance_away"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:text="5" />
+
+                <Spinner
+                    android:id="@+id/edit_sound_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:entries="@array/miles_minutes"
+                    android:prompt="@string/choose_type" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="away" />
+
+
+            </LinearLayout>
+            </LinearLayout>
+        <LinearLayout
+            android:id="@+id/edit_sound_settings_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:layout_marginRight="@dimen/activity_vertical_margin"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/ringer_adjust"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_vertical_margin"
-                android:layout_marginRight="@dimen/activity_vertical_margin"
+                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
                 android:orientation="vertical">
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10px"
+                    android:text="adjust ringer volume"
+                    android:textColor="@color/white" />
+
                 <LinearLayout
-                    android:id="@+id/ringer_adjust"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="10px"
-                        android:text="adjust ringer volume"
-                        android:textColor="@color/white" />
-
-                    <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:id="@+id/edit_sound_ringerIcon"
-                            android:layout_width="@dimen/abc_dropdownitem_icon_width"
-                            android:layout_height="@dimen/abc_dropdownitem_icon_width" />
-
-                        <SeekBar
-                            android:id="@+id/edit_sound_ringerSeek"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/media_adjust"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="10px"
-                        android:text="adjust media player volume"
-                        android:textColor="@color/white" />
-
-                    <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:id="@+id/edit_sound_mediaIcon"
-                            android:layout_width="@dimen/abc_dropdownitem_icon_width"
-                            android:layout_height="@dimen/abc_dropdownitem_icon_width" />
-
-                        <SeekBar
-                            android:id="@+id/edit_sound_mediaSeek"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/notification_adjust"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="10px"
-                        android:text="adjust notification volume"
-                        android:textColor="@color/white" />
-
-                    <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:id="@+id/edit_sound_notificationIcon"
-                            android:layout_width="@dimen/abc_dropdownitem_icon_width"
-                            android:layout_height="@dimen/abc_dropdownitem_icon_width" />
-
-                        <SeekBar
-                            android:id="@+id/edit_sound_notificationSeek"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/alarm_adjust"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="10px"
-                        android:text="adjust system volume"
-                        android:textColor="@color/white" />
-
-                    <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:id="@+id/edit_sound_systemIcon"
-                            android:layout_width="@dimen/abc_dropdownitem_icon_width"
-                            android:layout_height="@dimen/abc_dropdownitem_icon_width" />
-
-                        <SeekBar
-                            android:id="@+id/edit_sound_systemSeek"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="40dip"
-                    android:layout_marginRight="40dip"
-                    android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
                     android:orientation="horizontal">
 
-                    <Button
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:layout_weight="1"
-                        android:background="@color/greenish"
-                        android:onClick="deleteSound"
-                        android:text="delete"
-                        android:textColor="#ffffffff" />
+                    <ImageView
+                        android:id="@+id/edit_sound_ringerIcon"
+                        android:layout_width="@dimen/abc_dropdownitem_icon_width"
+                        android:layout_height="@dimen/abc_dropdownitem_icon_width" />
 
-                    <Button
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:layout_weight="1"
-                        android:background="@color/greenish"
-                        android:onClick="updateSound"
-                        android:text="done"
-                        android:textColor="@color/white" />
+                    <SeekBar
+                        android:id="@+id/edit_sound_ringerSeek"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/media_adjust"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10px"
+                    android:text="adjust media player volume"
+                    android:textColor="@color/white" />
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/edit_sound_mediaIcon"
+                        android:layout_width="@dimen/abc_dropdownitem_icon_width"
+                        android:layout_height="@dimen/abc_dropdownitem_icon_width" />
+
+                    <SeekBar
+                        android:id="@+id/edit_sound_mediaSeek"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/notification_adjust"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10px"
+                    android:text="adjust notification volume"
+                    android:textColor="@color/white" />
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/edit_sound_notificationIcon"
+                        android:layout_width="@dimen/abc_dropdownitem_icon_width"
+                        android:layout_height="@dimen/abc_dropdownitem_icon_width" />
+
+                    <SeekBar
+                        android:id="@+id/edit_sound_notificationSeek"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/alarm_adjust"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10px"
+                    android:text="adjust system volume"
+                    android:textColor="@color/white" />
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/edit_sound_systemIcon"
+                        android:layout_width="@dimen/abc_dropdownitem_icon_width"
+                        android:layout_height="@dimen/abc_dropdownitem_icon_width" />
+
+                    <SeekBar
+                        android:id="@+id/edit_sound_systemSeek"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
 
                 </LinearLayout>
 
 
             </LinearLayout>
+
+
+
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/edit_sound_button_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="15"
+            android:paddingTop="@dimen/abc_action_bar_icon_vertical_padding"
+            android:paddingBottom="@dimen/activity_horizontal_margin"
+            android:layout_marginLeft="40dip"
+            android:layout_marginRight="40dip"
+            android:orientation="horizontal">
 
+            <ImageButton
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_marginRight="@dimen/abc_action_bar_icon_vertical_padding"
+                android:layout_weight="1"
+                android:background="@color/lighter_purple"
+                android:onClick="deleteSound"
+                android:gravity="center"
+                android:src="@drawable/trash"
+                android:scaleType="fitCenter"
+                android:paddingTop="7dip"
+                android:paddingBottom="7dip"
+                android:textColor="#ffffffff" />
+
+            <ImageButton
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                android:layout_weight="1"
+                android:background="@color/lighter_purple"
+                android:onClick="updateSound"
+                android:gravity="center"
+                android:src="@drawable/save1"
+                android:scaleType="fitCenter"
+                android:paddingTop="7dip"
+                android:paddingBottom="7dip"
+                android:textColor="#ffffffff" />
+
+        </LinearLayout>
     </LinearLayout>
-</ScrollView>
+
+
+</LinearLayout></ScrollView>

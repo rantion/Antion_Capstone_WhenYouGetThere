@@ -2,17 +2,20 @@ package com.example.rachel.wygt;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
@@ -39,6 +42,7 @@ public class EditSMSTaskActivity extends Activity {
     CheckBox there, distance;
     MultiAutoCompleteTextView contacts;
     EditTextClear message, distanceM;
+    LinearLayout thereL, distanceL;
     private SimpleAdapter mAdapter;
     Spinner spinner;
     ArrayList<Map<String, String>> mPeopleList = MyApplication.getmPeopleList();
@@ -51,9 +55,22 @@ public class EditSMSTaskActivity extends Activity {
         LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
         LatLng destinationLocation = null;
         (new PopulateContacts()).execute();
+        initViews();
         destination = (TextView) findViewById(R.id.edit_text_destination);
         there = (CheckBox) findViewById(R.id.edit_text_there_checkbox);
         distance = (CheckBox) findViewById(R.id.edit_text_distance_checkbox);
+        LinearLayout all = (LinearLayout)findViewById(R.id.edit_text_distance_layout);
+        thereL = (LinearLayout)findViewById(R.id.there_layout_text);
+        distanceL = (LinearLayout)findViewById(R.id.distance_layout_text);
+        double width = MyApplication.getWidth();
+        thereL.setMinimumWidth(getPxByPercentage(width));
+        distanceL.setMinimumWidth(getPxByPercentage(width));
+//        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)thereL.getLayoutParams();
+//        params.height= getPxByPercentage(.50);
+//        all.updateViewLayout(thereL, params);
+//        LinearLayout.LayoutParams params1 = (LinearLayout.LayoutParams)distanceL.getLayoutParams();
+//        params1.height= getPxByPercentage(.50);
+//        all.updateViewLayout(distanceL, params1);
         distanceM = (EditTextClear) findViewById(R.id.edit_text_distance_away);
         contacts = (MultiAutoCompleteTextView) findViewById(R.id.edit_text_contacts);
         message = (EditTextClear) findViewById(R.id.edit_text_message);
@@ -101,6 +118,24 @@ public class EditSMSTaskActivity extends Activity {
         super.onCreate(savedInstanceState);
     }
 
+    public void initViews(){
+        LinearLayout display = (LinearLayout)findViewById(R.id.edit_text_display);
+        LinearLayout destination = (LinearLayout)findViewById(R.id.edit_text_destination_layout);
+        LinearLayout distance = (LinearLayout)findViewById(R.id.edit_text_distance_layout);
+        LinearLayout contacts = (LinearLayout)findViewById(R.id.edit_text_contact_layout);
+        LinearLayout message = (LinearLayout)findViewById(R.id.edit_text_message_layout);
+        LinearLayout buttons = (LinearLayout)findViewById(R.id.edit_text_button_layout);
+
+        display.setMinimumHeight(getPxByPercentage(.20));
+        destination.setMinimumHeight(getPxByPercentage(.16));
+        distance.setMinimumHeight(getPxByPercentage(.20));
+        contacts.setMinimumHeight(getPxByPercentage(.25));
+        message.setMinimumHeight(getPxByPercentage(.30));
+        buttons.setMinimumHeight(getPxByPercentage(.12));
+
+    }
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -113,14 +148,20 @@ public class EditSMSTaskActivity extends Activity {
 
 
     public void thereCheckedEditText(View view) {
+        thereL.setBackgroundColor(getResources().getColor(R.color.dark_purple));
+        distanceL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
         distance.setChecked(false);
+        there.setChecked(true);
         distanceM.setEnabled(false);
         distanceM.setClickable(false);
         spinner.setClickable(false);
     }
 
     public void distanceCheckedEditText(View view) {
+        thereL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
+        distanceL.setBackgroundColor(getResources().getColor(R.color.dark_purple));
         there.setChecked(false);
+        distance.setChecked(true);
         distanceM.setEnabled(true);
         distanceM.setClickable(true);
         distanceM.setFocusableInTouchMode(true);
@@ -248,7 +289,7 @@ public class EditSMSTaskActivity extends Activity {
             contacts.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    if(s.length() == 0){
+                    if (s.length() == 0) {
                         numbers.clear();
                     }
                 }
@@ -266,6 +307,16 @@ public class EditSMSTaskActivity extends Activity {
             contacts.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
             EditSMSTaskActivity.this.mPeopleList = maps;
         }
+    }
+
+    public int getPxByPercentage(double percentage) {
+
+        Resources resources = getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float height = MyApplication.getHeight();
+        float px = height * (metrics.densityDpi / 160f);
+
+        return (int) (px * percentage);
     }
 
 

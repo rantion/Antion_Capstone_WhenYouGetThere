@@ -49,8 +49,10 @@ public class LocationAdapter extends ArrayAdapter<MyLocation> {
            for(String string: addressParts){
                longAddress = longAddress+string+", ";
            }
-            String shortenedAddress =longAddress.substring(0,40);
-            _address = shortenedAddress+"...";
+            if(longAddress.length()>40) {
+                String shortenedAddress = longAddress.substring(0, 40);
+                _address = shortenedAddress+"...";
+            }
         }
         address.setText(_address);
         ImageView delete = (ImageView)rowView.findViewById(R.id.delete_location);

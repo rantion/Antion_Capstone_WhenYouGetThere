@@ -2,16 +2,19 @@ package com.example.rachel.wygt;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -36,6 +39,7 @@ public class EditCallTaskActivity extends Activity {
     GetDrivingDistances getDistance;
     CheckBox there, distance;
     AutoCompleteTextView contacts;
+    LinearLayout thereL, distanceL;
     EditTextClear distanceM;
     private SimpleAdapter mAdapter;
     Spinner spinner;
@@ -53,6 +57,19 @@ public class EditCallTaskActivity extends Activity {
         destination = (TextView) findViewById(R.id.edit_call_destination);
         there = (CheckBox) findViewById(R.id.edit_call_there_checkbox);
         distance = (CheckBox) findViewById(R.id.edit_call_distance_checkbox);
+        LinearLayout all = (LinearLayout)findViewById(R.id.call_distance_layout);
+        thereL = (LinearLayout) findViewById(R.id.edit_call_there_checkbox_layout);
+        distanceL = (LinearLayout)findViewById(R.id.edit_call_distance_checkbox_layout);
+        double width = MyApplication.getWidth();
+        thereL.setMinimumWidth(getPxByPercentage(width));
+        distanceL.setMinimumWidth(getPxByPercentage(width));
+//        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)thereL.getLayoutParams();
+//        params.height= getPxByPercentage(.50);
+//        all.updateViewLayout(thereL, params);
+//        LinearLayout.LayoutParams params1 = (LinearLayout.LayoutParams)distanceL.getLayoutParams();
+//        params1.height= getPxByPercentage(.50);
+//        all.updateViewLayout(distanceL, params1);
+
         distanceM = (EditTextClear) findViewById(R.id.edit_call_distance_away);
         spinner = (Spinner) findViewById(R.id.edit_call_spinner);
         ArrayAdapter adapter = ArrayAdapter.createFromResource(this, R.array.miles_minutes, R.layout.spinner_item);
@@ -108,15 +125,22 @@ public class EditCallTaskActivity extends Activity {
     }
 
 
-    public void thereChecked(View view) {
+    public void editCallThereChecked(View view) {
+
+        thereL.setBackgroundColor(getResources().getColor(R.color.dark_purple));
+        distanceL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
         distance.setChecked(false);
+        there.setChecked(true);
         distanceM.setEnabled(false);
         distanceM.setClickable(false);
         spinner.setClickable(false);
     }
 
-    public void distanceChecked(View view) {
+    public void editCallDistanceChecked(View view) {
+        thereL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
+        distanceL.setBackgroundColor(getResources().getColor(R.color.dark_purple));
         there.setChecked(false);
+        distance.setChecked(true);
         distanceM.setEnabled(true);
         distanceM.setClickable(true);
         distanceM.setFocusableInTouchMode(true);
@@ -235,6 +259,16 @@ public class EditCallTaskActivity extends Activity {
             contacts.setAdapter(mAdapter);
             EditCallTaskActivity.this.mPeopleList = maps;
         }
+    }
+
+    public int getPxByPercentage(double percentage) {
+
+        Resources resources = getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float height = MyApplication.getHeight();
+        float px = height * (metrics.densityDpi / 160f);
+
+        return (int) (px * percentage);
     }
 
 

@@ -3,17 +3,20 @@ package com.example.rachel.wygt;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -35,6 +38,7 @@ public class EditSoundTaskActivity extends Activity {
     TaskContactDataSource taskContactDataSource = MyApplication.getTaskContactDataSource();
     TextView destination;
     GetDrivingDistances getDistance;
+    LinearLayout thereL, distanceL;
     CheckBox there, distance;
     AutoCompleteTextView contacts;
     EditTextClear distanceM;
@@ -54,6 +58,18 @@ public class EditSoundTaskActivity extends Activity {
         LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
         LatLng destinationLocation = null;
         getActionBar().setDisplayHomeAsUpEnabled(true);
+        thereL = (LinearLayout)findViewById(R.id.there_layout_sound);
+        distanceL = (LinearLayout)findViewById(R.id.distance_layout_sound);
+        double width = MyApplication.getWidth();
+        thereL.setMinimumWidth(getPxByPercentage(width));
+        distanceL.setMinimumWidth(getPxByPercentage(width));
+        LinearLayout all = (LinearLayout)findViewById(R.id.edit_sound_distance_layout);
+//        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)thereL.getLayoutParams();
+//        params.height= getPxByPercentage(.50);
+//        all.updateViewLayout(thereL, params);
+//        LinearLayout.LayoutParams params1 = (LinearLayout.LayoutParams)distanceL.getLayoutParams();
+//        params1.height= getPxByPercentage(.50);
+//        all.updateViewLayout(distanceL, params1);
         destination = (TextView) findViewById(R.id.edit_sound_destination);
         there = (CheckBox) findViewById(R.id.edit_sound_there_checkbox);
         distance = (CheckBox) findViewById(R.id.edit_sound_distance_checkbox);
@@ -103,8 +119,24 @@ public class EditSoundTaskActivity extends Activity {
                 spinner.setSelection(spinnerPosition);
             }
             initControls();
+            initViews();
         }
         super.onCreate(savedInstanceState);
+    }
+
+    public void initViews(){
+        LinearLayout display = (LinearLayout)findViewById(R.id.edit_sound_display);
+        LinearLayout destination = (LinearLayout)findViewById(R.id.edit_sound_destination_layout);
+        LinearLayout distance = (LinearLayout) findViewById(R.id.edit_sound_distance_layout);
+        LinearLayout sound = (LinearLayout)findViewById(R.id.edit_sound_settings_layout);
+        LinearLayout buttons = (LinearLayout)findViewById(R.id.edit_sound_button_layout);
+
+
+        display.setMinimumHeight(getPxByPercentage(.20));
+        destination.setMinimumHeight(getPxByPercentage(.16));
+        distance.setMinimumHeight(getPxByPercentage(.20));
+        sound.setMinimumHeight(getPxByPercentage(.50));
+        buttons.setMinimumHeight(getPxByPercentage(.12));
     }
 
     @Override
@@ -119,6 +151,9 @@ public class EditSoundTaskActivity extends Activity {
 
 
     public void thereCheckedSound(View view) {
+        thereL.setBackgroundColor(getResources().getColor(R.color.dark_purple));
+        distanceL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
+        there.setChecked(true);
         distance.setChecked(false);
         distanceM.setEnabled(false);
         distanceM.setClickable(false);
@@ -126,7 +161,10 @@ public class EditSoundTaskActivity extends Activity {
     }
 
     public void distanceCheckedSound(View view) {
+        thereL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
+        distanceL.setBackgroundColor(getResources().getColor(R.color.dark_purple));
         there.setChecked(false);
+        distance.setChecked(true);
         distanceM.setEnabled(true);
         distanceM.setClickable(true);
         distanceM.setFocusableInTouchMode(true);
@@ -361,6 +399,16 @@ public class EditSoundTaskActivity extends Activity {
 
         }
     };
+
+    public int getPxByPercentage(double percentage) {
+
+        Resources resources = getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float height = MyApplication.getHeight();
+        float px = height * (metrics.densityDpi / 160f);
+
+        return (int) (px * percentage);
+    }
 
 
 }
