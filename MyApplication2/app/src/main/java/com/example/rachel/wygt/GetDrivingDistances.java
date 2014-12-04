@@ -1,9 +1,7 @@
 package com.example.rachel.wygt;
 
-import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 

@@ -2,14 +2,12 @@ package com.example.rachel.wygt;
 
 import android.app.Activity;
 import android.app.AlarmManager;
-import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -23,14 +21,10 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.telephony.SmsManager;
 import android.util.Log;
-import android.widget.EditText;
 import android.widget.RemoteViews;
 import android.widget.Toast;
-
-import com.google.android.gms.location.LocationClient;
 
 import java.util.List;
 

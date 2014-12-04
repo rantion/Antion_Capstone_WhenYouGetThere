@@ -17,6 +17,8 @@ public class Task {
     public static final int CALL_REMINDER_TASK_TYPE = 3;
     public static final int SOUND_SETTING_TASK_TYPE= 4;
     public int originalRadius;
+    public int isActive;
+    public boolean active;
 
     public int getOriginalRadius() {
         return originalRadius;
@@ -104,5 +106,21 @@ public class Task {
 
     public void setRadius_type(String radius_type) {
         this.radius_type = radius_type;
+    }
+
+    public int getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(int isActive) {
+        this.isActive = isActive;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

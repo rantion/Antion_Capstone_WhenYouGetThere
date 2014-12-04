@@ -1,28 +1,21 @@
 package com.example.rachel.wygt;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Rect;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.media.AudioManager;
-import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.ContactsContract;
 import android.support.v4.app.NavUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -33,13 +26,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MultiAutoCompleteTextView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
@@ -48,20 +40,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -87,6 +66,8 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     private LinearLayout textLayout, callLayout, reminderLayout, soundLayout;
     private GPSTracker gpsTracker = MyApplication.gpsTracker;
     private ImageView soundIcon, reminderIcon, textIcon, phoneIcon;
+    private AlarmInfo textAlarm, callAlarm, remindAlarm, soundAlarm;
+    private LinearLayout textDone, callDone, remindDone, soundDone;
 //    private Bitmap soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, phoneI, phoneGlow;
 private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, phoneI, phoneGlow;
 
@@ -96,11 +77,6 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
         getActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_do_something);
         (new loadImages()).execute();
-        textLayout = (LinearLayout) findViewById(R.id.enter_contacts_text);
-        callLayout = (LinearLayout) findViewById(R.id.enter_contacts_call_reminder);
-        reminderLayout = (LinearLayout) findViewById(R.id.reminder_layout);
-        soundLayout = (LinearLayout) findViewById(R.id.sound_layout);
-
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         this.setVolumeControlStream(AudioManager.STREAM_RING);
         this.setVolumeControlStream(AudioManager.STREAM_ALARM);
@@ -132,12 +108,27 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
             _duration.setText(duration);
             _distance.setText(distance);
         }
+        textAlarm = new AlarmInfo();
+        callAlarm = new AlarmInfo();
+        remindAlarm = new AlarmInfo();
+        soundAlarm = new AlarmInfo();
+
         hideKeyboard();
         initControls();
         initViews();
     }
 
     private void initViews() {
+        textLayout = (LinearLayout) findViewById(R.id.enter_contacts_text);
+        callLayout = (LinearLayout) findViewById(R.id.enter_contacts_call_reminder);
+        reminderLayout = (LinearLayout) findViewById(R.id.reminder_layout);
+        soundLayout = (LinearLayout) findViewById(R.id.sound_layout);
+
+        textDone = (LinearLayout)findViewById(R.id.do_something_button_text);
+        callDone = (LinearLayout)findViewById(R.id.do_something_button_call);
+        remindDone = (LinearLayout) findViewById(R.id.do_something_button_reminder);
+        soundDone = (LinearLayout)findViewById(R.id.do_something_button_sound);
+
         thereCheckerCall(callLayout);
         thereCheckerReminder(reminderLayout);
         thereCheckerSound(soundLayout);
@@ -145,7 +136,7 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
         Spinner call = (Spinner) findViewById(R.id.spinner_call_miles_minutes);
         Spinner remind = (Spinner) findViewById(R.id.spinner_reminder_miles_minutes);
         Spinner sound = (Spinner) findViewById(R.id.spinner_sound_miles_minutes);
-        Spinner text = (Spinner) findViewById(R.id.spinner_text_miles_minute);
+        Spinner text = (Spinner) findViewById(R.id.spinner_text_miles_minutes);
         ArrayAdapter adapter = ArrayAdapter.createFromResource(this, R.array.miles_minutes, R.layout.spinner_item);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown);
         call.setAdapter(adapter);
@@ -157,6 +148,56 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
         reminderIcon = (ImageView) findViewById(R.id.set_reminder_icon);
         soundIcon = (ImageView) findViewById(R.id.set_sound_icon);
         phoneIcon = (ImageView) findViewById(R.id.set_phone_icon);
+        initSizes();
+    }
+
+    private void initSizes(){
+        LinearLayout destination = (LinearLayout) findViewById(R.id.do_something_destination);
+        LinearLayout taskDrawer = (LinearLayout)findViewById(R.id.task_drawer);
+
+        LinearLayout proxText = (LinearLayout) findViewById(R.id.proximity_information_text);
+        LinearLayout contactsText = (LinearLayout) findViewById(R.id.do_something_enter_contacts);
+        LinearLayout messageText = (LinearLayout) findViewById(R.id.do_something_message_text);
+        LinearLayout buttonText = (LinearLayout) findViewById(R.id.do_something_button_text);
+
+        LinearLayout proxCall = (LinearLayout)findViewById(R.id.proximity_information_call);
+        LinearLayout contactCall = (LinearLayout)findViewById(R.id.do_something_contact_call);
+        LinearLayout buttonCall = (LinearLayout)findViewById(R.id.do_something_button_call);
+
+        LinearLayout proxReminder = (LinearLayout)findViewById(R.id.proximity_information_reminder);
+        LinearLayout messageReminder = (LinearLayout)findViewById(R.id.do_something_message_reminder);
+        LinearLayout buttonReminder = (LinearLayout)findViewById(R.id.do_something_button_reminder);
+
+        LinearLayout proxSound = (LinearLayout)findViewById(R.id.proximity_information_sound);
+        LinearLayout soundSettings = (LinearLayout)findViewById(R.id.sound_settings);
+        LinearLayout buttonSound = (LinearLayout)findViewById(R.id.do_something_button_sound);
+
+
+
+
+        destination.setMinimumHeight(getPxByPercentage(.15));
+        //text
+        proxText.setMinimumHeight(getPxByPercentage(.15));
+        contactsText.setMinimumHeight(getPxByPercentage(.20));
+        messageText.setMinimumHeight(getPxByPercentage(.20));
+        buttonText.setMinimumHeight(getPxByPercentage(.12));
+        //call
+        proxCall.setMinimumHeight(getPxByPercentage(.15));
+        contactCall.setMinimumHeight(getPxByPercentage(.20));
+        buttonCall.setMinimumHeight(getPxByPercentage(.12));
+        //reminder
+        proxReminder.setMinimumHeight(getPxByPercentage(.15));
+        messageReminder.setMinimumHeight(getPxByPercentage(.35));
+        buttonReminder.setMinimumHeight(getPxByPercentage(.12));
+        //sound
+        proxSound.setMinimumHeight(getPxByPercentage(.15));
+        soundSettings.setMinimumHeight(getPxByPercentage(.60));
+        buttonSound.setMinimumHeight(getPxByPercentage(.12));
+
+
+
+
+        taskDrawer.setMinimumHeight(getPxByPercentage(.15));
     }
 
     private Drawable getVolumeIcon(int max, int current, int type) {
@@ -364,8 +405,8 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
         CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_text);
         CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_text);
 
-        LinearLayout distanceL = (LinearLayout) findViewById(R.id.distance_chooser_layout);
-        LinearLayout thereL = (LinearLayout) findViewById(R.id.there_layout);
+        LinearLayout distanceL = (LinearLayout) findViewById(R.id.distance_chooser_layout_text);
+        LinearLayout thereL = (LinearLayout) findViewById(R.id.there_layout_text);
 
         thereL.setBackgroundColor(getResources().getColor(R.color.dark_purple));
         distanceL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
@@ -375,7 +416,7 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
         EditText number = (EditText) findViewById(R.id.miles_away_text);
         number.setEnabled(false);
         number.setClickable(false);
-        Spinner miles = (Spinner) findViewById(R.id.spinner_text_miles_minute);
+        Spinner miles = (Spinner) findViewById(R.id.spinner_text_miles_minutes);
         miles.setClickable(false);
     }
 
@@ -400,8 +441,8 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
     public void distanceCheckedText(View view) {
         CheckBox distance = (CheckBox) findViewById(R.id.distance_checkbox_text);
         CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_text);
-        LinearLayout distanceL = (LinearLayout) findViewById(R.id.distance_chooser_layout);
-        LinearLayout thereL = (LinearLayout) findViewById(R.id.there_layout);
+        LinearLayout distanceL = (LinearLayout) findViewById(R.id.distance_chooser_layout_text);
+        LinearLayout thereL = (LinearLayout) findViewById(R.id.there_layout_text);
 
         thereL.setBackgroundColor(getResources().getColor(R.color.translucent_black));
         distanceL.setBackgroundColor(getResources().getColor(R.color.dark_purple));
@@ -412,7 +453,7 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
         number.setEnabled(true);
         number.setClickable(true);
         number.setFocusableInTouchMode(true);
-        Spinner miles = (Spinner) findViewById(R.id.spinner_text_miles_minute);
+        Spinner miles = (Spinner) findViewById(R.id.spinner_text_miles_minutes);
         miles.setClickable(true);
     }
 
@@ -540,7 +581,7 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
         int ring = ringerVlmSeekBar.getProgress();
         int system = alarmVlmSeekBar.getProgress();
         int nofity = notifyVlmSeekBar.getProgress();
-        Task task = taskDataSource.createTask(destinationLocation, "", metersAway, Task.SOUND_SETTING_TASK_TYPE, destination, radiusType, original);
+        Task task = taskDataSource.createTask(destinationLocation, "", metersAway, Task.SOUND_SETTING_TASK_TYPE, destination, radiusType, original, 1);
         taskSoundDataSource.createSoundSettings(media, ring, nofity, system, task.getId());
         Toast.makeText(getApplicationContext(),
                 "Sound Setting Created!", Toast.LENGTH_SHORT)
@@ -561,7 +602,7 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
         String reminder = "filler";
         CheckBox distanceCheckbox = (CheckBox) findViewById(R.id.distance_checkbox_text);
         CheckBox there = (CheckBox) findViewById(R.id.there_checkbox_text);
-        Spinner milesMinutes = (Spinner) findViewById(R.id.spinner_text_miles_minute);
+        Spinner milesMinutes = (Spinner) findViewById(R.id.spinner_text_miles_minutes);
         EditText _miles = (EditText) findViewById(R.id.miles_away_text);
         if (distanceCheckbox.isChecked()) {
             String miles = _miles.getText().toString();
@@ -584,7 +625,7 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
         if (_reminder != null) {
             reminder = _reminder.getText().toString();
         }
-        Task task = taskDataSource.createTask(destinationLocation, reminder, metersAway, Task.TEXT_MESSAGE_TASK_TYPE, destination, radiusType, original);
+        Task task = taskDataSource.createTask(destinationLocation, reminder, metersAway, Task.TEXT_MESSAGE_TASK_TYPE, destination, radiusType, original, 1);
         Log.d("DOSOMETHINGActivity", "Saved Destination");
         String contacts = _contacts.getText().toString();
         String[] num1 = contacts.split("<");
@@ -653,7 +694,7 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
         }
 
         AutoCompleteTextView _contacts = (AutoCompleteTextView) findViewById(R.id.auto_contacts);
-        Task task = taskDataSource.createTask(destinationLocation, "", metersAway, Task.CALL_REMINDER_TASK_TYPE, destination, radiusType, original);
+        Task task = taskDataSource.createTask(destinationLocation, "", metersAway, Task.CALL_REMINDER_TASK_TYPE, destination, radiusType, original, 1);
         String contacts = _contacts.getText().toString();
         String[] num1 = contacts.split("<");
         for (int i = 1; i < num1.length; i++) {
@@ -767,6 +808,11 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
         reminderLayout.setVisibility(View.GONE);
         soundLayout.setVisibility(View.GONE);
 
+        textDone.setVisibility(View.GONE);
+        callDone.setVisibility(View.VISIBLE);
+        remindDone.setVisibility(View.GONE);
+        soundDone.setVisibility(View.GONE);
+
         phoneIcon.setImageDrawable(phoneGlow);
         textIcon.setImageDrawable(textI);
         reminderIcon.setImageDrawable(reminderI);
@@ -784,6 +830,11 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
         textLayout.setVisibility(View.GONE);
         reminderLayout.setVisibility(View.GONE);
         callLayout.setVisibility(View.GONE);
+
+        textDone.setVisibility(View.GONE);
+        callDone.setVisibility(View.GONE);
+        remindDone.setVisibility(View.GONE);
+        soundDone.setVisibility(View.VISIBLE);
 
         phoneIcon.setImageDrawable(phoneI);
         textIcon.setImageDrawable(textI);
@@ -804,6 +855,11 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
         callLayout.setVisibility(View.GONE);
         soundLayout.setVisibility(View.GONE);
 
+        textDone.setVisibility(View.VISIBLE);
+        callDone.setVisibility(View.GONE);
+        remindDone.setVisibility(View.GONE);
+        soundDone.setVisibility(View.GONE);
+
         phoneIcon.setImageDrawable(phoneI);
         textIcon.setImageDrawable(textGlow);
         reminderIcon.setImageDrawable(reminderI);
@@ -814,15 +870,15 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
     public void reminderSelected(View view) {
         hideKeyboard();
 
-//        Drawable textI = getResources().getDrawable(R.drawable.text);
-//        Drawable soundI = getResources().getDrawable(R.drawable.audio);
-//        Drawable phoneI = getResources().getDrawable(R.drawable.phone);
-//        Drawable reminderGlow = getResources().getDrawable(R.drawable.reminderglow);
-
         reminderLayout.setVisibility(View.VISIBLE);
         textLayout.setVisibility(View.GONE);
         callLayout.setVisibility(View.GONE);
         soundLayout.setVisibility(View.GONE);
+
+        textDone.setVisibility(View.GONE);
+        callDone.setVisibility(View.GONE);
+        remindDone.setVisibility(View.VISIBLE);
+        soundDone.setVisibility(View.GONE);
 
         phoneIcon.setImageDrawable(phoneI);
         textIcon.setImageDrawable(textI);
@@ -886,7 +942,7 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
         Toast.makeText(getApplicationContext(),
                 "Reminder Created!", Toast.LENGTH_SHORT)
                 .show();
-        taskDataSource.createTask(destinationLocation, reminder, metersAway, Task.REMINDER_MESSAGE_TASK_TYPE, destination, radiusType, original);
+        taskDataSource.createTask(destinationLocation, reminder, metersAway, Task.REMINDER_MESSAGE_TASK_TYPE, destination, radiusType, original,1);
         Log.d("CreateTaskActivity", "Saved Destination");
       //  distance.setText("5");
         there.setChecked(true);
@@ -951,6 +1007,16 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
         super.onDestroy();
     }
 
+
+    public int getPxByPercentage(double percentage) {
+        Resources resources = getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float height = MyApplication.getHeight();
+        float px = height * (metrics.densityDpi / 160f);
+
+        return (int) (px * percentage);
+    }
+
     private class loadImages extends AsyncTask<Void, Void, Void> {
 
         @Override
@@ -972,5 +1038,361 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
 
         }
     }
+
+    public void setAlarmText(View view){
+       Button monday = (Button)findViewById(R.id.monday_text);
+        Button tuesday = (Button)findViewById(R.id.tuesday_text);
+        Button wednesday = (Button)findViewById(R.id.wednesday_text);
+        Button thursday = (Button)findViewById(R.id.thursday_text);
+        Button friday = (Button)findViewById(R.id.friday_text);
+        Button saturday = (Button)findViewById(R.id.saturday_text);
+        Button sunday = (Button)findViewById(R.id.sunday_text);
+
+        if(view.equals(monday)){
+            boolean on = textAlarm.is_mon();
+            if(!on){
+                monday.setBackground(getResources().getDrawable(R.drawable.button_filled));
+                textAlarm.set_mon(true);
+            }
+            else{
+                monday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+                textAlarm.set_mon(false);
+            }
+        }
+        if(view.equals(tuesday)){
+            boolean on = textAlarm.is_tue();
+            if(!on){
+                tuesday.setBackground(getResources().getDrawable(R.drawable.button_filled));
+                textAlarm.set_tue(true);
+            }
+            else{
+                tuesday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+                textAlarm.set_tue(false);
+            }
+        }
+        if(view.equals(wednesday)){
+            boolean on = textAlarm.is_wed();
+            if(!on){
+                wednesday.setBackground(getResources().getDrawable(R.drawable.button_filled));
+                textAlarm.set_wed(true);
+            }
+            else{
+                wednesday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+                textAlarm.set_wed(false);
+            }
+        }
+        if(view.equals(thursday)){
+            boolean on = textAlarm.is_thu();
+            if(!on){
+                thursday.setBackground(getResources().getDrawable(R.drawable.button_filled));
+                textAlarm.set_thu(true);
+            }
+            else{
+                thursday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+                textAlarm.set_thu(false);
+            }
+        }
+        if(view.equals(friday)){
+            boolean on = textAlarm.is_fri();
+            if(!on){
+                friday.setBackground(getResources().getDrawable(R.drawable.button_filled));
+                textAlarm.set_fri(true);
+            }
+            else{
+                friday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+                textAlarm.set_fri(false);
+            }
+        }
+        if(view.equals(saturday)){
+            boolean on = textAlarm.is_sat();
+            if(!on){
+                saturday.setBackground(getResources().getDrawable(R.drawable.button_filled));
+                textAlarm.set_sat(true);
+            }
+            else{
+                saturday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+                textAlarm.set_sat(false);
+            }
+        }
+        if(view.equals(sunday)){
+            boolean on = textAlarm.is_sun();
+            if(!on){
+                sunday.setBackground(getResources().getDrawable(R.drawable.button_filled));
+                textAlarm.set_sun(true);
+            }
+            else{
+                sunday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+                textAlarm.set_sun(false);
+            }
+        }
+    }
+
+    public void setAlarmCall(View view){
+        Button monday = (Button)findViewById(R.id.monday_call);
+        Button tuesday = (Button)findViewById(R.id.tuesday_call);
+        Button wednesday = (Button)findViewById(R.id.wednesday_call);
+        Button thursday = (Button)findViewById(R.id.thursday_call);
+        Button friday = (Button)findViewById(R.id.friday_call);
+        Button saturday = (Button)findViewById(R.id.saturday_call);
+        Button sunday = (Button)findViewById(R.id.sunday_call);
+
+        if(view.equals(monday)){
+            boolean on = callAlarm.is_mon();
+            if(!on){
+                monday.setBackground(getResources().getDrawable(R.drawable.button_filled));
+                callAlarm.set_mon(true);
+            }
+            else{
+                monday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+                callAlarm.set_mon(false);
+            }
+        }
+        if(view.equals(tuesday)){
+            boolean on = callAlarm.is_tue();
+            if(!on){
+                tuesday.setBackground(getResources().getDrawable(R.drawable.button_filled));
+                callAlarm.set_tue(true);
+            }
+            else{
+                tuesday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+                callAlarm.set_tue(false);
+            }
+        }
+        if(view.equals(wednesday)){
+            boolean on = callAlarm.is_wed();
+            if(!on){
+                wednesday.setBackground(getResources().getDrawable(R.drawable.button_filled));
+                callAlarm.set_wed(true);
+            }
+            else{
+                wednesday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+                callAlarm.set_wed(false);
+            }
+        }
+        if(view.equals(thursday)){
+            boolean on = callAlarm.is_thu();
+            if(!on){
+                thursday.setBackground(getResources().getDrawable(R.drawable.button_filled));
+                callAlarm.set_thu(true);
+            }
+            else{
+                thursday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+                callAlarm.set_thu(false);
+            }
+        }
+        if(view.equals(friday)){
+            boolean on = callAlarm.is_fri();
+            if(!on){
+                friday.setBackground(getResources().getDrawable(R.drawable.button_filled));
+                callAlarm.set_fri(true);
+            }
+            else{
+                friday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+                callAlarm.set_fri(false);
+            }
+        }
+        if(view.equals(saturday)){
+            boolean on = callAlarm.is_sat();
+            if(!on){
+                saturday.setBackground(getResources().getDrawable(R.drawable.button_filled));
+                callAlarm.set_sat(true);
+            }
+            else{
+                saturday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+                callAlarm.set_sat(false);
+            }
+        }
+        if(view.equals(sunday)){
+            boolean on = callAlarm.is_sun();
+            if(!on){
+                sunday.setBackground(getResources().getDrawable(R.drawable.button_filled));
+               callAlarm.set_sun(true);
+            }
+            else{
+                sunday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+                callAlarm.set_sun(false);
+            }
+        }
+    }
+
+    public void setAlarmReminder(View view){
+        Button monday = (Button)findViewById(R.id.monday_reminder);
+        Button tuesday = (Button)findViewById(R.id.tuesday_reminder);
+        Button wednesday = (Button)findViewById(R.id.wednesday_reminder);
+        Button thursday = (Button)findViewById(R.id.thursday_reminder);
+        Button friday = (Button)findViewById(R.id.friday_reminder);
+        Button saturday = (Button)findViewById(R.id.saturday_reminder);
+        Button sunday = (Button)findViewById(R.id.sunday_reminder);
+
+        if(view.equals(monday)){
+            boolean on = remindAlarm.is_mon();
+            if(!on){
+                monday.setBackground(getResources().getDrawable(R.drawable.button_filled));
+                remindAlarm.set_mon(true);
+            }
+            else{
+                monday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+                remindAlarm.set_mon(false);
+            }
+        }
+        if(view.equals(tuesday)){
+            boolean on = textAlarm.is_tue();
+            if(!on){
+                tuesday.setBackground(getResources().getDrawable(R.drawable.button_filled));
+                remindAlarm.set_tue(true);
+            }
+            else{
+                tuesday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+                remindAlarm.set_tue(false);
+            }
+        }
+        if(view.equals(wednesday)){
+            boolean on = remindAlarm.is_wed();
+            if(!on){
+                wednesday.setBackground(getResources().getDrawable(R.drawable.button_filled));
+                remindAlarm.set_wed(true);
+            }
+            else{
+                wednesday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+                remindAlarm.set_wed(false);
+            }
+        }
+        if(view.equals(thursday)){
+            boolean on = remindAlarm.is_thu();
+            if(!on){
+                thursday.setBackground(getResources().getDrawable(R.drawable.button_filled));
+                remindAlarm.set_thu(true);
+            }
+            else{
+                thursday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+                remindAlarm.set_thu(false);
+            }
+        }
+        if(view.equals(friday)){
+            boolean on = remindAlarm.is_fri();
+            if(!on){
+                friday.setBackground(getResources().getDrawable(R.drawable.button_filled));
+                remindAlarm.set_fri(true);
+            }
+            else{
+                friday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+                remindAlarm.set_fri(false);
+            }
+        }
+        if(view.equals(saturday)){
+            boolean on = remindAlarm.is_sat();
+            if(!on){
+                saturday.setBackground(getResources().getDrawable(R.drawable.button_filled));
+                remindAlarm.set_sat(true);
+            }
+            else{
+                saturday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+                remindAlarm.set_sat(false);
+            }
+        }
+        if(view.equals(sunday)){
+            boolean on = remindAlarm.is_sun();
+            if(!on){
+                sunday.setBackground(getResources().getDrawable(R.drawable.button_filled));
+                remindAlarm.set_sun(true);
+            }
+            else{
+                sunday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+               remindAlarm.set_sun(false);
+            }
+        }
+    }
+
+   public void setAlarmSound(View view){
+        Button monday = (Button)findViewById(R.id.monday_sound);
+        Button tuesday = (Button)findViewById(R.id.tuesday_sound);
+        Button wednesday = (Button)findViewById(R.id.wednesday_sound);
+        Button thursday = (Button)findViewById(R.id.thursday_sound);
+        Button friday = (Button)findViewById(R.id.friday_sound);
+        Button saturday = (Button)findViewById(R.id.saturday_sound);
+        Button sunday = (Button)findViewById(R.id.sunday_sound);
+
+        if(view.equals(monday)){
+            boolean on = soundAlarm.is_mon();
+            if(!on){
+                monday.setBackground(getResources().getDrawable(R.drawable.button_filled));
+                soundAlarm.set_mon(true);
+            }
+            else{
+                monday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+                soundAlarm.set_mon(false);
+            }
+        }
+        if(view.equals(tuesday)){
+            boolean on = soundAlarm.is_tue();
+            if(!on){
+                tuesday.setBackground(getResources().getDrawable(R.drawable.button_filled));
+                soundAlarm.set_tue(true);
+            }
+            else{
+                tuesday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+                soundAlarm.set_tue(false);
+            }
+        }
+        if(view.equals(wednesday)){
+            boolean on = soundAlarm.is_wed();
+            if(!on){
+                wednesday.setBackground(getResources().getDrawable(R.drawable.button_filled));
+                soundAlarm.set_wed(true);
+            }
+            else{
+                wednesday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+                soundAlarm.set_wed(false);
+            }
+        }
+        if(view.equals(thursday)){
+            boolean on = soundAlarm.is_thu();
+            if(!on){
+                thursday.setBackground(getResources().getDrawable(R.drawable.button_filled));
+                soundAlarm.set_thu(true);
+            }
+            else{
+                thursday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+                soundAlarm.set_thu(false);
+            }
+        }
+        if(view.equals(friday)){
+            boolean on = soundAlarm.is_fri();
+            if(!on){
+                friday.setBackground(getResources().getDrawable(R.drawable.button_filled));
+                soundAlarm.set_fri(true);
+            }
+            else{
+                friday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+                soundAlarm.set_fri(false);
+            }
+        }
+        if(view.equals(saturday)){
+            boolean on = soundAlarm.is_sat();
+            if(!on){
+                saturday.setBackground(getResources().getDrawable(R.drawable.button_filled));
+                soundAlarm.set_sat(true);
+            }
+            else{
+                saturday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+                soundAlarm.set_sat(false);
+            }
+        }
+        if(view.equals(sunday)){
+            boolean on = soundAlarm.is_sun();
+            if(!on){
+                sunday.setBackground(getResources().getDrawable(R.drawable.button_filled));
+                soundAlarm.set_sun(true);
+            }
+            else{
+                sunday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+                soundAlarm.set_sun(false);
+            }
+        }
+    }
+
+
+
+
 }
 

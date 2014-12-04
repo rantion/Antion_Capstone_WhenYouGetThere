@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.SystemClock;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -39,7 +38,7 @@ public class TaskDataSource {
         dbHelper.close();
     }
 
-    public Task createTask(LatLng location, String reminder, long radius, int taskType, String address, String radius_type, int original) {
+    public Task createTask(LatLng location, String reminder, long radius, int taskType, String address, String radius_type, int original, int active) {
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_REMINDER, reminder);
         values.put(MySQLiteHelper.COLUMN_LATITUDE, location.latitude);

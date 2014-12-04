@@ -1,12 +1,10 @@
 package com.example.rachel.wygt;
 
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.Fragment;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -15,7 +13,6 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
-import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -40,18 +37,14 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -331,7 +324,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                     .setPositiveButton("save", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             String name = input.getText().toString();
-                            MyLocation loc = locationDataSouce.createMyLocation(name, destinationAddress, destinationLocation.latitude, destinationLocation.longitude);
+                           custLoc = locationDataSouce.createMyLocation(name, destinationAddress, destinationLocation.latitude, destinationLocation.longitude);
                             Toast.makeText(MyApplication.getAppContext(), "location saved!", Toast.LENGTH_SHORT).show();
                             star.setImageDrawable(getResources().getDrawable(R.drawable.star));
                             usingCustLocation = true;
@@ -339,8 +332,9 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
                             TextView destName = (TextView) findViewById(R.id.cust_name);
                             destName.setVisibility(View.VISIBLE);
                             destName.setText(name);
-                            myLocations.add(loc);
+                            myLocations.add(custLoc);
                             adapter.notifyDataSetChanged();
+
                         }
                     });
             final AlertDialog alert = builder.create();

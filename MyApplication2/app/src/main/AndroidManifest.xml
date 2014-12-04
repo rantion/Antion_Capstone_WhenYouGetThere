@@ -3,12 +3,12 @@
     package="com.example.rachel.wygt">
 
     <application
-        android:name=".MyApplication"
+        android:name="com.example.rachel.wygt.MyApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/CustomActionBarTheme">
-        <service android:name=".GPSTracker">
+        <service android:name="com.example.rachel.wygt.GPSTracker">
 
         </service>
 
@@ -40,7 +40,7 @@
         </receiver>
 
         <activity
-            android:name=".MyActivity"
+            android:name="com.example.rachel.wygt.MyActivity"
             android:label="@string/full_app_name"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -50,82 +50,82 @@
         </activity>
 
         <activity
-            android:name=".RememberSomethingActivity"
+            android:name="com.example.rachel.wygt.RememberSomethingActivity"
             android:label="@string/full_app_name"
             android:screenOrientation="portrait"></activity>
 
         <activity
-            android:name=".ReminderActivity"
+            android:name="com.example.rachel.wygt.ReminderActivity"
             android:label="@string/full_app_name"
-            android:parentActivityName=".MyActivity"
+            android:parentActivityName="com.example.rachel.wygt.MyActivity"
             android:screenOrientation="portrait"></activity>
 
         <activity
-            android:name=".UserSettingsActivity"
+            android:name="com.example.rachel.wygt.UserSettingsActivity"
             android:label="@string/full_app_name"
             android:screenOrientation="portrait">
 
         </activity>
 
-        <activity android:name=".EditMyLocationActivity"
+        <activity android:name="com.example.rachel.wygt.EditMyLocationActivity"
             android:label="@string/full_app_name"
-            android:parentActivityName=".MyLocationsActivity"
+            android:parentActivityName="com.example.rachel.wygt.MyLocationsActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden">
 
         </activity>
 
-        <activity android:name=".MyLocationsActivity"
+        <activity android:name="com.example.rachel.wygt.MyLocationsActivity"
             android:label="@string/full_app_name"
-            android:parentActivityName=".MyActivity"
+            android:parentActivityName="com.example.rachel.wygt.MyActivity"
             android:screenOrientation="portrait">
 
         </activity>
 
-        <activity android:name=".AddLocationActivity"
+        <activity android:name="com.example.rachel.wygt.AddLocationActivity"
             android:label="@string/full_app_name"
-            android:parentActivityName=".MyLocationsActivity"
+            android:parentActivityName="com.example.rachel.wygt.MyLocationsActivity"
             android:screenOrientation="portrait">
 
         </activity>
 
         <activity
-            android:name=".TaskListActivity"
+            android:name="com.example.rachel.wygt.TaskListActivity"
             android:label="@string/full_app_name"
-            android:parentActivityName=".MyActivity">
+            android:parentActivityName="com.example.rachel.wygt.MyActivity">
 
         </activity>
 
         <activity
-            android:name=".EditSMSTaskActivity"
+            android:name="com.example.rachel.wygt.EditSMSTaskActivity"
             android:label="@string/full_app_name"
-            android:parentActivityName=".TaskListActivity"
+            android:parentActivityName="com.example.rachel.wygt.TaskListActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden"></activity>
         <activity
-            android:name=".EditCallTaskActivity"
+            android:name="com.example.rachel.wygt.EditCallTaskActivity"
             android:label="@string/full_app_name"
-            android:parentActivityName=".TaskListActivity"
+            android:parentActivityName="com.example.rachel.wygt.TaskListActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden"></activity>
         <activity
-            android:name=".EditSoundTaskActivity"
+            android:name="com.example.rachel.wygt.EditSoundTaskActivity"
             android:label="@string/full_app_name"
-            android:parentActivityName=".TaskListActivity"
+            android:parentActivityName="com.example.rachel.wygt.TaskListActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden"></activity>
         <activity
-            android:name=".EditReminderTaskActivity"
+            android:name="com.example.rachel.wygt.EditReminderTaskActivity"
             android:label="@string/full_app_name"
-            android:parentActivityName=".TaskListActivity"
+            android:parentActivityName="com.example.rachel.wygt.TaskListActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan"></activity>
 
         <activity
-            android:name=".DoSomethingActivity"
+            android:name="com.example.rachel.wygt.DoSomethingActivity"
             android:label="@string/full_app_name"
             android:largeHeap="true"
-            android:parentActivityName=".MyActivity"
+            android:parentActivityName="com.example.rachel.wygt.MyActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan"></activity>
 

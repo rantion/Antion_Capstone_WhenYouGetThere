@@ -1,1030 +1,1484 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-
-
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:weightSum="100"
+    android:divider="@drawable/divider_horizontal_white"
+    android:showDividers="middle"
+    android:background="@color/dark_purple">
     <LinearLayout
-        android:id="@+id/do_something_layout"
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:background="@color/dark_purple"
-        android:divider="@drawable/divider_horizontal"
-        android:orientation="vertical"
-        android:showDividers="middle"
-        android:weightSum="100">
+        android:id="@+id/task_drawer"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="bottom"
+        android:layout_weight="11"
+        android:gravity="bottom"
+        android:orientation="horizontal"
+        android:padding="@dimen/abc_action_bar_icon_vertical_padding">
 
-        <LinearLayout
-            android:id="@+id/do_something_destination"
+        <ImageView
+            android:padding="3dip"
+            android:id="@+id/set_text_icon"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            android:onClick="textSelected"
+            android:scaleType="fitCenter"
+            android:src="@drawable/textglow" />
+
+        <ImageButton
+            android:id="@+id/set_phone_icon"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            android:onClick="phoneSelected"
+            android:scaleType="fitCenter"
+            android:src="@drawable/phone" />
+
+        <ImageButton
+            android:id="@+id/set_reminder_icon"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            android:onClick="reminderSelected"
+            android:scaleType="fitCenter"
+            android:src="@drawable/reminder" />
+
+        <ImageButton
+            android:id="@+id/set_sound_icon"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            android:onClick="soundSelected"
+            android:scaleType="fitCenter"
+            android:src="@drawable/audio" />
+
+        <ImageButton
+            android:padding="4dip"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            android:onClick="goToGoogleMaps"
+            android:scaleType="fitCenter"
+            android:src="@drawable/googlemaps" />
+
+    </LinearLayout>
+    task drawer
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_height="0dp"
+        android:layout_weight="78"
+        android:layout_width="match_parent">
+
+        <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="15"
-            android:orientation="vertical">
+            android:layout_height="fill_parent">
+
 
             <LinearLayout
-                android:layout_width="fill_parent"
+                android:id="@+id/do_something_layout"
+                android:layout_width="match_parent"
                 android:layout_height="fill_parent"
-                android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
-                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="5"
-                    android:divider="@drawable/divider_vertical"
-                    android:orientation="horizontal"
-                    android:showDividers="middle">
-
-                    <LinearLayout
-                        android:id="@+id/destination_layout"
-                        android:layout_width="0dp"
-                        android:layout_height="fill_parent"
-                        android:layout_weight="3"
-                        android:gravity="center"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/destination_address"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text=""
-                            android:textColor="#ffffffff"
-                            android:textSize="7pt" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="fill_parent"
-                        android:layout_marginLeft="@dimen/activity_vertical_margin"
-                        android:layout_weight="2"
-                        android:orientation="vertical">
-
-                        <LinearLayout
-                            android:layout_width="fill_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:id="@+id/distance_display"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="distance: "
-                                android:textColor="#ffffffff"
-                                android:textSize="6pt" />
-
-                            <TextView
-                                android:id="@+id/distance"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text=""
-                                android:textColor="#ffffffff"
-                                android:textSize="6pt" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="fill_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="duration: "
-                                android:textColor="#ffffffff"
-                                android:textSize="6pt" />
-
-                            <TextView
-                                android:id="@+id/duration"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text=""
-                                android:textColor="#ffffffff"
-                                android:textSize="6pt" />
-
-                        </LinearLayout>
-                    </LinearLayout>
-
-
-                </LinearLayout>
-
-
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/enter_contacts_text"
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="74"
-            android:divider="@drawable/divider_horizontal"
-            android:orientation="vertical"
-            android:showDividers="beginning|middle"
-            android:visibility="visible"
-            android:weightSum="100">
-
-            <LinearLayout
-                android:id="@+id/proximity_information_text"
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
-                android:layout_weight="30"
-                android:orientation="vertical"
-                android:weightSum="100">
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="25"
-                    android:gravity="center"
-                    android:text="send text(s) when I am...."
-                    android:textColor="@color/white" />
-
-                <LinearLayout
-                    android:id="@+id/there_layout"
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="35"
-                    android:gravity="center_vertical"
-                    android:onClick="thereCheckerText"
-                    android:orientation="horizontal">
-
-                    <CheckBox
-                        android:id="@+id/there_checkbox_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:layout_marginLeft="@dimen/activity_vertical_margin"
-                        android:checked="true"
-                        android:onClick="thereCheckerText" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:gravity="center_vertical"
-                        android:text="there"
-                        android:textColor="@color/white" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/distance_chooser_layout"
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="40"
-                    android:background="@color/translucent_black"
-                    android:clickable="false"
-                    android:gravity="center_vertical"
-                    android:onClick="distanceCheckedText">
-
-                    <CheckBox
-                        android:id="@+id/distance_checkbox_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:layout_marginLeft="@dimen/activity_vertical_margin"
-                        android:gravity="center_vertical"
-                        android:onClick="distanceCheckedText" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:gravity="center_vertical"
-                        android:text="about..."
-                        android:textColor="@color/white" />
-
-                    <com.example.rachel.wygt.EditTextClear
-                        android:id="@+id/miles_away_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:clickable="false"
-                        android:gravity="center_vertical"
-                        android:text="5"
-                        android:textColor="@color/white" />
-
-                    <Spinner
-                        android:id="@+id/spinner_text_miles_minute"
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:clickable="false"
-                        android:entries="@array/miles_minutes"
-                        android:gravity="center_vertical"
-                        android:prompt="@string/choose_type" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="away"
-                        android:textColor="@color/white" />
-
-
-                </LinearLayout>
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
-                android:layout_weight="55"
+                android:background="@color/dark_purple"
                 android:divider="@drawable/divider_horizontal"
                 android:orientation="vertical"
                 android:showDividers="middle"
                 android:weightSum="100">
 
                 <LinearLayout
+                    android:id="@+id/do_something_destination"
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="50"
+                    android:layout_weight="15"
                     android:orientation="vertical">
 
-                    <TextView
+                    <LinearLayout
                         android:layout_width="fill_parent"
-                        android:layout_height="0dp"
-                        android:layout_marginLeft="@dimen/activity_vertical_margin"
-                        android:layout_marginRight="@dimen/activity_vertical_margin"
-                        android:layout_weight="15"
-                        android:gravity="center_vertical"
-                        android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:text="contacts"
-                        android:textColor="@color/white"
-                        android:textSize="8pt"
-                        android:textStyle="bold" />
-
-                    <MultiAutoCompleteTextView
-                        android:id="@+id/multiAuto_contacts"
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dp"
-                        android:layout_marginLeft="@dimen/activity_vertical_margin"
-                        android:layout_marginRight="@dimen/activity_vertical_margin"
-                        android:layout_weight="35"
-                        android:gravity="top|start"
-                        android:hint="sent to contact(s)..."
-                        android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:textColor="@color/white" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginLeft="@dimen/activity_vertical_margin"
-                    android:layout_marginRight="@dimen/activity_vertical_margin"
-                    android:layout_weight="50"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dp"
+                        android:layout_height="fill_parent"
                         android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:layout_weight="15"
-                        android:paddingTop="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:text="message"
-                        android:textColor="@color/white"
-                        android:textSize="8pt"
-                        android:textStyle="bold" />
+                        android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:orientation="vertical">
 
-                    <com.example.rachel.wygt.EditTextClear
-                        android:id="@+id/enter_reminder_field"
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="5"
+                            android:divider="@drawable/divider_vertical"
+                            android:orientation="horizontal"
+                            android:showDividers="middle">
+
+                            <LinearLayout
+                                android:id="@+id/destination_layout"
+                                android:layout_width="0dp"
+                                android:layout_height="fill_parent"
+                                android:layout_weight="3"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/destination_address"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:text=""
+                                    android:textColor="#ffffffff"
+                                    android:textSize="7pt" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="fill_parent"
+                                android:layout_marginLeft="@dimen/activity_vertical_margin"
+                                android:layout_weight="2"
+                                android:orientation="vertical">
+
+                                <LinearLayout
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="0dp"
+                                    android:layout_weight="1"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/distance_display"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="distance: "
+                                        android:textColor="#ffffffff"
+                                        android:textSize="6pt" />
+
+                                    <TextView
+                                        android:id="@+id/distance"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text=""
+                                        android:textColor="#ffffffff"
+                                        android:textSize="6pt" />
+
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="0dp"
+                                    android:layout_weight="1"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="duration: "
+                                        android:textColor="#ffffffff"
+                                        android:textSize="6pt" />
+
+                                    <TextView
+                                        android:id="@+id/duration"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text=""
+                                        android:textColor="#ffffffff"
+                                        android:textSize="6pt" />
+
+                                </LinearLayout>
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/enter_contacts_text"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:divider="@drawable/divider_horizontal"
+                    android:orientation="vertical"
+                    android:showDividers="beginning|middle|end"
+                    android:visibility="visible"
+                    android:weightSum="100">
+
+                    <LinearLayout
+                        android:id="@+id/proximity_information_text"
                         android:layout_width="fill_parent"
                         android:layout_height="0dp"
-                        android:layout_weight="35"
-                        android:gravity="top|start"
-                        android:hint="enter your text message here"
-                        android:inputType="textMultiLine|textCapSentences"
-                        android:lines="9"
-                        android:maxLines="30"
-                        android:minLines="1"
+                        android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_weight="40"
+                        android:orientation="vertical"
+                        android:weightSum="100">
+
+                        <TextView
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="30"
+                            android:gravity="center"
+                            android:text="send text(s) when I am..."
+                            android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                            android:textColor="@color/white" />
+
+                        <LinearLayout
+                            android:id="@+id/there_layout_text"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp"
+                            android:paddingLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                            android:layout_weight="35"
+                            android:onClick="thereCheckerText"
+                            android:orientation="horizontal">
+
+                            <CheckBox
+                                android:id="@+id/there_checkbox_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/activity_vertical_margin"
+                                android:checked="true"
+                                android:onClick="thereCheckerText" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="there"
+                                android:textColor="@color/white" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/distance_chooser_layout_text"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="35"
+                            android:background="@color/translucent_black"
+                            android:clickable="false"
+                            android:onClick="distanceCheckedText">
+
+                            <CheckBox
+                                android:id="@+id/distance_checkbox_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/activity_vertical_margin"
+                                android:onClick="distanceCheckedText" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="about..."
+                                android:textColor="@color/white" />
+
+                            <com.example.rachel.wygt.EditTextClear
+                                android:id="@+id/miles_away_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:clickable="false"
+                                android:hint="5" />
+
+                            <Spinner
+                                android:id="@+id/spinner_text_miles_minutes"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:clickable="false"
+                                android:entries="@array/miles_minutes"
+                                android:prompt="@string/choose_type" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="away"
+                                android:textColor="@color/white" />
+
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+                    <LinearLayout android:id="@+id/recurrence_text"
+                        android:layout_marginLeft="@dimen/activity_vertical_margin"
+                        android:layout_marginRight="@dimen/activity_vertical_margin"
+                        android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:weightSum="70">
+
+                        <TextView
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:textSize="15sp"
+                            android:text="repeat"
+                            android:paddingTop="@dimen/abc_action_bar_icon_vertical_padding"/>
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+                            android:orientation="horizontal">
+                            <Button
+                                android:id="@+id/monday_text"
+                                android:layout_width="0dp"
+                                android:layout_weight="10"
+                                android:layout_marginRight="10dip"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/button_outline"
+                                android:text="mon"
+                                android:onClick="setAlarmText"
+                                android:textSize="12sp"
+                                android:textColor="@color/white"/>
+                            <Button
+                                android:id="@+id/tuesday_text"
+                                android:layout_width="0dp"
+                                android:layout_weight="10"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="10dip"
+                                android:background="@drawable/button_outline"
+                                android:text="tue"
+                                android:onClick="setAlarmText"
+                                android:textSize="12sp"
+                                android:textColor="@color/white"/>
+                            <Button
+                                android:id="@+id/wednesday_text"
+                                android:layout_width="0dp"
+                                android:layout_weight="10"
+                                android:layout_marginRight="10dip"
+                                android:layout_height="wrap_content"
+                                android:onClick="setAlarmText"
+                                android:background="@drawable/button_outline"
+                                android:textSize="12sp"
+                                android:text="wed"
+                                android:textColor="@color/white"/>
+                            <Button
+                                android:id="@+id/thursday_text"
+                                android:layout_width="0dp"
+                                android:layout_weight="10"
+                                android:layout_marginRight="10dip"
+                                android:layout_height="wrap_content"
+                                android:onClick="setAlarmText"
+                                android:background="@drawable/button_outline"
+                                android:textSize="12sp"
+                                android:text="thu"
+                                android:textColor="@color/white"/>
+                            <Button
+                                android:id="@+id/friday_text"
+                                android:layout_width="0dp"
+                                android:layout_weight="10"
+                                android:layout_marginRight="10dip"
+                                android:layout_height="wrap_content"
+                                android:onClick="setAlarmText"
+                                android:background="@drawable/button_outline"
+                                android:textSize="12sp"
+                                android:text="fri"
+                                android:textColor="@color/white"/>
+                            <Button
+                                android:id="@+id/saturday_text"
+                                android:layout_width="0dp"
+                                android:onClick="setAlarmText"
+                                android:layout_weight="10"
+                                android:layout_marginRight="10dip"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/button_outline"
+                                android:textSize="12sp"
+                                android:text="sat"
+                                android:textColor="@color/white"/>
+                            <Button
+                                android:id="@+id/sunday_text"
+                                android:layout_width="0dp"
+                                android:layout_weight="10"
+                                android:onClick="setAlarmText"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/button_outline"
+                                android:textSize="12sp"
+                                android:text="sun"
+                                android:textColor="@color/white"/>
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_weight="55"
+                        android:divider="@drawable/divider_horizontal"
+                        android:orientation="vertical"
+                        android:showDividers="middle"
+                        android:weightSum="100">
+
+                        <LinearLayout
+                            android:id="@+id/do_something_enter_contacts"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="50"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="fill_parent"
+                                android:layout_height="0dp"
+                                android:layout_marginLeft="@dimen/activity_vertical_margin"
+                                android:layout_marginRight="@dimen/activity_vertical_margin"
+                                android:layout_weight="15"
+                                android:gravity="center_vertical"
+                                android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                                android:text="contacts"
+                                android:textColor="@color/white"
+                                android:textSize="8pt"
+                                android:textStyle="bold" />
+
+                            <MultiAutoCompleteTextView
+                                android:id="@+id/multiAuto_contacts"
+                                android:layout_width="fill_parent"
+                                android:layout_height="0dp"
+                                android:layout_marginLeft="@dimen/activity_vertical_margin"
+                                android:layout_marginRight="@dimen/activity_vertical_margin"
+                                android:layout_weight="35"
+                                android:gravity="top|start"
+                                android:hint="sent to contact(s)..."
+                                android:inputType="textMultiLine|textCapSentences"
+                                android:lines="9"
+                                android:maxLines="30"
+                                android:minLines="1"
+                                android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                                android:scrollbars="vertical"
+                                android:textColor="@color/white"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/do_something_message_text"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp"
+                            android:layout_marginLeft="@dimen/activity_vertical_margin"
+                            android:layout_marginRight="@dimen/activity_vertical_margin"
+                            android:layout_weight="50"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="fill_parent"
+                                android:layout_height="0dp"
+                                android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                                android:layout_weight="15"
+                                android:paddingTop="@dimen/abc_action_bar_icon_vertical_padding"
+                                android:text="message"
+                                android:textColor="@color/white"
+                                android:textSize="8pt"
+                                android:textStyle="bold" />
+
+                            <com.example.rachel.wygt.EditTextClear
+                                android:id="@+id/enter_reminder_field"
+                                android:layout_width="fill_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="35"
+                                android:gravity="top|start"
+                                android:hint="enter your text message here"
+                                android:inputType="textMultiLine|textCapSentences"
+                                android:lines="9"
+                                android:maxLines="30"
+                                android:minLines="1"
+                                android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                                android:scrollbars="vertical"
+                                android:textColor="@color/white" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+
+                </LinearLayout>text layout
+
+
+                <LinearLayout
+                    android:id="@+id/enter_contacts_call_reminder"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="74"
+                    android:divider="@drawable/divider_horizontal"
+                    android:orientation="vertical"
+                    android:showDividers="beginning|middle|end"
+                    android:visibility="gone"
+                    android:weightSum="100">
+
+                    <LinearLayout
+                        android:id="@+id/proximity_information_call"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_weight="40"
+                        android:orientation="vertical"
+                        android:weightSum="100">
+
+                        <TextView
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="30"
+                            android:gravity="center"
+                            android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                            android:text="send reminder when I am..."
+                            android:textColor="@color/white" />
+
+                        <LinearLayout
+                            android:id="@+id/there_layout_call"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp"
+                            android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                            android:layout_weight="35"
+                            android:onClick="thereCheckerCall"
+                            android:orientation="horizontal">
+
+                            <CheckBox
+                                android:id="@+id/there_checkbox_call"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/activity_vertical_margin"
+                                android:checked="true"
+                                android:onClick="thereCheckerCall" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="there"
+                                android:textColor="@color/white" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/distance_chooser_layout_call"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="35"
+                            android:background="@color/translucent_black"
+                            android:clickable="false"
+                            android:onClick="distanceCheckedCall">
+
+                            <CheckBox
+                                android:id="@+id/distance_checkbox_call"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/activity_vertical_margin"
+                                android:onClick="distanceCheckedCall" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="about..."
+                                android:textColor="@color/white" />
+
+                            <com.example.rachel.wygt.EditTextClear
+                                android:id="@+id/miles_away_call"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:clickable="false"
+                                android:hint="5" />
+
+                            <Spinner
+                                android:id="@+id/spinner_call_miles_minutes"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:clickable="false"
+                                android:entries="@array/miles_minutes"
+                                android:prompt="@string/choose_type" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="away"
+                                android:textColor="@color/white" />
+
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+                    <LinearLayout android:id="@+id/recurrence_call"
+                        android:layout_marginLeft="@dimen/activity_vertical_margin"
+                        android:layout_marginRight="@dimen/activity_vertical_margin"
+                        android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:weightSum="70">
+
+                        <TextView
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:textSize="15sp"
+                            android:text="repeat"
+                            android:paddingTop="@dimen/abc_action_bar_icon_vertical_padding"/>
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+                            android:orientation="horizontal">
+                            <Button
+                                android:id="@+id/monday_call"
+                                android:layout_width="0dp"
+                                android:layout_weight="10"
+                                android:layout_marginRight="10dip"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/button_outline"
+                                android:text="mon"
+                                android:onClick="setAlarmCall"
+                                android:textSize="12sp"
+                                android:textColor="@color/white"/>
+                            <Button
+                                android:id="@+id/tuesday_call"
+                                android:layout_width="0dp"
+                                android:layout_weight="10"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="10dip"
+                                android:background="@drawable/button_outline"
+                                android:text="tue"
+                                android:onClick="setAlarmCall"
+                                android:textSize="12sp"
+                                android:textColor="@color/white"/>
+                            <Button
+                                android:id="@+id/wednesday_call"
+                                android:layout_width="0dp"
+                                android:layout_weight="10"
+                                android:layout_marginRight="10dip"
+                                android:layout_height="wrap_content"
+                                android:onClick="setAlarmCall"
+                                android:background="@drawable/button_outline"
+                                android:textSize="12sp"
+                                android:text="wed"
+                                android:textColor="@color/white"/>
+                            <Button
+                                android:id="@+id/thursday_call"
+                                android:layout_width="0dp"
+                                android:layout_weight="10"
+                                android:layout_marginRight="10dip"
+                                android:layout_height="wrap_content"
+                                android:onClick="setAlarmCall"
+                                android:background="@drawable/button_outline"
+                                android:textSize="12sp"
+                                android:text="thu"
+                                android:textColor="@color/white"/>
+                            <Button
+                                android:id="@+id/friday_call"
+                                android:layout_width="0dp"
+                                android:layout_weight="10"
+                                android:layout_marginRight="10dip"
+                                android:layout_height="wrap_content"
+                                android:onClick="setAlarmCall"
+                                android:background="@drawable/button_outline"
+                                android:textSize="12sp"
+                                android:text="fri"
+                                android:textColor="@color/white"/>
+                            <Button
+                                android:id="@+id/saturday_call"
+                                android:layout_width="0dp"
+                                android:onClick="setAlarmCall"
+                                android:layout_weight="10"
+                                android:layout_marginRight="10dip"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/button_outline"
+                                android:textSize="12sp"
+                                android:text="sat"
+                                android:textColor="@color/white"/>
+                            <Button
+                                android:id="@+id/sunday_call"
+                                android:layout_width="0dp"
+                                android:layout_weight="10"
+                                android:onClick="setAlarmCall"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/button_outline"
+                                android:textSize="12sp"
+                                android:text="sun"
+                                android:textColor="@color/white"/>
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+
+
+                    <LinearLayout
+                        android:id="@+id/do_something_contact_call"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_weight="45"
+                        android:orientation="vertical"
+                        android:weightSum="100">
+
+                        <TextView
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp"
+                            android:layout_marginLeft="@dimen/activity_vertical_margin"
+                            android:layout_weight="40"
+                            android:paddingTop="@dimen/abc_action_bar_icon_vertical_padding"
+                            android:text="contact"
+                            android:textColor="@color/white"
+                            android:textSize="8pt"
+                            android:textStyle="bold" />
+
+                        <com.example.rachel.wygt.AutoWithSpaces
+                            android:id="@+id/auto_contacts"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp"
+                            android:layout_marginLeft="@dimen/activity_vertical_margin"
+                            android:layout_marginRight="@dimen/activity_vertical_margin"
+                            android:layout_weight="60"
+                            android:gravity="top|start"
+                            android:hint="enter contact.."
+                            android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                            android:textColor="@color/white" />
+                    </LinearLayout>
+
+
+
+                </LinearLayout>
+                call layout
+
+                <LinearLayout
+                    android:id="@+id/reminder_layout"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="74"
+                    android:divider="@drawable/divider_horizontal"
+                    android:orientation="vertical"
+                    android:showDividers="beginning|middle|end"
+                    android:visibility="gone"
+                    android:weightSum="100">
+
+                    <LinearLayout
+                        android:id="@+id/proximity_information_reminder"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_weight="30"
+                        android:orientation="vertical"
+                        android:weightSum="100">
+
+                        <TextView
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="30"
+                            android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                            android:gravity="center"
+                            android:text="send notification when I am..."
+                            android:textColor="@color/white" />
+
+                        <LinearLayout
+                            android:id="@+id/there_layout_reminder"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="35"
+                            android:onClick="thereCheckerReminder"
+                            android:orientation="horizontal">
+
+                            <CheckBox
+                                android:id="@+id/there_checkbox_reminder"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/activity_vertical_margin"
+                                android:checked="true"
+                                android:onClick="thereCheckerReminder" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="there"
+                                android:textColor="@color/white" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/distance_chooser_layout_reminder"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="35"
+                            android:background="@color/translucent_black"
+                            android:clickable="false"
+                            android:onClick="distanceCheckedReminder">
+
+                            <CheckBox
+                                android:id="@+id/distance_checkbox_reminder"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/activity_vertical_margin"
+                                android:onClick="distanceCheckedReminder" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="about..."
+                                android:textColor="@color/white" />
+
+                            <com.example.rachel.wygt.EditTextClear
+                                android:id="@+id/miles_away_reminder"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:clickable="false"
+                                android:text="5"
+                                android:textColor="@color/white" />
+
+                            <Spinner
+                                android:id="@+id/spinner_reminder_miles_minutes"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:clickable="false"
+                                android:entries="@array/miles_minutes"
+                                android:prompt="@string/choose_type" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="away"
+                                android:textColor="@color/white" />
+
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout android:id="@+id/recurrence_reminder"
+                        android:layout_marginLeft="@dimen/activity_vertical_margin"
+                        android:layout_marginRight="@dimen/activity_vertical_margin"
+                        android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:weightSum="70">
+
+                        <TextView
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:textSize="15sp"
+                            android:text="repeat"
+                            android:paddingTop="@dimen/abc_action_bar_icon_vertical_padding"/>
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+                            android:orientation="horizontal">
+                            <Button
+                                android:id="@+id/monday_reminder"
+                                android:layout_width="0dp"
+                                android:layout_weight="10"
+                                android:layout_marginRight="10dip"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/button_outline"
+                                android:text="mon"
+                                android:onClick="setAlarmReminder"
+                                android:textSize="12sp"
+                                android:textColor="@color/white"/>
+                            <Button
+                                android:id="@+id/tuesday_reminder"
+                                android:layout_width="0dp"
+                                android:layout_weight="10"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="10dip"
+                                android:background="@drawable/button_outline"
+                                android:text="tue"
+                                android:onClick="setAlarmReminder"
+                                android:textSize="12sp"
+                                android:textColor="@color/white"/>
+                            <Button
+                                android:id="@+id/wednesday_reminder"
+                                android:layout_width="0dp"
+                                android:layout_weight="10"
+                                android:layout_marginRight="10dip"
+                                android:layout_height="wrap_content"
+                                android:onClick="setAlarmReminder"
+                                android:background="@drawable/button_outline"
+                                android:textSize="12sp"
+                                android:text="wed"
+                                android:textColor="@color/white"/>
+                            <Button
+                                android:id="@+id/thursday_reminder"
+                                android:layout_width="0dp"
+                                android:layout_weight="10"
+                                android:layout_marginRight="10dip"
+                                android:layout_height="wrap_content"
+                                android:onClick="setAlarmReminder"
+                                android:background="@drawable/button_outline"
+                                android:textSize="12sp"
+                                android:text="thu"
+                                android:textColor="@color/white"/>
+                            <Button
+                                android:id="@+id/friday_reminder"
+                                android:layout_width="0dp"
+                                android:layout_weight="10"
+                                android:layout_marginRight="10dip"
+                                android:layout_height="wrap_content"
+                                android:onClick="setAlarmReminder"
+                                android:background="@drawable/button_outline"
+                                android:textSize="12sp"
+                                android:text="fri"
+                                android:textColor="@color/white"/>
+                            <Button
+                                android:id="@+id/saturday_reminder"
+                                android:layout_width="0dp"
+                                android:onClick="setAlarmReminder"
+                                android:layout_weight="10"
+                                android:layout_marginRight="10dip"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/button_outline"
+                                android:textSize="12sp"
+                                android:text="sat"
+                                android:textColor="@color/white"/>
+                            <Button
+                                android:id="@+id/sunday_reminder"
+                                android:layout_width="0dp"
+                                android:layout_weight="10"
+                                android:onClick="setAlarmReminder"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/button_outline"
+                                android:textSize="12sp"
+                                android:text="sun"
+                                android:textColor="@color/white"/>
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+
+
+                    <LinearLayout
+                        android:id="@+id/do_something_message_reminder"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_weight="55"
+                        android:orientation="vertical"
+                        android:weightSum="100">
+
+                        <TextView
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp"
+                            android:layout_marginLeft="@dimen/activity_vertical_margin"
+                            android:layout_weight="20"
+                            android:paddingTop="@dimen/abc_action_bar_icon_vertical_padding"
+                            android:text="reminder"
+                            android:textColor="@color/white"
+                            android:textSize="8pt"
+                            android:textStyle="bold" />
+
+
+                        <com.example.rachel.wygt.EditTextClear
+                            android:id="@+id/reminder_edit_text"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="80"
+                            android:gravity="top|start"
+                            android:hint="enter your reminder/ message here"
+                            android:inputType="textMultiLine|textCapSentences"
+                            android:lines="9"
+                            android:maxLines="30"
+                            android:minLines="1"
+                            android:scrollbars="vertical"
+                            android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                            android:textColor="@color/white" />
+                    </LinearLayout>
+
+
+                </LinearLayout>
+                reminder layout
+
+
+                <LinearLayout
+                    android:id="@+id/sound_layout"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="74"
+                    android:divider="@drawable/divider_horizontal"
+                    android:orientation="vertical"
+                    android:showDividers="beginning|middle|end"
+                    android:visibility="gone"
+                    android:weightSum="100">
+
+                    <LinearLayout
+                        android:id="@+id/proximity_information_sound"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="22"
+                        android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:orientation="vertical"
+                        android:weightSum="100">
+
+                        <TextView
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="30"
+                            android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                            android:gravity="center"
+                            android:paddingTop="3dip"
+                            android:text="change sound settings when I am..."
+                            android:textColor="@color/white" />
+
+                        <LinearLayout
+                            android:id="@+id/there_layout_sound"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="35"
+                            android:onClick="thereCheckerSound"
+                            android:orientation="horizontal">
+
+                            <CheckBox
+                                android:id="@+id/there_checkbox_sound"
+                                android:layout_width="wrap_content"
+                                android:layout_height="fill_parent"
+                                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                                android:checked="true"
+                                android:gravity="center_vertical"
+                                android:onClick="thereCheckerSound" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="fill_parent"
+                                android:gravity="center_vertical"
+                                android:text="there"
+                                android:textColor="@color/white" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/distance_chooser_layout_sound"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="35"
+                            android:background="@color/translucent_black"
+                            android:clickable="false"
+                            android:gravity="center_vertical"
+                            android:onClick="distanceCheckedSound">
+
+                            <CheckBox
+                                android:id="@+id/distance_checkbox_sound"
+                                android:layout_width="wrap_content"
+                                android:layout_height="fill_parent"
+                                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                                android:gravity="center_vertical"
+                                android:onClick="distanceCheckedSound" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="fill_parent"
+                                android:gravity="center_vertical"
+                                android:text="about..."
+                                android:textColor="@color/white" />
+
+                            <com.example.rachel.wygt.EditTextClear
+                                android:id="@+id/miles_away_sound"
+                                android:layout_width="wrap_content"
+                                android:layout_height="fill_parent"
+                                android:clickable="false"
+                                android:gravity="center_vertical"
+                                android:text="5"
+                                android:textColor="@color/white" />
+
+                            <Spinner
+                                android:id="@+id/spinner_sound_miles_minutes"
+                                android:layout_width="wrap_content"
+                                android:layout_height="fill_parent"
+                                android:clickable="false"
+                                android:entries="@array/miles_minutes"
+                                android:gravity="center_vertical"
+                                android:prompt="@string/choose_type" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="fill_parent"
+                                android:gravity="center_vertical"
+                                android:text="away"
+                                android:textColor="@color/white" />
+
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout android:id="@+id/recurrence_sound"
+                        android:layout_marginLeft="@dimen/activity_vertical_margin"
+                        android:layout_marginRight="@dimen/activity_vertical_margin"
+                        android:layout_marginBottom="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:weightSum="70">
+
+                        <TextView
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:textSize="15sp"
+                            android:text="repeat"
+                            android:paddingTop="@dimen/abc_action_bar_icon_vertical_padding"/>
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+                            android:orientation="horizontal">
+                            <Button
+                                android:id="@+id/monday_sound"
+                                android:layout_width="0dp"
+                                android:layout_weight="10"
+                                android:layout_marginRight="10dip"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/button_outline"
+                                android:text="mon"
+                                android:onClick="setAlarmSound"
+                                android:textSize="12sp"
+                                android:textColor="@color/white"/>
+                            <Button
+                                android:id="@+id/tuesday_sound"
+                                android:layout_width="0dp"
+                                android:layout_weight="10"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="10dip"
+                                android:background="@drawable/button_outline"
+                                android:text="tue"
+                                android:onClick="setAlarmSound"
+                                android:textSize="12sp"
+                                android:textColor="@color/white"/>
+                            <Button
+                                android:id="@+id/wednesday_sound"
+                                android:layout_width="0dp"
+                                android:layout_weight="10"
+                                android:layout_marginRight="10dip"
+                                android:layout_height="wrap_content"
+                                android:onClick="setAlarmSound"
+                                android:background="@drawable/button_outline"
+                                android:textSize="12sp"
+                                android:text="wed"
+                                android:textColor="@color/white"/>
+                            <Button
+                                android:id="@+id/thursday_sound"
+                                android:layout_width="0dp"
+                                android:layout_weight="10"
+                                android:layout_marginRight="10dip"
+                                android:layout_height="wrap_content"
+                                android:onClick="setAlarmSound"
+                                android:background="@drawable/button_outline"
+                                android:textSize="12sp"
+                                android:text="thu"
+                                android:textColor="@color/white"/>
+                            <Button
+                                android:id="@+id/friday_sound"
+                                android:layout_width="0dp"
+                                android:layout_weight="10"
+                                android:layout_marginRight="10dip"
+                                android:layout_height="wrap_content"
+                                android:onClick="setAlarmSound"
+                                android:background="@drawable/button_outline"
+                                android:textSize="12sp"
+                                android:text="fri"
+                                android:textColor="@color/white"/>
+                            <Button
+                                android:id="@+id/saturday_sound"
+                                android:layout_width="0dp"
+                                android:onClick="setAlarmSound"
+                                android:layout_weight="10"
+                                android:layout_marginRight="10dip"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/button_outline"
+                                android:textSize="12sp"
+                                android:text="sat"
+                                android:textColor="@color/white"/>
+                            <Button
+                                android:id="@+id/sunday_sound"
+                                android:layout_width="0dp"
+                                android:layout_weight="10"
+                                android:onClick="setAlarmSound"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/button_outline"
+                                android:textSize="12sp"
+                                android:text="sun"
+                                android:textColor="@color/white"/>
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/sound_settings"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
                         android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:scrollbars="vertical"
-                        android:textColor="@color/white" />
+                        android:orientation="vertical"
+                        android:weightSum="100">
+
+                        <LinearLayout
+                            android:id="@+id/ringer_adjust"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="25"
+                            android:orientation="vertical"
+                            android:weightSum="100">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:padding="10px"
+                                android:text="adjust ringer volume"
+                                android:textColor="@color/white"
+                                android:textSize="6pt" />
+
+                            <LinearLayout
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:id="@+id/ringerIcon"
+                                    android:layout_width="@dimen/abc_dropdownitem_icon_width"
+                                    android:layout_height="@dimen/abc_dropdownitem_icon_width"
+                                    android:paddingTop="2dip" />
+
+                                <SeekBar
+                                    android:id="@+id/ringerSeek"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="fill_parent" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/media_adjust"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="25"
+                            android:orientation="vertical"
+                            android:weightSum="100">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:padding="10px"
+                                android:text="adjust media player volume"
+                                android:textColor="@color/white"
+                                android:textSize="6pt" />
+
+                            <LinearLayout
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:id="@+id/mediaIcon"
+                                    android:layout_width="@dimen/abc_dropdownitem_icon_width"
+                                    android:layout_height="@dimen/abc_dropdownitem_icon_width"
+                                    android:paddingTop="2dip" />
+
+                                <SeekBar
+                                    android:id="@+id/mediaSeek"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="fill_parent" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/notification_adjust"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="25"
+                            android:orientation="vertical"
+                            android:weightSum="100">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:padding="10px"
+                                android:text="adjust notification volume"
+                                android:textColor="@color/white"
+                                android:textSize="6pt" />
+
+                            <LinearLayout
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:id="@+id/notificationIcon"
+                                    android:layout_width="@dimen/abc_dropdownitem_icon_width"
+                                    android:layout_height="@dimen/abc_dropdownitem_icon_width"
+                                    android:paddingTop="2dip" />
+
+                                <SeekBar
+                                    android:id="@+id/notificationSeek"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="fill_parent" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/alarm_adjust"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="25"
+                            android:orientation="vertical"
+                            android:weightSum="100">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:padding="10px"
+                                android:text="adjust system volume"
+                                android:textColor="@color/white"
+                                android:textSize="6pt" />
+
+                            <LinearLayout
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:id="@+id/systemIcon"
+                                    android:layout_width="@dimen/abc_dropdownitem_icon_width"
+                                    android:layout_height="@dimen/abc_dropdownitem_icon_width"
+                                    android:paddingTop="2dip" />
+
+                                <SeekBar
+                                    android:id="@+id/systemSeek"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="fill_parent" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+
                 </LinearLayout>
+                sound layout
+
+
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
-                android:layout_weight="15"
-                android:gravity="center_vertical">
 
-                <Button
-                    android:layout_width="fill_parent"
-                    android:layout_height="@dimen/abc_action_bar_default_height"
-                    android:layout_marginBottom="8dip"
-                    android:layout_marginLeft="80dip"
-                    android:layout_marginRight="80dip"
-                    android:background="@color/greenish"
-                    android:onClick="sendTextMessage"
-                    android:text="Done"
-                    android:textColor="#ffffffff" />
-            </LinearLayout>
+        </RelativeLayout>
+    </ScrollView>
 
-        </LinearLayout>
-
+    <LinearLayout
+        android:id="@+id/do_something_done_button_layout"
+        android:layout_height="0dp"
+        android:layout_weight="11"
+        android:layout_width="fill_parent"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/enter_contacts_call_reminder"
+            android:id="@+id/do_something_button_text"
             android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="74"
-            android:divider="@drawable/divider_horizontal"
-            android:orientation="vertical"
-            android:showDividers="beginning|middle"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+            android:layout_weight="15"
+            android:gravity="center_vertical">
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/abc_action_bar_default_height"
+                android:layout_marginBottom="8dip"
+                android:layout_marginLeft="80dip"
+                android:layout_marginRight="80dip"
+                android:background="@color/greenish"
+                android:onClick="sendTextMessage"
+                android:text="done"
+                android:textColor="#ffffffff" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/do_something_button_sound"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
             android:visibility="gone"
-            android:weightSum="100">
+            android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+            android:layout_weight="15"
+            android:gravity="center_vertical">
 
-            <LinearLayout
-                android:id="@+id/proximity_information_call"
+            <Button
                 android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
-                android:layout_weight="40"
-                android:orientation="vertical"
-                android:weightSum="100">
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="30"
-                    android:gravity="center"
-                    android:text="send reminder when I am..."
-                    android:textColor="@color/white" />
-
-                <LinearLayout
-                    android:id="@+id/there_layout_call"
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                    android:layout_weight="35"
-                    android:onClick="thereCheckerCall"
-                    android:orientation="horizontal">
-
-                    <CheckBox
-                        android:id="@+id/there_checkbox_call"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_vertical_margin"
-                        android:checked="true"
-                        android:onClick="thereCheckerCall" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="there"
-                        android:textColor="@color/white" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/distance_chooser_layout_call"
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="35"
-                    android:background="@color/translucent_black"
-                    android:clickable="false"
-                    android:onClick="distanceCheckedCall">
-
-                    <CheckBox
-                        android:id="@+id/distance_checkbox_call"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_vertical_margin"
-                        android:onClick="distanceCheckedCall" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="about..."
-                        android:textColor="@color/white" />
-
-                    <com.example.rachel.wygt.EditTextClear
-                        android:id="@+id/miles_away_call"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:clickable="false"
-                        android:hint="5" />
-
-                    <Spinner
-                        android:id="@+id/spinner_call_miles_minutes"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:clickable="false"
-                        android:entries="@array/miles_minutes"
-                        android:prompt="@string/choose_type" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="away"
-                        android:textColor="@color/white" />
-
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
-                android:layout_weight="45"
-                android:orientation="vertical"
-                android:weightSum="100">
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginLeft="@dimen/activity_vertical_margin"
-                    android:layout_weight="40"
-                    android:paddingTop="@dimen/abc_action_bar_icon_vertical_padding"
-                    android:text="contact"
-                    android:textColor="@color/white"
-                    android:textSize="8pt"
-                    android:textStyle="bold" />
-
-                <com.example.rachel.wygt.AutoWithSpaces
-                    android:id="@+id/auto_contacts"
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginLeft="@dimen/activity_vertical_margin"
-                    android:layout_marginRight="@dimen/activity_vertical_margin"
-                    android:layout_weight="60"
-                    android:gravity="top|start"
-                    android:hint="enter contact.."
-                    android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
-                    android:textColor="@color/white" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
-                android:layout_weight="15"
-                android:gravity="center_vertical">
-
-                <Button
-                    android:layout_width="fill_parent"
-                    android:layout_height="@dimen/abc_action_bar_default_height"
-                    android:layout_marginBottom="8dip"
-                    android:layout_marginLeft="80dip"
-                    android:layout_marginRight="80dip"
-                    android:background="@color/greenish"
-                    android:onClick="setCallReminder"
-                    android:text="Done"
-                    android:textColor="#ffffffff" />
-            </LinearLayout>
-
-
+                android:layout_height="@dimen/abc_action_bar_default_height"
+                android:layout_marginBottom="8dip"
+                android:layout_marginLeft="80dip"
+                android:layout_marginRight="80dip"
+                android:background="@color/greenish"
+                android:onClick="setSound"
+                android:text="done"
+                android:textColor="#ffffffff" />
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/reminder_layout"
+            android:id="@+id/do_something_button_call"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
-            android:layout_weight="74"
-            android:divider="@drawable/divider_horizontal"
-            android:orientation="vertical"
-            android:showDividers="beginning|middle"
+            android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+            android:layout_weight="15"
             android:visibility="gone"
-            android:weightSum="100">
+            android:gravity="center_vertical">
 
-            <LinearLayout
-                android:id="@+id/proximity_information_reminder"
+            <Button
                 android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
-                android:layout_weight="30"
-                android:orientation="vertical"
-                android:weightSum="100">
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="25"
-                    android:gravity="center"
-                    android:text="send notification when I am..."
-                    android:textColor="@color/white" />
-
-                <LinearLayout
-                    android:id="@+id/there_layout_reminder"
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="35"
-                    android:onClick="thereCheckerReminder"
-                    android:orientation="horizontal">
-
-                    <CheckBox
-                        android:id="@+id/there_checkbox_reminder"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_vertical_margin"
-                        android:checked="true"
-                        android:onClick="thereCheckerReminder" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="there"
-                        android:textColor="@color/white" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/distance_chooser_layout_reminder"
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="45"
-                    android:background="@color/translucent_black"
-                    android:clickable="false"
-                    android:onClick="distanceCheckedReminder">
-
-                    <CheckBox
-                        android:id="@+id/distance_checkbox_reminder"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_vertical_margin"
-                        android:onClick="distanceCheckedReminder" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="about..."
-                        android:textColor="@color/white" />
-
-                    <com.example.rachel.wygt.EditTextClear
-                        android:id="@+id/miles_away_reminder"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:clickable="false"
-                        android:text="5"
-                        android:textColor="@color/white" />
-
-                    <Spinner
-                        android:id="@+id/spinner_reminder_miles_minutes"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:clickable="false"
-                        android:entries="@array/miles_minutes"
-                        android:prompt="@string/choose_type" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="away"
-                        android:textColor="@color/white" />
-
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
-                android:layout_weight="55"
-                android:orientation="vertical"
-                android:weightSum="100">
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginLeft="@dimen/activity_vertical_margin"
-                    android:layout_weight="20"
-                    android:paddingTop="@dimen/abc_action_bar_icon_vertical_padding"
-                    android:text="reminder"
-                    android:textColor="@color/white"
-                    android:textSize="8pt"
-                    android:textStyle="bold" />
-
-
-                <com.example.rachel.wygt.EditTextClear
-                    android:id="@+id/reminder_edit_text"
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="80"
-                    android:gravity="top|start"
-                    android:hint="enter your reminder/ message here"
-                    android:inputType="textMultiLine|textCapSentences"
-                    android:lines="9"
-                    android:maxLines="30"
-                    android:minLines="1"
-                    android:scrollbars="vertical"
-                    android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
-                    android:textColor="@color/white" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
-                android:layout_weight="15"
-                android:gravity="center_vertical">
-
-                <Button
-                    android:layout_width="fill_parent"
-                    android:layout_height="@dimen/abc_action_bar_default_height"
-                    android:layout_marginBottom="8dip"
-                    android:layout_marginLeft="80dip"
-                    android:layout_marginRight="80dip"
-                    android:background="@color/greenish"
-                    android:onClick="setReminder"
-                    android:text="Done"
-                    android:textColor="#ffffffff" />
-            </LinearLayout>
-
-
+                android:layout_height="@dimen/abc_action_bar_default_height"
+                android:layout_marginBottom="8dip"
+                android:layout_marginLeft="80dip"
+                android:layout_marginRight="80dip"
+                android:background="@color/greenish"
+                android:onClick="setCallReminder"
+                android:text="done"
+                android:textColor="#ffffffff" />
         </LinearLayout>
 
-
         <LinearLayout
-            android:id="@+id/sound_layout"
+            android:id="@+id/do_something_button_reminder"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
-            android:layout_weight="74"
-            android:divider="@drawable/divider_horizontal"
-            android:orientation="vertical"
-            android:showDividers="beginning|middle"
             android:visibility="gone"
-            android:weightSum="100">
+            android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
+            android:layout_weight="15"
+            android:gravity="center_vertical">
 
-            <LinearLayout
-                android:id="@+id/proximity_information_sound"
+            <Button
                 android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_weight="22"
-                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
-                android:orientation="vertical"
-                android:weightSum="100">
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="25"
-                    android:gravity="center"
-                    android:paddingTop="3dip"
-                    android:text="change sound settings when I am..."
-                    android:textColor="@color/white"
-                    android:textSize="6pt" />
-
-                <LinearLayout
-                    android:id="@+id/there_layout_sound"
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="30"
-                    android:onClick="thereCheckerSound"
-                    android:orientation="horizontal">
-
-                    <CheckBox
-                        android:id="@+id/there_checkbox_sound"
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:checked="true"
-                        android:gravity="center_vertical"
-                        android:onClick="thereCheckerSound" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:gravity="center_vertical"
-                        android:text="there"
-                        android:textColor="@color/white" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/distance_chooser_layout_sound"
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="45"
-                    android:background="@color/translucent_black"
-                    android:clickable="false"
-                    android:gravity="center_vertical"
-                    android:onClick="distanceCheckedSound">
-
-                    <CheckBox
-                        android:id="@+id/distance_checkbox_sound"
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:gravity="center_vertical"
-                        android:onClick="distanceCheckedSound" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:gravity="center_vertical"
-                        android:text="about..."
-                        android:textColor="@color/white" />
-
-                    <com.example.rachel.wygt.EditTextClear
-                        android:id="@+id/miles_away_sound"
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:clickable="false"
-                        android:gravity="center_vertical"
-                        android:text="5"
-                        android:textColor="@color/white" />
-
-                    <Spinner
-                        android:id="@+id/spinner_sound_miles_minutes"
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:clickable="false"
-                        android:entries="@array/miles_minutes"
-                        android:gravity="center_vertical"
-                        android:prompt="@string/choose_type" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:gravity="center_vertical"
-                        android:text="away"
-                        android:textColor="@color/white" />
-
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/sound_settings"
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
-                android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
-                android:layout_weight="63"
-                android:orientation="vertical"
-                android:weightSum="100">
-
-                <LinearLayout
-                    android:id="@+id/ringer_adjust"
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="25"
-                    android:orientation="vertical"
-                    android:weightSum="100">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="35"
-                        android:gravity="center"
-                        android:padding="10px"
-                        android:text="adjust ringer volume"
-                        android:textColor="@color/white"
-                        android:textSize="6pt" />
-
-                    <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dp"
-                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:layout_weight="65"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:id="@+id/ringerIcon"
-                            android:layout_width="@dimen/abc_dropdownitem_icon_width"
-                            android:layout_height="@dimen/abc_dropdownitem_icon_width"
-                            android:paddingTop="2dip" />
-
-                        <SeekBar
-                            android:id="@+id/ringerSeek"
-                            android:layout_width="match_parent"
-                            android:layout_height="fill_parent" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/media_adjust"
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="25"
-                    android:orientation="vertical"
-                    android:weightSum="100">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="35"
-                        android:gravity="center"
-                        android:padding="10px"
-                        android:text="adjust media player volume"
-                        android:textColor="@color/white"
-                        android:textSize="6pt" />
-
-                    <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dp"
-                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:layout_weight="65"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:id="@+id/mediaIcon"
-                            android:layout_width="@dimen/abc_dropdownitem_icon_width"
-                            android:layout_height="@dimen/abc_dropdownitem_icon_width"
-                            android:paddingTop="2dip" />
-
-                        <SeekBar
-                            android:id="@+id/mediaSeek"
-                            android:layout_width="match_parent"
-                            android:layout_height="fill_parent" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/notification_adjust"
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="25"
-                    android:orientation="vertical"
-                    android:weightSum="100">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="35"
-                        android:gravity="center"
-                        android:padding="10px"
-                        android:text="adjust notification volume"
-                        android:textColor="@color/white"
-                        android:textSize="6pt" />
-
-                    <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dp"
-                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:layout_weight="65"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:id="@+id/notificationIcon"
-                            android:layout_width="@dimen/abc_dropdownitem_icon_width"
-                            android:layout_height="@dimen/abc_dropdownitem_icon_width"
-                            android:paddingTop="2dip" />
-
-                        <SeekBar
-                            android:id="@+id/notificationSeek"
-                            android:layout_width="match_parent"
-                            android:layout_height="fill_parent" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/alarm_adjust"
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="25"
-                    android:orientation="vertical"
-                    android:weightSum="100">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="35"
-                        android:gravity="center"
-                        android:padding="10px"
-                        android:text="adjust system volume"
-                        android:textColor="@color/white"
-                        android:textSize="6pt" />
-
-                    <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dp"
-                        android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
-                        android:layout_weight="60"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:id="@+id/systemIcon"
-                            android:layout_width="@dimen/abc_dropdownitem_icon_width"
-                            android:layout_height="@dimen/abc_dropdownitem_icon_width"
-                            android:paddingTop="2dip" />
-
-                        <SeekBar
-                            android:id="@+id/systemSeek"
-                            android:layout_width="match_parent"
-                            android:layout_height="fill_parent" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
-                android:layout_weight="15"
-                android:gravity="center_vertical">
-
-                <Button
-                    android:layout_width="fill_parent"
-                    android:layout_height="@dimen/abc_action_bar_default_height"
-                    android:layout_marginBottom="8dip"
-                    android:layout_marginLeft="80dip"
-                    android:layout_marginRight="80dip"
-                    android:background="@color/greenish"
-                    android:onClick="setSound"
-                    android:text="Done"
-                    android:textColor="#ffffffff" />
-            </LinearLayout>
-
+                android:layout_height="@dimen/abc_action_bar_default_height"
+                android:layout_marginBottom="8dip"
+                android:layout_marginLeft="80dip"
+                android:layout_marginRight="80dip"
+                android:background="@color/greenish"
+                android:onClick="setReminder"
+                android:text="done"
+                android:textColor="#ffffffff" />
         </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/task_drawer"
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_gravity="bottom"
-            android:layout_weight="11"
-            android:background="@color/lighter_purple"
-            android:gravity="bottom"
-            android:orientation="horizontal"
-            android:padding="@dimen/abc_action_bar_icon_vertical_padding">
-
-            <ImageView
-                android:padding="3dip"
-                android:id="@+id/set_text_icon"
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:adjustViewBounds="true"
-                android:background="@android:color/transparent"
-                android:onClick="textSelected"
-                android:scaleType="fitCenter"
-                android:src="@drawable/textglow" />
-
-            <ImageButton
-                android:id="@+id/set_phone_icon"
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:adjustViewBounds="true"
-                android:background="@android:color/transparent"
-                android:onClick="phoneSelected"
-                android:scaleType="fitCenter"
-                android:src="@drawable/phone" />
-
-            <ImageButton
-                android:id="@+id/set_reminder_icon"
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:adjustViewBounds="true"
-                android:background="@android:color/transparent"
-                android:onClick="reminderSelected"
-                android:scaleType="fitCenter"
-                android:src="@drawable/reminder" />
-
-            <ImageButton
-                android:id="@+id/set_sound_icon"
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:adjustViewBounds="true"
-                android:background="@android:color/transparent"
-                android:onClick="soundSelected"
-                android:scaleType="fitCenter"
-                android:src="@drawable/audio" />
-
-            <ImageButton
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:adjustViewBounds="true"
-                android:background="@android:color/transparent"
-                android:onClick="goToGoogleMaps"
-                android:scaleType="fitCenter"
-                android:src="@drawable/googlemaps" />
-
-        </LinearLayout>
-
 
     </LinearLayout>
 
 
-</RelativeLayout>
+</LinearLayout>
 
 
 
