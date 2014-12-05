@@ -116,7 +116,7 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
     private LatLng destinationLocation;
     private PreferenceChangeListener preferenceListener = new PreferenceChangeListener();
     private MyLocationDataSource locationDataSouce = MyApplication.getMyLocationDataSource();
-    private List<MyLocation> myLocations = locationDataSouce.getAllMyLocations();
+    private List<MyLocation> myLocations = new ArrayList<MyLocation>();
     private ArrayList<Map<String, String>> _myLocations;
     private ImageView star;
     MyLocation custLoc;
@@ -186,7 +186,9 @@ public class MyActivity extends FragmentActivity implements GooglePlayServicesCl
         progress.setMessage("Calculating...");
         progress.setIndeterminate(false);
         progress.setCancelable(true);
-
+        if(!locationDataSouce.getAllMyLocations().equals(null)) {
+            myLocations = locationDataSouce.getAllMyLocations();
+        }
         MyApplication.setGpsTracker(gpsTracker);
         star = (ImageView) findViewById(R.id.save_location_star);
         SharedPreferences sharedPreferences = PreferenceManager

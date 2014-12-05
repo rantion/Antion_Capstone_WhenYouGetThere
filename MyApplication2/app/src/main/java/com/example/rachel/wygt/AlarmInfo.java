@@ -16,8 +16,8 @@ public class AlarmInfo {
     // true == 1
 
     private int mon, tue, wed, thu, fri, sat, sun, alarmType;
-    private boolean _mon, _tue, _wed, _thu, _fri, _sat,_sun;
-    private long taskId, id;
+    private boolean _mon, _tue, _wed, _thu, _fri, _sat,_sun, hasAlarm;
+    private long taskId, id, last_time;
 
     public AlarmInfo(){
         _mon = false;
@@ -27,6 +27,7 @@ public class AlarmInfo {
         _fri = false;
         _sat = false;
         _sun = false;
+       hasAlarm = false;
     }
 
     public int getMon() {
@@ -46,6 +47,36 @@ public class AlarmInfo {
         }
     }
 
+    public boolean isHasAlarm() {
+        hasAlarm = false;
+        if(_mon == true){
+            hasAlarm = true;
+        }
+        if(_tue == true){
+            hasAlarm = true;
+        }
+        if(_wed == true){
+            hasAlarm = true;
+        }
+        if(_thu == true){
+            hasAlarm = true;
+        }
+        if(_fri == true){
+            hasAlarm = true;
+        }
+        if(_sat == true){
+            hasAlarm = true;
+        }
+        if(_sun == true){
+            hasAlarm = true;
+        }
+        return hasAlarm;
+    }
+
+    public void setHasAlarm(boolean hasAlarm) {
+        this.hasAlarm = hasAlarm;
+    }
+
     public long getTaskId() {
         return taskId;
     }
@@ -56,6 +87,14 @@ public class AlarmInfo {
 
     public int getTue() {
         return tue;
+    }
+
+    public long getLast_time() {
+        return last_time;
+    }
+
+    public void setLast_time(long last_time) {
+        this.last_time = last_time;
     }
 
     public void setTue(int tue) {

@@ -21,6 +21,7 @@ public class MyApplication extends Application {
     protected static TaskDataSource taskDataSource;
     protected static TaskSoundDataSource taskSoundDataSource;
     protected static MyLocationDataSource myLocationDataSource;
+    protected static AlarmInfoDataSource alarmInfoDataSource;
     private static Context context;
     private static Context activityContext;
     private static ArrayList<Map<String, String>> mPeopleList;
@@ -39,6 +40,8 @@ public class MyApplication extends Application {
             taskSoundDataSource.open();
             myLocationDataSource = new MyLocationDataSource(context);
             myLocationDataSource.open();
+            alarmInfoDataSource = new AlarmInfoDataSource(context);
+            alarmInfoDataSource.open();
         }
         catch(Exception e) {
             e.printStackTrace();
@@ -90,6 +93,14 @@ public class MyApplication extends Application {
 
     public static void setTaskSoundDataSource(TaskSoundDataSource taskSoundDataSource) {
         MyApplication.taskSoundDataSource = taskSoundDataSource;
+    }
+
+    public static AlarmInfoDataSource getAlarmInfoDataSource() {
+        return alarmInfoDataSource;
+    }
+
+    public static void setAlarmInfoDataSource(AlarmInfoDataSource alarmInfoDataSource) {
+        MyApplication.alarmInfoDataSource = alarmInfoDataSource;
     }
 
     public static TaskDataSource getTaskDataSource() {

@@ -16,9 +16,12 @@ public class Task {
     public static final int REMINDER_MESSAGE_TASK_TYPE = 2;
     public static final int CALL_REMINDER_TASK_TYPE = 3;
     public static final int SOUND_SETTING_TASK_TYPE= 4;
+
+    public static final int ACTIVE_ONCE = 1;
+    public static final int ACTIVE_WEEKLY_ON = 2;
+    public static final int ACTIVE_WEEKLY_OFF = 3;
     public int originalRadius;
     public int isActive;
-    public boolean active;
 
     public int getOriginalRadius() {
         return originalRadius;
@@ -116,11 +119,4 @@ public class Task {
         this.isActive = isActive;
     }
 
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
 }

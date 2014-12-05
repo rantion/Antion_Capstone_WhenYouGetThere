@@ -55,7 +55,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
 
     private static final String TASK_DB = "task.db";
-    private static final int DATABASE_VERSION = 14;
+    private static final int DATABASE_VERSION = 20;
 
     // Database creation sql statement
     private static final String CREATE_TASK_DB = "create table "
@@ -87,7 +87,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private static final String CREATE_ALARM_INFO ="create table " +TABLE_ALARM_INFO+"("+ COLUMN_ID
             + " integer primary key autoincrement, " +COLUMN_ALARM_TYPE+" integer, " + COLUMN_MONDAY+" integer, "+
             COLUMN_TUESDAY+ " integer, "+COLUMN_WEDNESDAY+" integer, "+COLUMN_THURSDAY + " integer, "+ COLUMN_FRIDAY+
-            "integer, "+ COLUMN_SATURDAY+ " integer, "+COLUMN_SUNDAY+" integer,  "
+            " integer, "+ COLUMN_SATURDAY+ " integer, "+COLUMN_SUNDAY+" integer,  "+COLUMN_TIME+" numeric, "+ COLUMN_TASK_ID + " integer,"
             + " FOREIGN KEY ("+COLUMN_TASK_ID+") REFERENCES "+COLUMN_ID+" ("+TABLE_TASK+"));";
 
     public MySQLiteHelper(Context context) {
@@ -115,6 +115,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TASK_LIST_ITEM);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TASK_SOUND);
         db.execSQL("DROP TABLE IF EXISTS "+ TABLE_MY_LOCATIONS);
+        db.execSQL("DROP TABLE IF EXISTS "+ TABLE_ALARM_INFO);
         onCreate(db);
     }
 

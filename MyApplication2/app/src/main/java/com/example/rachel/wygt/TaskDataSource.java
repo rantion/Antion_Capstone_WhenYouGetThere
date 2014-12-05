@@ -23,6 +23,7 @@ public class TaskDataSource {
             MySQLiteHelper.COLUMN_REMINDER , MySQLiteHelper.COLUMN_LATITUDE, MySQLiteHelper.COLUMN_LONGITUDE,
             MySQLiteHelper.COLUMN_ADDRESS, MySQLiteHelper.COLUMN_RADIUS,MySQLiteHelper.COLUMN_RADIUS_TYPE,
             MySQLiteHelper.COLUMN_TIME,MySQLiteHelper.COLUMN_ORIGINAL_RADIUS_VALUE, MySQLiteHelper.COLUMN_TASK_TYPE,
+            MySQLiteHelper.COLUMN_IS_ACTIVE
 
     };
 
@@ -49,6 +50,7 @@ public class TaskDataSource {
         values.put(MySQLiteHelper.COLUMN_ADDRESS,address);
         values.put(MySQLiteHelper.COLUMN_RADIUS_TYPE, radius_type);
         values.put(MySQLiteHelper.COLUMN_ORIGINAL_RADIUS_VALUE, original);
+        values.put(MySQLiteHelper.COLUMN_IS_ACTIVE, active);
         long insertId = database.insert(MySQLiteHelper.TABLE_TASK, null,
                 values);
         Cursor cursor = database.query(MySQLiteHelper.TABLE_TASK,
@@ -96,6 +98,7 @@ public class TaskDataSource {
         values.put(MySQLiteHelper.COLUMN_ADDRESS,task.getAddress());
         values.put(MySQLiteHelper.COLUMN_RADIUS_TYPE, task.getRadius_type());
         values.put(MySQLiteHelper.COLUMN_ORIGINAL_RADIUS_VALUE, task.getOriginalRadius());
+        values.put(MySQLiteHelper.COLUMN_IS_ACTIVE, task.getIsActive());
         database.update(MySQLiteHelper.TABLE_TASK, values, MySQLiteHelper.COLUMN_ID+"="+task.getId(), null);
 
     }
@@ -198,6 +201,7 @@ public class TaskDataSource {
         task.setAddress(cursor.getString(4));
         task.setRadius_type(cursor.getString(6));
         task.setOriginalRadius(cursor.getInt(8));
+        task.setIsActive(cursor.getInt(10));
         return task;
     }
 }

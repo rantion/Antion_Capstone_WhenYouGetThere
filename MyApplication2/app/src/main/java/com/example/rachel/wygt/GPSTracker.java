@@ -26,6 +26,8 @@ import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -50,6 +52,7 @@ public class GPSTracker extends Service implements LocationListener {
     double latitude;
     double longitude;
     private AudioManager audioManager = (AudioManager) MyApplication.getAppContext().getSystemService(Context.AUDIO_SERVICE);
+    private AlarmInfoDataSource alarmInfoDataSource = MyApplication.getAlarmInfoDataSource();
 
 
     public GPSTracker() {
@@ -163,21 +166,21 @@ public class GPSTracker extends Service implements LocationListener {
 ////                Activity activity = (Activity) MyApplication.getActivityContext();
 ////                dialog.show(activity.getFragmentManager(), null);
             } else {
-                Log.d("MARKER+GPS","canGetLocation");
+                Log.d("MARKER+GPS", "canGetLocation");
                 this.canGetLocation = true;
                 if (isNetworkEnabled) {
                     locationManager.requestLocationUpdates(
                             LocationManager.NETWORK_PROVIDER,
                             MIN_TIME_BW_UPDATES,
                             MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-                            Log.d("Marker+ GPS Tracker", "Network");
+                    Log.d("Marker+ GPS Tracker", "Network");
                     if (locationManager != null) {
                         location = locationManager
                                 .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                         if (location != null) {
                             latitude = location.getLatitude();
                             longitude = location.getLongitude();
-                            Log.d("MARKER+GPS","gotNetworkLocation");
+                            Log.d("MARKER+GPS", "gotNetworkLocation");
                         }
                     }
                 }
@@ -187,14 +190,14 @@ public class GPSTracker extends Service implements LocationListener {
                                 LocationManager.GPS_PROVIDER,
                                 MIN_TIME_BW_UPDATES,
                                 MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-                         Log.d(LOGTAG, "GPS Enabled");
+                        Log.d(LOGTAG, "GPS Enabled");
                         if (locationManager != null) {
                             location = locationManager
                                     .getLastKnownLocation(LocationManager.GPS_PROVIDER);
                             if (location != null) {
                                 latitude = location.getLatitude();
                                 longitude = location.getLongitude();
-                                Log.d("MARKER+GPS","gotGPSLocation");
+                                Log.d("MARKER+GPS", "gotGPSLocation");
                             }
                         }
                     }
@@ -204,12 +207,12 @@ public class GPSTracker extends Service implements LocationListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        boolean isNull = location==null;
-        if(isNull){
-           location = getLastKnownLocation();
+        boolean isNull = location == null;
+        if (isNull) {
+            location = getLastKnownLocation();
         }
-        if(location == null){
-            Log.d("MArker_GPS","location still null");
+        if (location == null) {
+            Log.d("MArker_GPS", "location still null");
         }
 
         return location;
@@ -258,7 +261,7 @@ public class GPSTracker extends Service implements LocationListener {
         float accuracy = location.getAccuracy();
         long time = location.getTime();
 
-        if(location != null){
+        if (location != null) {
             this.location = location;
             checkTextReminders();
             checkMessageReminders();
@@ -283,7 +286,7 @@ public class GPSTracker extends Service implements LocationListener {
         if (alarmUp = false) {
             startAlarmManager();
         } else {
-     //       Log.d(LOGTAG, "Alarm is running");
+            //       Log.d(LOGTAG, "Alarm is running");
         }
     }
 
@@ -305,38 +308,89 @@ public class GPSTracker extends Service implements LocationListener {
     }
 
     private void checkSoundSettings() {
-   //     Log.d(LOGTAG,"checking sound settings");
+        //     Log.d(LOGTAG,"checking sound settings");
         List<Task> _tasks = taskDataSource.getSoundTasks();
-  //      Log.d(LOGTAG+"/Sound",_tasks.size() +" tasks");
+        //      Log.d(LOGTAG+"/Sound",_tasks.size() +" tasks");
         for (Task task : _tasks) {
             float[] results = new float[4];
             long radius = task.getRadius();
             Location.distanceBetween(task.getLatitude(), task.getLongitude(), location.getLatitude(), location.getLongitude(), results);
-            if (results[0] < (float) radius) {
+            if (task.getIsActive() == Task.ACTIVE_WEEKLY_OFF) {
+                List<AlarmInfo> alarms = alarmInfoDataSource.getAlarmInfoByTaskId(task.getId());
+                AlarmInfo alarm = alarms.get(0);
+                boolean forToday = isAlarmForToday(alarm);
+                if (forToday && System.currentTimeMillis() > alarm.getLast_time() + 72000000) { //20 hours in milliseconds
+                    task.setIsActive(Task.ACTIVE_WEEKLY_ON);
+                }
+            }
+            if (results[0] < (float) radius && task.getIsActive()!=Task.ACTIVE_WEEKLY_OFF) {
                 long taskId = task.getId();
                 List<SoundSettings> sounds = taskSoundDataSource.getTaskSoundsByTaskId(taskId);
                 for (SoundSettings sound : sounds) {
-                    taskSoundDataSource.deleteTaskSound(sound);
+                    if (task.getIsActive() == Task.ACTIVE_ONCE) {
+                        taskSoundDataSource.deleteTaskSound(sound);
+                    }
                     audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, sound.getAlarm(), 0);
                     audioManager.setStreamVolume(AudioManager.STREAM_RING, sound.getRinger(), 0);
                     audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, sound.getMedia(), 0);
                     audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, sound.getNotification(), 0);
                 }
-                taskDataSource.deleteTask(task);
+                if (task.getIsActive() == Task.ACTIVE_ONCE) {
+                    taskDataSource.deleteTask(task);
+                } else {
+                    task.setIsActive(Task.ACTIVE_WEEKLY_OFF);
+                    taskDataSource.updateTask(task);
+                    List<AlarmInfo> infos = alarmInfoDataSource.getAlarmInfoByTaskId(task.getId());
+                    AlarmInfo info = infos.get(0);
+                    info.setLast_time(System.currentTimeMillis());
+                    alarmInfoDataSource.updateAlarmInfo(info);
+                }
             }
-    //        Log.d(LOGTAG+"/Sound","task out of radius " + task.getLatitude() + "," + task.getLongitude() + "Radius: " + task.getRadius() + " distance: " + results[0]);
+            //        Log.d(LOGTAG+"/Sound","task out of radius " + task.getLatitude() + "," + task.getLongitude() + "Radius: " + task.getRadius() + " distance: " + results[0]);
         }
     }
 
+    private boolean isAlarmForToday(AlarmInfo info){
+        boolean forToday = false;
+        int day = getDay();
+        if (day == 2 && info.is_mon()) {
+            forToday = true;
+        } else if (day == 3 && info.is_tue()) {
+           forToday = true;
+        } else if (day == 4 && info.is_wed()) {
+           forToday = true;
+        } else if (day == 5 && info.is_thu()) {
+            forToday = true;
+        } else if (day == 6 && info.is_fri()) {
+            forToday = true;
+        } else if (day == 7 && info.is_sat()) {
+           forToday = true;
+        } else if (day == 1 && info.is_sun()) {
+            forToday = true;
+        }
+        return forToday;
+    }
+
+
     private void checkCallReminders() {
-  //      Log.d(LOGTAG,"checking call reminders");
+        //      Log.d(LOGTAG,"checking call reminders");
         List<Task> _tasks = taskDataSource.getCallReminderTasks();
-  //      Log.d(LOGTAG+"/Call",_tasks.size() +" tasks");
+        //      Log.d(LOGTAG+"/Call",_tasks.size() +" tasks");
         for (Task task : _tasks) {
             float[] results = new float[4];
             long radius = task.getRadius();
             Location.distanceBetween(task.getLatitude(), task.getLongitude(), location.getLatitude(), location.getLongitude(), results);
-            if (results[0] < (float) radius) {
+            if (task.getIsActive() == Task.ACTIVE_WEEKLY_OFF) {
+                List<AlarmInfo> alarms = alarmInfoDataSource.getAlarmInfoByTaskId(task.getId());
+                AlarmInfo alarm = alarms.get(0);
+                boolean forToday = isAlarmForToday(alarm);
+                long twentySence = alarm.getLast_time() +72000000;
+                long current = System.currentTimeMillis();
+                if (forToday && (current>twentySence)) { //20 hours in milliseconds
+                    task.setIsActive(Task.ACTIVE_WEEKLY_ON);
+                }
+            }
+            if (results[0] < (float) radius && task.getIsActive()!= Task.ACTIVE_WEEKLY_OFF) {
                 long taskId = task.getId();
                 List<TaskContact> taskContacts = taskContactDataSource.getTaskContactsByTaskId(taskId);
                 for (TaskContact con : taskContacts) {
@@ -344,11 +398,22 @@ public class GPSTracker extends Service implements LocationListener {
                     Notification notification = createCallReminder(con.getName(), con.getPhoneNumber());
                     NotificationManager mNotificationManager = (NotificationManager) MyApplication.getAppContext().getSystemService(NOTIFICATION_SERVICE);
                     mNotificationManager.notify(1001, notification);
+                    if(task.getIsActive() == Task.ACTIVE_ONCE){
+                        taskContactDataSource.deleteTaskContact(con);
+                    }
+                }
+                if (task.getIsActive() == Task.ACTIVE_ONCE) {
                     taskDataSource.deleteTask(task);
-                    taskContactDataSource.deleteTaskContact(con);
+                } else {
+                    task.setIsActive(Task.ACTIVE_WEEKLY_OFF);
+                    taskDataSource.updateTask(task);
+                    List<AlarmInfo> infos = alarmInfoDataSource.getAlarmInfoByTaskId(task.getId());
+                    AlarmInfo info = infos.get(0);
+                    info.setLast_time(System.currentTimeMillis());
+                    alarmInfoDataSource.updateAlarmInfo(info);
                 }
             }
-  //          Log.d(LOGTAG+"/Call","task out of radius " + task.getLatitude() + "," + task.getLongitude() + "Radius: " + task.getRadius() + " distance: " + results[0]);
+            //          Log.d(LOGTAG+"/Call","task out of radius " + task.getLatitude() + "," + task.getLongitude() + "Radius: " + task.getRadius() + " distance: " + results[0]);
         }
     }
 
@@ -370,31 +435,51 @@ public class GPSTracker extends Service implements LocationListener {
         Intent intent = new Intent("com.example.wygt.call");
         intent.putExtra("URI", Uri.parse(uri));
         intent.putExtra("ID", 1001);
-      //  Intent intent = new Intent(Intent.ACTION_CALL);
-     //   intent.setData(Uri.parse(uri));
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(MyApplication.getAppContext(), (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        //  Intent intent = new Intent(Intent.ACTION_CALL);
+        //   intent.setData(Uri.parse(uri));
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(MyApplication.getAppContext(), (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         contentView.setOnClickPendingIntent(R.id.call_reminder_call_button, pendingIntent);
         return notification;
     }
 
     private void checkTextReminders() {
-   //     Log.d(LOGTAG + "/SMS", "checking Text Reminders");
+        //     Log.d(LOGTAG + "/SMS", "checking Text Reminders");
         List<Task> tasks = taskDataSource.getTextTasks();
-   //     Log.d(LOGTAG + "/SMS", tasks.size() + " tasks");
+        //     Log.d(LOGTAG + "/SMS", tasks.size() + " tasks");
         for (Task task : tasks) {
             float[] results = new float[4];
             long radius = task.getRadius();
             Location.distanceBetween(task.getLatitude(), task.getLongitude(), location.getLatitude(), location.getLongitude(), results);
-            if (results[0] < (float) radius) {
+            if (task.getIsActive() == Task.ACTIVE_WEEKLY_OFF) {
+                List<AlarmInfo> alarms = alarmInfoDataSource.getAlarmInfoByTaskId(task.getId());
+                AlarmInfo alarm = alarms.get(0);
+                boolean forToday = isAlarmForToday(alarm);
+                if (forToday && System.currentTimeMillis() > alarm.getLast_time() + 72000000) { //20 hours in milliseconds
+                    task.setIsActive(Task.ACTIVE_WEEKLY_ON);
+                }
+            }
+            if (results[0] < (float) radius && task.getIsActive() != Task.ACTIVE_WEEKLY_OFF) {
                 long taskId = task.getId();
                 List<TaskContact> taskContacts = taskContactDataSource.getTaskContactsByTaskId(taskId);
                 for (TaskContact con : taskContacts) {
                     sendSMS(con.getPhoneNumber(), task.getReminder());
-                    taskContactDataSource.deleteTaskContact(con);
+                   if (task.getIsActive() == Task.ACTIVE_ONCE) {
+                        taskContactDataSource.deleteTaskContact(con);
+                   }
                 }
-                taskDataSource.deleteTask(task);
+                if (task.getIsActive() == Task.ACTIVE_ONCE) {
+                    taskDataSource.deleteTask(task);
+                } else {
+                    task.setIsActive(Task.ACTIVE_WEEKLY_OFF);
+                    taskDataSource.updateTask(task);
+                    List<AlarmInfo> infos = alarmInfoDataSource.getAlarmInfoByTaskId(task.getId());
+                    AlarmInfo info = infos.get(0);
+                    info.setLast_time(System.currentTimeMillis());
+                    alarmInfoDataSource.updateAlarmInfo(info);
+                }
+
             } else {
-  //              Log.d("GPS TRACKER", "task out of radius " + task.getLatitude() + "," + task.getLongitude() + "Radius: " + task.getRadius() + " distance: " + results[0]);
+                //              Log.d("GPS TRACKER", "task out of radius " + task.getLatitude() + "," + task.getLongitude() + "Radius: " + task.getRadius() + " distance: " + results[0]);
             }
         }
     }
@@ -420,14 +505,22 @@ public class GPSTracker extends Service implements LocationListener {
     }
 
     private void checkMessageReminders() {
-   //     Log.d(LOGTAG,"Checking message reminders");
+        //     Log.d(LOGTAG,"Checking message reminders");
         List<Task> values = taskDataSource.getReminderMessageTasks();
-   //     Log.d(LOGTAG+"/Message",values.size()+ " tasks" );
+        //     Log.d(LOGTAG+"/Message",values.size()+ " tasks" );
         for (Task task : values) {
             float[] results = new float[4];
             long radius = task.getRadius();
             Location.distanceBetween(task.getLatitude(), task.getLongitude(), location.getLatitude(), location.getLongitude(), results);
-            if (results[0] < (float) radius) {
+            if (task.getIsActive() == Task.ACTIVE_WEEKLY_OFF) {
+                List<AlarmInfo> alarms = alarmInfoDataSource.getAlarmInfoByTaskId(task.getId());
+                AlarmInfo alarm = alarms.get(0);
+                boolean forToday = isAlarmForToday(alarm);
+                if (forToday && System.currentTimeMillis() > alarm.getLast_time() + 72000000) { //20 hours in milliseconds
+                    task.setIsActive(Task.ACTIVE_WEEKLY_ON);
+                }
+            }
+            if (results[0] < (float) radius && task.getIsActive() != Task.ACTIVE_WEEKLY_OFF) {
                 int requestID = (int) System.currentTimeMillis();
                 Intent intent = new Intent(MyApplication.getAppContext(), ReminderActivity.class);
                 intent.putExtra("Reminder", task.getReminder());
@@ -440,10 +533,20 @@ public class GPSTracker extends Service implements LocationListener {
                 notification.setLatestEventInfo(context,
                         "wygt reminder", null, pendingIntent);
                 mNotificationManager.notify(REMINDER_NOTIFICATION_ID, notification);
-                taskDataSource.deleteTask(task);
-    //            Log.d("reminder", "you should see that shit");
+                if (task.getIsActive() == Task.ACTIVE_ONCE) {
+                    taskDataSource.deleteTask(task);
+                } else {
+                    task.setIsActive(Task.ACTIVE_WEEKLY_OFF);
+                    taskDataSource.updateTask(task);
+                    List<AlarmInfo> infos = alarmInfoDataSource.getAlarmInfoByTaskId(task.getId());
+                    AlarmInfo info = infos.get(0);
+                    info.setLast_time(System.currentTimeMillis());
+                    alarmInfoDataSource.updateAlarmInfo(info);
+                }
+
+                //            Log.d("reminder", "you should see that shit");
             }
-   //         Log.d(LOGTAG+"/Message","task out of radius " + task.getLatitude() + "," + task.getLongitude() + "Radius: " + task.getRadius() + " distance: " + results[0]);
+            //         Log.d(LOGTAG+"/Message","task out of radius " + task.getLatitude() + "," + task.getLongitude() + "Radius: " + task.getRadius() + " distance: " + results[0]);
         }
     }
 
@@ -481,6 +584,13 @@ public class GPSTracker extends Service implements LocationListener {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    public int getDay() {
+        Date d = new Date();
+        Calendar calendar = Calendar.getInstance();
+        int day = calendar.get(Calendar.DAY_OF_WEEK);
+        return day;
     }
 
 

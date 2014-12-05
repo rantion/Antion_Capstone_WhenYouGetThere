@@ -41,6 +41,8 @@ import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -57,6 +59,7 @@ public class DoSomethingActivity extends Activity implements View.OnKeyListener 
     private TaskSoundDataSource taskSoundDataSource = MyApplication.getTaskSoundDataSource();
     private TaskDataSource taskDataSource = MyApplication.getTaskDataSource();
     private TaskContactDataSource taskContactDataSource = MyApplication.getTaskContactDataSource();
+    private AlarmInfoDataSource alarmInfoDataSource = MyApplication.getAlarmInfoDataSource();
     private SeekBar mediaVlmSeekBar = null;
     private SeekBar ringerVlmSeekBar = null;
     private SeekBar alarmVlmSeekBar = null;
@@ -581,7 +584,20 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
         int ring = ringerVlmSeekBar.getProgress();
         int system = alarmVlmSeekBar.getProgress();
         int nofity = notifyVlmSeekBar.getProgress();
-        Task task = taskDataSource.createTask(destinationLocation, "", metersAway, Task.SOUND_SETTING_TASK_TYPE, destination, radiusType, original, 1);
+        int active = 1;
+        if(soundAlarm.isHasAlarm()){
+            if(isAlarmForToday(soundAlarm)) {
+                active = 2;
+                Log.d("DOSOMETHING", "isActive");
+            }
+            else{
+                active = 3;
+            }
+        }
+        Task task = taskDataSource.createTask(destinationLocation, "", metersAway, Task.SOUND_SETTING_TASK_TYPE,
+                destination, radiusType, original, active);
+        soundAlarm.setTaskId(task.getId());
+        alarmInfoDataSource.createAlarmInfo(soundAlarm);
         taskSoundDataSource.createSoundSettings(media, ring, nofity, system, task.getId());
         Toast.makeText(getApplicationContext(),
                 "Sound Setting Created!", Toast.LENGTH_SHORT)
@@ -590,6 +606,7 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
         distanceCheckbox.setChecked(false);
         _miles.setText("5");
         milesMinutes.setSelection(0);
+        setSoundButtonsToEmpty();
         initControls();
     }
 
@@ -625,7 +642,20 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
         if (_reminder != null) {
             reminder = _reminder.getText().toString();
         }
-        Task task = taskDataSource.createTask(destinationLocation, reminder, metersAway, Task.TEXT_MESSAGE_TASK_TYPE, destination, radiusType, original, 1);
+        int active = 1;
+        if(textAlarm.isHasAlarm()){
+            if(isAlarmForToday(textAlarm)) {
+                active = 2;
+                Log.d("DOSOMETHING", "isActive");
+            }
+            else{
+                active = 3;
+            }
+        }
+        Task task = taskDataSource.createTask(destinationLocation, reminder, metersAway, Task.TEXT_MESSAGE_TASK_TYPE,
+                destination, radiusType, original, active);
+        textAlarm.setTaskId(task.getId());
+        alarmInfoDataSource.createAlarmInfo(textAlarm);
         Log.d("DOSOMETHINGActivity", "Saved Destination");
         String contacts = _contacts.getText().toString();
         String[] num1 = contacts.split("<");
@@ -653,7 +683,37 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
         milesMinutes.setSelection(0);
         there.setChecked(true);
         _miles.setText("5");
+        setTextButtonsToEmpty();
     }
+
+    private boolean isAlarmForToday(AlarmInfo info){
+        boolean forToday = false;
+        int day = getDay();
+        if (day == 2 && info.is_mon()) {
+            forToday = true;
+        } else if (day == 3 && info.is_tue()) {
+            forToday = true;
+        } else if (day == 4 && info.is_wed()) {
+            forToday = true;
+        } else if (day == 5 && info.is_thu()) {
+            forToday = true;
+        } else if (day == 6 && info.is_fri()) {
+            forToday = true;
+        } else if (day == 7 && info.is_sat()) {
+            forToday = true;
+        } else if (day == 1 && info.is_sun()) {
+            forToday = true;
+        }
+        return forToday;
+    }
+
+    public int getDay() {
+        Date d = new Date();
+        Calendar calendar = Calendar.getInstance();
+        int day = calendar.get(Calendar.DAY_OF_WEEK);
+        return day;
+    }
+
 
     public long getMinutesAwayRadius(int minutes) {
         String distanceAway = distanceMeters;
@@ -694,8 +754,25 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
         }
 
         AutoCompleteTextView _contacts = (AutoCompleteTextView) findViewById(R.id.auto_contacts);
-        Task task = taskDataSource.createTask(destinationLocation, "", metersAway, Task.CALL_REMINDER_TASK_TYPE, destination, radiusType, original, 1);
+        int active = 1;
+        if(callAlarm.isHasAlarm()){
+            if(isAlarmForToday(callAlarm)) {
+                active = 2;
+                Log.d("DOSOMETHING", "isActive");
+            }
+            else{
+                active = 3;
+            }
+        }
+        Task task = taskDataSource.createTask(destinationLocation, "", metersAway, Task.CALL_REMINDER_TASK_TYPE, destination,
+                radiusType, original, active);
+        callAlarm.setTaskId(task.getId());
+        alarmInfoDataSource.createAlarmInfo(callAlarm);
         String contacts = _contacts.getText().toString();
+        if(contacts.length()<1){
+            Toast.makeText(this, "Please Enter a Contact", Toast.LENGTH_SHORT).show();
+            return;
+        }
         String[] num1 = contacts.split("<");
         for (int i = 1; i < num1.length; i++) {
             String[] num2 = num1[i].split(">");
@@ -719,7 +796,84 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
         _miles.setText("5");
         _contacts.setText("");
         milesMin.setSelection(0);
+        setCallButtonsToEmpty();
 
+
+    }
+
+    private void setCallButtonsToEmpty(){
+        callAlarm = new AlarmInfo();
+        Button monday = (Button)findViewById(R.id.monday_call);
+        Button tuesday = (Button)findViewById(R.id.tuesday_call);
+        Button wednesday = (Button)findViewById(R.id.wednesday_call);
+        Button thursday = (Button)findViewById(R.id.thursday_call);
+        Button friday = (Button)findViewById(R.id.friday_call);
+        Button saturday = (Button)findViewById(R.id.saturday_call);
+        Button sunday = (Button)findViewById(R.id.sunday_call);
+        monday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+        tuesday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+        wednesday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+        thursday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+        friday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+        saturday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+        sunday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+
+    }
+
+    private void setTextButtonsToEmpty(){
+        textAlarm = new AlarmInfo();
+        Button monday = (Button)findViewById(R.id.monday_text);
+        Button tuesday = (Button)findViewById(R.id.tuesday_text);
+        Button wednesday = (Button)findViewById(R.id.wednesday_text);
+        Button thursday = (Button)findViewById(R.id.thursday_text);
+        Button friday = (Button)findViewById(R.id.friday_text);
+        Button saturday = (Button)findViewById(R.id.saturday_text);
+        Button sunday = (Button)findViewById(R.id.sunday_text);
+        monday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+        tuesday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+        wednesday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+        thursday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+        friday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+        saturday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+        sunday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+
+    }
+
+    private void setReminderButtonsToEmpty(){
+        remindAlarm = new AlarmInfo();
+        Button monday = (Button)findViewById(R.id.monday_reminder);
+        Button tuesday = (Button)findViewById(R.id.tuesday_reminder);
+        Button wednesday = (Button)findViewById(R.id.wednesday_reminder);
+        Button thursday = (Button)findViewById(R.id.thursday_reminder);
+        Button friday = (Button)findViewById(R.id.friday_reminder);
+        Button saturday = (Button)findViewById(R.id.saturday_reminder);
+        Button sunday = (Button)findViewById(R.id.sunday_reminder);
+        monday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+        tuesday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+        wednesday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+        thursday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+        friday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+        saturday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+        sunday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+
+    }
+
+    private void setSoundButtonsToEmpty(){
+        soundAlarm = new AlarmInfo();
+        Button monday = (Button)findViewById(R.id.monday_sound);
+        Button tuesday = (Button)findViewById(R.id.tuesday_sound);
+        Button wednesday = (Button)findViewById(R.id.wednesday_sound);
+        Button thursday = (Button)findViewById(R.id.thursday_sound);
+        Button friday = (Button)findViewById(R.id.friday_sound);
+        Button saturday = (Button)findViewById(R.id.saturday_sound);
+        Button sunday = (Button)findViewById(R.id.sunday_sound);
+        monday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+        tuesday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+        wednesday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+        thursday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+        friday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+        saturday.setBackground(getResources().getDrawable(R.drawable.button_outline));
+        sunday.setBackground(getResources().getDrawable(R.drawable.button_outline));
 
     }
 
@@ -942,7 +1096,21 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
         Toast.makeText(getApplicationContext(),
                 "Reminder Created!", Toast.LENGTH_SHORT)
                 .show();
-        taskDataSource.createTask(destinationLocation, reminder, metersAway, Task.REMINDER_MESSAGE_TASK_TYPE, destination, radiusType, original,1);
+        int active = 1;
+        if(remindAlarm.isHasAlarm()){
+            if(isAlarmForToday(remindAlarm)) {
+                active = 2;
+                Log.d("DOSOMETHING", "isActive");
+            }
+            else{
+                active = 3;
+            }
+        }
+
+
+        Task task = taskDataSource.createTask(destinationLocation, reminder, metersAway, Task.REMINDER_MESSAGE_TASK_TYPE, destination, radiusType, original,active);
+        remindAlarm.setTaskId(task.getId());
+        alarmInfoDataSource.createAlarmInfo(remindAlarm);
         Log.d("CreateTaskActivity", "Saved Destination");
       //  distance.setText("5");
         there.setChecked(true);
@@ -950,6 +1118,7 @@ private Drawable soundI, soundGlow, textI, textGlow, reminderI, reminderGlow, ph
         _reminder.setText("");
         _miles.setText("5");
         milesMin.setSelection(0);
+        setReminderButtonsToEmpty();
 
     }
 

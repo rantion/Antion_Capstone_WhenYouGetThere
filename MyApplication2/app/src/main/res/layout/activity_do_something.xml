@@ -5,77 +5,8 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:weightSum="100"
-    android:divider="@drawable/divider_horizontal_white"
-    android:showDividers="middle"
     android:background="@color/dark_purple">
-    <LinearLayout
-        android:id="@+id/task_drawer"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_gravity="bottom"
-        android:layout_weight="11"
-        android:gravity="bottom"
-        android:orientation="horizontal"
-        android:padding="@dimen/abc_action_bar_icon_vertical_padding">
 
-        <ImageView
-            android:padding="3dip"
-            android:id="@+id/set_text_icon"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:adjustViewBounds="true"
-            android:background="@android:color/transparent"
-            android:onClick="textSelected"
-            android:scaleType="fitCenter"
-            android:src="@drawable/textglow" />
-
-        <ImageButton
-            android:id="@+id/set_phone_icon"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:adjustViewBounds="true"
-            android:background="@android:color/transparent"
-            android:onClick="phoneSelected"
-            android:scaleType="fitCenter"
-            android:src="@drawable/phone" />
-
-        <ImageButton
-            android:id="@+id/set_reminder_icon"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:adjustViewBounds="true"
-            android:background="@android:color/transparent"
-            android:onClick="reminderSelected"
-            android:scaleType="fitCenter"
-            android:src="@drawable/reminder" />
-
-        <ImageButton
-            android:id="@+id/set_sound_icon"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:adjustViewBounds="true"
-            android:background="@android:color/transparent"
-            android:onClick="soundSelected"
-            android:scaleType="fitCenter"
-            android:src="@drawable/audio" />
-
-        <ImageButton
-            android:padding="4dip"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:adjustViewBounds="true"
-            android:background="@android:color/transparent"
-            android:onClick="goToGoogleMaps"
-            android:scaleType="fitCenter"
-            android:src="@drawable/googlemaps" />
-
-    </LinearLayout>
-    task drawer
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_height="0dp"
@@ -1213,6 +1144,7 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding"
+                        android:layout_marginRight="4dip"
                         android:layout_marginTop="@dimen/abc_action_bar_icon_vertical_padding"
                         android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
                         android:orientation="vertical"
@@ -1476,6 +1408,75 @@
         </LinearLayout>
 
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/task_drawer"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="bottom"
+        android:layout_weight="11"
+        android:gravity="bottom"
+        android:background="@color/lighter_purple"
+        android:orientation="horizontal"
+        android:padding="@dimen/abc_action_bar_icon_vertical_padding">
+
+        <ImageView
+            android:padding="3dip"
+            android:id="@+id/set_text_icon"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            android:onClick="textSelected"
+            android:scaleType="fitCenter"
+            android:src="@drawable/textglow" />
+
+        <ImageButton
+            android:id="@+id/set_phone_icon"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            android:onClick="phoneSelected"
+            android:scaleType="fitCenter"
+            android:src="@drawable/phone" />
+
+        <ImageButton
+            android:id="@+id/set_reminder_icon"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            android:onClick="reminderSelected"
+            android:scaleType="fitCenter"
+            android:src="@drawable/reminder" />
+
+        <ImageButton
+            android:id="@+id/set_sound_icon"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            android:onClick="soundSelected"
+            android:scaleType="fitCenter"
+            android:src="@drawable/audio" />
+
+        <ImageButton
+            android:padding="4dip"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            android:onClick="goToGoogleMaps"
+            android:scaleType="fitCenter"
+            android:src="@drawable/googlemaps" />
+
+    </LinearLayout>
+    task drawer
 
 
 </LinearLayout>

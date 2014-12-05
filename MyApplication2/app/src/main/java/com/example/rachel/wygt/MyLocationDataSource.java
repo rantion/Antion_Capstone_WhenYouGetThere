@@ -72,6 +72,9 @@ public class MyLocationDataSource {
         }
         // make sure to close the cursor
         cursor.close();
+        if(locations.equals(null)){
+            Log.d("MyLocationDataSource", "is null");
+        }
         return locations;
     }
 

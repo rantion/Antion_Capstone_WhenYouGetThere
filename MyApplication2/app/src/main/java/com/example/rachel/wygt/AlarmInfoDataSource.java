@@ -18,7 +18,8 @@ public class AlarmInfoDataSource {
     private MySQLiteHelper dbHelper;
     private String[] allColumns = {MySQLiteHelper.COLUMN_ID, MySQLiteHelper.COLUMN_ALARM_TYPE, MySQLiteHelper.COLUMN_MONDAY,
             MySQLiteHelper.COLUMN_TUESDAY, MySQLiteHelper.COLUMN_WEDNESDAY, MySQLiteHelper.COLUMN_THURSDAY,
-            MySQLiteHelper.COLUMN_FRIDAY, MySQLiteHelper.COLUMN_SATURDAY, MySQLiteHelper.COLUMN_SUNDAY,MySQLiteHelper.COLUMN_TASK_ID};
+            MySQLiteHelper.COLUMN_FRIDAY, MySQLiteHelper.COLUMN_SATURDAY, MySQLiteHelper.COLUMN_SUNDAY,
+            MySQLiteHelper.COLUMN_TIME, MySQLiteHelper.COLUMN_TASK_ID};
 
     public AlarmInfoDataSource(Context context) {
         dbHelper = new MySQLiteHelper(context);
@@ -42,6 +43,7 @@ public class AlarmInfoDataSource {
         values.put(MySQLiteHelper.COLUMN_FRIDAY, info.getFri());
         values.put(MySQLiteHelper.COLUMN_SATURDAY, info.getSat());
         values.put(MySQLiteHelper.COLUMN_SUNDAY, info.getSun());
+        values.put(MySQLiteHelper.COLUMN_TIME,System.currentTimeMillis());
         values.put(MySQLiteHelper.COLUMN_TASK_ID, info.getTaskId());
         long insertId = database.insert(MySQLiteHelper.TABLE_ALARM_INFO, null,
                 values);
@@ -79,6 +81,22 @@ public class AlarmInfoDataSource {
         return infos;
     }
 
+    public void updateAlarmInfo(AlarmInfo info){
+        ContentValues values = new ContentValues();
+        values.put(MySQLiteHelper.COLUMN_ALARM_TYPE, info.getAlarmType());
+        values.put(MySQLiteHelper.COLUMN_MONDAY, info.getMon());
+        values.put(MySQLiteHelper.COLUMN_TUESDAY, info.getTue());
+        values.put(MySQLiteHelper.COLUMN_WEDNESDAY, info.getWed());
+        values.put(MySQLiteHelper.COLUMN_THURSDAY, info.getThu());
+        values.put(MySQLiteHelper.COLUMN_FRIDAY, info.getFri());
+        values.put(MySQLiteHelper.COLUMN_SATURDAY, info.getSat());
+        values.put(MySQLiteHelper.COLUMN_SUNDAY, info.getSun());
+        values.put(MySQLiteHelper.COLUMN_TIME,System.currentTimeMillis());
+        values.put(MySQLiteHelper.COLUMN_TASK_ID, info.getTaskId());
+        database.update(MySQLiteHelper.TABLE_ALARM_INFO, values, MySQLiteHelper.COLUMN_ID+"="+info.getId(), null);
+
+    }
+
     public List<AlarmInfo> getAlarmInfoByTaskId(long taskId) {
         List<AlarmInfo> infos = new ArrayList<AlarmInfo>();
         Cursor cursor = database.rawQuery("select * from " + MySQLiteHelper.TABLE_ALARM_INFO +
@@ -105,7 +123,8 @@ public class AlarmInfoDataSource {
         info.setFri(cursor.getInt(6));
         info.setSat(cursor.getInt(7));
         info.setSun(cursor.getInt(8));
-        info.setTaskId(cursor.getLong(9));
+        info.setLast_time(cursor.getLong(9));
+        info.setTaskId(cursor.getLong(10));
         return info;
     }
 }
